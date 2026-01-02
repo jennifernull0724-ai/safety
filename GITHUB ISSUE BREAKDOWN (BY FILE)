@@ -1,0 +1,363 @@
+📁 safety/ — GITHUB ISSUE BREAKDOWN (BY FILE)
+
+Use one issue per file unless noted otherwise.
+
+1️⃣ README.md
+Issue: Platform Overview & Entry Contract
+
+Type: Documentation
+Priority: P0
+Depends On: None
+
+Description
+Finalize the README as the authoritative entry point for the System of Proof platform.
+
+Checklist
+
+ Clearly state NO dummy data
+
+ Define “System of Proof” in 1 paragraph
+
+ Link to each file in /safety
+
+ Explicitly state Employees ≠ Users
+
+ Explicitly state Evidence + Ledger are immutable
+
+Acceptance Criteria
+
+New engineer can understand the platform in <10 minutes
+
+README contains no implementation drift from files below
+
+2️⃣ CORE SYSTEM TABLES (NON-NEGOTIABLE)
+Issue: Lock Core Data Model Contracts
+
+Type: Architecture
+Priority: P0
+Depends On: None
+
+Description
+Formalize which tables can never be removed, altered, or soft-deleted.
+
+Checklist
+
+ Mark EvidenceNode + ImmutableEventLedger as append-only
+
+ Mark Certification + VerificationEvent as non-deletable
+
+ Explicitly list tables that may evolve vs may not
+
+ Document DB-level delete restrictions
+
+Acceptance Criteria
+
+Any future schema change must reference this file
+
+No ambiguity on “what cannot change”
+
+3️⃣ schema.prisma
+Issue: Prisma Schema Finalization & Validation
+
+Type: Backend
+Priority: P0
+Depends On: Core System Tables
+
+Description
+Ensure Prisma schema exactly matches the System of Proof contract.
+
+Checklist
+
+ Employees are non-auth entities
+
+ Certifications belong to Employees
+
+ VerificationToken → VerificationEvent chain is correct
+
+ EvidenceNode + Ledger relations enforced
+
+ No @delete or cascading deletes anywhere
+
+Acceptance Criteria
+
+prisma validate passes
+
+No model allows historical mutation
+
+No optional shortcuts added
+
+4️⃣ PRISMA MODELS + RELATIONS (FINALIZED)
+Issue: Model Semantics & Relationship Rationale
+
+Type: Architecture / Docs
+Priority: P1
+Depends On: schema.prisma
+
+Description
+Explain why relationships exist, not just that they exist.
+
+Checklist
+
+ Why Employee ≠ User
+
+ Why VerificationEvent is immutable
+
+ Why Evidence is generic + linked
+
+ Why enforcement state is derived
+
+Acceptance Criteria
+
+Reviewer can defend schema decisions to a regulator
+
+5️⃣ PRISMA MIGRATIONS (AUTHORITATIVE)
+Issue: Migration Order & Safety Guarantees
+
+Type: Backend
+Priority: P0
+Depends On: schema.prisma
+
+Description
+Document and enforce safe migration practices.
+
+Checklist
+
+ Ordered migration list
+
+ Explicit “no destructive migrations” rule
+
+ Backfill guidance only via jobs
+
+ DB role restrictions documented
+
+Acceptance Criteria
+
+No migration can silently remove evidence
+
+New migrations require referencing this doc
+
+6️⃣ MIDDLEWARE & ENFORCEMENT LOGIC (MOST IMPORTANT)
+Issue: Enforcement as a First-Class System
+
+Type: Backend / Security
+Priority: 🔥 P0
+Depends On: schema + migrations
+
+Description
+Codify enforcement rules so they cannot be bypassed by UI or API misuse.
+
+Checklist
+
+ Org scope enforcement
+
+ Role enforcement
+
+ Certification enforcement
+
+ Evidence write middleware on all mutations
+
+ Fail-closed behavior documented
+
+Acceptance Criteria
+
+Impossible to assign uncertified employee
+
+Impossible to mutate historical truth
+
+All blocks generate evidence
+
+7️⃣ BACKGROUND JOBS & CRON
+Issue: Automated Truth Maintenance
+
+Type: Backend / Ops
+Priority: P0
+Depends On: Enforcement logic
+
+Description
+Ensure system self-enforces over time.
+
+Checklist
+
+ Certification expiration job
+
+ JHA re-validation sweep
+
+ Fatigue aggregation job
+
+ AI insight generation job
+
+ Audit readiness job
+
+Acceptance Criteria
+
+Cert expires → system blocks next day without human action
+
+Jobs only derive or flag, never fabricate data
+
+8️⃣ OVERVIEW - AI LAYER — SYSTEM OF PROOF (EXPLICIT)
+Issue: AI Governance & Scope Lock
+
+Type: Architecture / AI
+Priority: P1
+Depends On: Evidence + Jobs
+
+Description
+Ensure AI never becomes a liability.
+
+Checklist
+
+ AI outputs are advisory only
+
+ AI linked to evidence IDs
+
+ AI never triggers enforcement directly
+
+ AI transparency rules stated
+
+Acceptance Criteria
+
+System remains compliant with AI disabled
+
+AI decisions are explainable
+
+9️⃣ NEXTJS APP ROUTER STRUCTURE
+Issue: Route & Boundary Enforcement
+
+Type: Frontend Architecture
+Priority: P0
+Depends On: API + middleware
+
+Description
+Lock routing structure so roles and scopes are enforced by design.
+
+Checklist
+
+ (platform) routes scoped
+
+ (public)/verify isolated
+
+ (regulator) read-only
+
+ Server-only services enforced
+
+Acceptance Criteria
+
+No accidental data leaks across scopes
+
+Public QR route has zero auth dependency
+
+🔟 FIGMA AUTO-LAYOUT TOKENS & SPACING RULES
+Issue: Design System Law
+
+Type: Design System
+Priority: P1
+Depends On: None
+
+Description
+Prevent UI entropy and spacing drift.
+
+Checklist
+
+ 4px base scale locked
+
+ No arbitrary spacing allowed
+
+ Auto-layout required everywhere
+
+ Mobile overrides documented
+
+Acceptance Criteria
+
+Design and code spacing match exactly
+
+1️⃣1️⃣ FIGMA-READY COMPONENT SPECS
+Issue: Component Contract Definition
+
+Type: Design / Frontend
+Priority: P1
+Depends On: Spacing rules
+
+Description
+Define canonical components before implementation.
+
+Checklist
+
+ StatusBadge
+
+ QRCodeCard
+
+ EvidenceTimeline
+
+ PageContainer
+
+ MobileNav
+
+Acceptance Criteria
+
+Components map 1:1 to React components
+
+1️⃣2️⃣ TAILWIND CONFIG (MAPPED TO FIGMA TOKENS)
+Issue: Design → Code Parity Enforcement
+
+Type: Frontend
+Priority: P0
+Depends On: Figma tokens
+
+Description
+Ensure Tailwind cannot diverge from design system.
+
+Checklist
+
+ Spacing tokens only
+
+ Semantic status colors
+
+ No arbitrary values
+
+ No inline styles
+
+Acceptance Criteria
+
+Visual parity between Figma and app
+
+1️⃣3️⃣ role-by-role UI wireframes
+Issue: Role-Correct UX Enforcement
+
+Type: UX / Product
+Priority: P1
+Depends On: App router + enforcement
+
+Description
+Ensure each role sees only what they are allowed to see.
+
+Checklist
+
+ Admin flows
+
+ Safety flows
+
+ Dispatch flows
+
+ Supervisor flows
+
+ Executive flows
+
+ Regulator flows
+
+Acceptance Criteria
+
+No role can override enforcement
+
+No role can edit historical evidence
+
+✅ FINAL NOTE (IMPORTANT)
+
+This breakdown:
+
+Matches exactly what is already in your repo
+
+Does not introduce new scope
+
+Can be pasted directly into GitHub Issues
+
+Creates a clean, auditable execution trail
