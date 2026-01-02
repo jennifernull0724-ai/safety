@@ -1,0 +1,212 @@
+API CONVENTIONS (GLOBAL)
+
+Base
+
+/api
+
+
+Auth rules
+
+users authenticate (JWT/session)
+
+employees never authenticate
+
+QR verification endpoints are public, read-only
+
+Write rules
+
+All writes create:
+
+evidence_node
+
+immutable_event_ledger entry
+
+0. CORE SYSTEM / SPINE
+Evidence & Ledger (SYSTEM ONLY)
+
+These are internal and not directly exposed to UI.
+
+(INTERNAL)
+evidence_nodes.create()
+immutable_event_ledger.append()
+
+1. ORGANIZATIONS & USERS
+Organizations
+GET    /api/organizations/:id
+POST   /api/organizations
+PATCH  /api/organizations/:id
+
+Users (Authenticated)
+GET    /api/users/me
+GET    /api/users
+POST   /api/users
+PATCH  /api/users/:id
+
+2. EMPLOYEES (ANCHOR DOMAIN)
+Employee Directory
+GET    /api/employees
+POST   /api/employees
+GET    /api/employees/:employeeId
+PATCH  /api/employees/:employeeId
+
+Crew Assignment
+POST   /api/crews
+POST   /api/crews/:crewId/members
+DELETE /api/crews/:crewId/members/:employeeId
+
+3. EMPLOYEE CERTIFICATIONS & QR VERIFICATION (CRITICAL)
+Certifications (Employee-Native)
+GET    /api/employees/:employeeId/certifications
+POST   /api/employees/:employeeId/certifications
+GET    /api/certifications/:certificationId
+PATCH  /api/certifications/:certificationId
+
+Certification Status Enforcement
+POST   /api/certifications/:certificationId/revoke
+POST   /api/certifications/:certificationId/expire
+
+QR Verification Tokens
+POST   /api/certifications/:certificationId/qr
+POST   /api/qr/:tokenId/rotate
+POST   /api/qr/:tokenId/revoke
+
+QR Verification Scan (PUBLIC, READ-ONLY)
+GET    /api/verify/:verificationToken
+
+Behavior
+
+No auth required
+
+Resolves current certification state
+
+Logs verification_event
+
+Writes immutable ledger entry
+
+4. SAFETY & COMPLIANCE
+Job Hazard Analysis (JHA)
+GET    /api/jha
+POST   /api/jha
+GET    /api/jha/:jhaId
+PATCH  /api/jha/:jhaId
+
+Crew Acknowledgment (EMPLOYEE)
+POST   /api/jha/:jhaId/acknowledge
+
+
+Enforces certification validity before acknowledgment.
+
+Safety Observations / Near Misses
+POST   /api/safety/observations
+GET    /api/safety/observations
+GET    /api/safety/observations/:id
+
+Audit Defense Vault
+GET    /api/audits
+POST   /api/audits
+GET    /api/audits/:auditId
+
+Attach Evidence
+POST   /api/audits/:auditId/evidence
+
+Export Audit Package
+GET    /api/audits/:auditId/export
+
+5. FIELD EXECUTION & AUTHORITY
+Work Windows / Track Time
+GET    /api/work-windows
+POST   /api/work-windows
+GET    /api/work-windows/:id
+PATCH  /api/work-windows/:id
+
+
+Enforces employee certification eligibility.
+
+Field Logs (EMPLOYEE-GENERATED)
+POST   /api/field-logs
+GET    /api/field-logs
+GET    /api/field-logs/:id
+
+Authority Management
+GET    /api/authority
+POST   /api/authority
+GET    /api/authority/:id
+
+6. INCIDENT & EMERGENCY
+Incident Management
+GET    /api/incidents
+POST   /api/incidents
+GET    /api/incidents/:incidentId
+PATCH  /api/incidents/:incidentId
+
+Incident Personnel
+POST   /api/incidents/:incidentId/employees
+
+Incident Cost Recovery
+POST   /api/incidents/:incidentId/costs
+GET    /api/incidents/:incidentId/costs
+
+Drug & Alcohol Testing
+POST   /api/incidents/:incidentId/testing
+GET    /api/testing/:testId
+
+Emergency Pre-Plans
+GET    /api/emergency/preplans
+POST   /api/emergency/preplans
+GET    /api/emergency/preplans/:id
+
+Emergency Contractor Mobilization
+GET    /api/emergency/responders
+POST   /api/emergency/callout
+
+7. ASSETS, DAMAGE & ENVIRONMENTAL
+Assets
+GET    /api/assets
+POST   /api/assets
+GET    /api/assets/:assetId
+
+Right-of-Way Damage
+POST   /api/damage
+GET    /api/damage/:id
+
+Environmental Records
+POST   /api/environmental
+GET    /api/environmental/:id
+
+8. LEGAL, INSURANCE & DEFENSE
+Legal Cases
+GET    /api/legal/cases
+POST   /api/legal/cases
+GET    /api/legal/cases/:id
+
+Insurance Policies & Exposure
+GET    /api/insurance/policies
+POST   /api/insurance/policies
+GET    /api/insurance/exposure
+
+9. REGULATOR PORTAL (READ-ONLY)
+Regulator Sessions
+POST   /api/regulator/sessions
+GET    /api/regulator/sessions/:sessionId
+
+Regulator Evidence Access
+GET    /api/regulator/evidence/:evidenceNodeId
+
+
+All access logged.
+
+10. MEDIA / UPLOADS
+POST   /api/media/upload
+GET    /api/media/:mediaId
+
+HARD GUARANTEES (NON-NEGOTIABLE)
+
+Every POST/PATCH → Evidence Node + Ledger entry
+
+QR verification endpoints never mutate data
+
+Employees never authenticate
+
+Expired/revoked certifications still resolve
+
+No deletes on evidence-bearing records
