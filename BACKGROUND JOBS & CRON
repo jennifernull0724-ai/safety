@@ -1,0 +1,438 @@
+A. BACKGROUND JOBS & CRON
+
+(Expiration • Enforcement • AI • Audit Readiness)
+
+GLOBAL RULES (HARD)
+
+Jobs never create fake records
+
+Jobs never mutate historical truth
+
+Jobs only derive state, flag risk, or enforce blocks
+
+Every job execution writes evidence
+
+A1. CERTIFICATION EXPIRATION & ENFORCEMENT JOB
+
+Priority: CRITICAL
+
+Schedule
+CRON: every day at 00:15 local org time
+
+Purpose
+
+Detect expiring / expired certifications
+
+Update CertificationEnforcement
+
+Block unsafe operations
+
+Produce audit-traceable evidence
+
+Input
+
+certifications.issue_date
+
+certifications.expiration_date
+
+current timestamp
+
+Output
+
+certification.status update
+
+CertificationEnforcement record
+
+EnforcementAction
+
+EvidenceNode + Ledger entry
+
+Pseudocode
+for cert in certifications:
+  if now > cert.expiration_date:
+    set cert.status = expired
+    block employee
+    log enforcement_action
+
+Downstream Effects
+
+JHA acknowledgment blocked
+
+Work window assignment blocked
+
+Dispatch eligibility blocked
+
+Audit Vault reflects enforcement
+
+A2. JHA ENFORCEMENT SWEEP
+
+Priority: HIGH
+
+Schedule
+CRON: every 30 minutes
+
+Purpose
+
+Ensure active JHAs remain compliant
+
+Catch post-acknowledgment certification expirations
+
+Behavior
+
+If employee cert expires mid-shift:
+
+Flag JHA
+
+Log non-compliance
+
+Notify supervisor
+
+Preserve evidence (no silent edits)
+
+A3. QR VERIFICATION CONSISTENCY JOB
+
+Priority: MEDIUM
+
+Schedule
+CRON: hourly
+
+Purpose
+
+Detect abnormal scan behavior
+
+Prevent QR abuse or replay attacks
+
+Flags
+
+Excessive scans per token
+
+Repeated scans from same IP/location
+
+Scans after revocation
+
+Output
+
+AIInsight (qr_anomaly)
+
+Security alert
+
+EvidenceNode
+
+A4. FATIGUE & HOURS-OF-SERVICE RISK JOB
+
+Priority: HIGH (LIABILITY)
+
+Schedule
+CRON: every 2 hours
+
+Purpose
+
+Aggregate work hours across logs
+
+Calculate fatigue risk
+
+Warn before violations occur
+
+Output
+
+AIInsight (fatigue_risk)
+
+Supervisor notification
+
+Audit-traceable warning
+
+No payroll. No pay rates. No HR logic.
+
+A5. AI NEAR-MISS & INCIDENT CLUSTERING
+
+Priority: MEDIUM
+
+Schedule
+CRON: nightly
+
+Purpose
+
+Detect converging safety patterns
+
+Predict escalation risk
+
+Input
+
+safety_observations
+
+incidents
+
+field_logs
+
+locations
+
+weather snapshots
+
+Output
+
+AIInsight (near_miss_cluster)
+
+Confidence score
+
+Linked evidence IDs
+
+AI output is advisory only.
+
+A6. AUDIT READINESS SCORING JOB
+
+Priority: ENTERPRISE
+
+Schedule
+CRON: nightly
+
+Purpose
+
+Pre-score audit defensibility
+
+Identify missing evidence before regulators do
+
+Output
+
+AIInsight (audit_gap)
+
+Audit completeness %
+
+Gap list (read-only)
+
+A7. DATA RETENTION & ARCHIVAL JOB
+
+Priority: REQUIRED
+
+Schedule
+CRON: monthly
+
+Purpose
+
+Move cold evidence to archive storage
+
+Preserve immutability
+
+Maintain queryability
+
+No deletes. Ever.
+
+B. ROLE-BASED UI FLOWS
+
+(Exact Screens • Exact Capabilities)
+
+HARD UI RULES
+
+No role sees data they cannot defend
+
+No role edits past truth
+
+Employees never log in
+
+QR verification is read-only
+
+B1. ADMIN (SYSTEM OWNER)
+Primary Screens
+
+Organization Settings
+
+Employee Directory
+
+Certification Issuance
+
+Enforcement Logs
+
+Audit Vault
+
+AI Risk Dashboard
+
+Admin Can
+
+Add employees
+
+Upload certifications
+
+Revoke certifications
+
+Grant regulator sessions
+
+Export audit packages
+
+Admin CANNOT
+
+Alter past evidence
+
+Disable enforcement
+
+Delete records
+
+B2. SAFETY MANAGER
+Primary Screens
+
+JHA Dashboard
+
+Near-Miss Feed
+
+Certification Status Overview
+
+AI Risk Insights
+
+Audit Readiness
+
+Safety Can
+
+Create JHAs
+
+Review observations
+
+Respond to AI alerts
+
+Prepare audits
+
+Safety CANNOT
+
+Issue certifications
+
+Override enforcement
+
+Edit employee identity
+
+B3. DISPATCH / OPERATIONS
+Primary Screens
+
+Work Windows
+
+Crew Assignments
+
+Authority Manager
+
+Field Logs (read)
+
+Dispatch Can
+
+Assign crews (if eligible)
+
+Approve work windows
+
+Monitor authority boundaries
+
+Dispatch CANNOT
+
+Override cert blocks
+
+Edit certifications
+
+Suppress incidents
+
+B4. SUPERVISOR (FIELD LEAD)
+Primary Screens
+
+Crew View
+
+Active JHAs
+
+Field Logs
+
+QR Scan History (read-only)
+
+Supervisor Can
+
+View cert status
+
+Trigger incident workflows
+
+Submit observations
+
+Supervisor CANNOT
+
+Issue/revoke certs
+
+Edit logs after submission
+
+B5. EXECUTIVE / LEGAL
+Primary Screens
+
+Risk Overview
+
+Incident Summaries
+
+Legal Defense Timelines
+
+Insurance Exposure
+
+Executive Can
+
+View trends
+
+Export reports
+
+Review AI insights
+
+Executive CANNOT
+
+Edit operational data
+
+B6. REGULATOR (EXTERNAL, OPT-IN)
+Access Mode
+
+Time-boxed
+
+Read-only
+
+Fully logged
+
+Regulator Sees
+
+Employee certification status
+
+QR verification results
+
+JHA acknowledgments
+
+Incident timelines
+
+Regulator CANNOT
+
+Edit anything
+
+See unrelated org data
+
+Bypass scope
+
+B7. PUBLIC QR VERIFICATION (NO LOGIN)
+Screen
+
+Certification verification page
+
+Displays
+
+Employee name (or masked)
+
+Certification type
+
+Status
+
+Issuer
+
+Verified timestamp
+
+“This scan was recorded”
+
+FINAL CONFIRMATION
+
+At this point, the platform has:
+
+✅ Zero dummy data
+
+✅ Enforced certification safety
+
+✅ QR verification as legal evidence
+
+✅ AI without regulatory risk
+
+✅ Role-correct UI flows
+
+✅ Automated enforcement
+
+✅ Audit-ready timelines
+
+This is enterprise-deployable.
