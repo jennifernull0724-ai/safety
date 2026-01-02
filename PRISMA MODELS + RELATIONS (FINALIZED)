@@ -1,0 +1,168 @@
+1. PRISMA MODELS + RELATIONS (FINALIZED)
+
+You already have the core schema. Below are the critical additions and clarifications that make enforcement and audits work correctly.
+
+1.1 Required Additions to Existing Prisma Schema
+A. Certification Enforcement State (derived but persisted)
+
+This avoids recalculating status inconsistently during audits.
+
+model CertificationEnforcement {
+  id               String   @id @default(uuid())
+  certificationId  String   @unique
+  isBlocked        Boolean  @default(false)
+  blockedReason    String?
+  evaluatedAt      DateTime @default(now())
+
+  certification Certification @relation(fields: [certificationId], references: [id])
+}
+
+B. Evidence Linking Helper (Many-to-Many, Generic)
+
+This lets any entity pull evidence cleanly.
+
+model EntityEvidenceLink {
+  id             String @id @default(uuid())
+  entityType     String
+  entityId       String
+  evidenceNodeId String
+
+  evidenceNode EvidenceNode @relation(fields: [evidenceNodeId], references: [id])
+
+  @@index([entityType, entityId])
+}
+
+C. Enforcement Actions (Auditable)
+model EnforcementAction {
+  id              String   @id @default(uuid())
+  actionType      EnforcementType
+  targetType      String
+  targetId        String
+  reason          String
+  triggeredBy     String   // system | userId
+  createdAt       DateTime @default(now())
+}
+
+enum EnforcementType {
+  certification_block
+  work_window_block
+  jha_block
+}
+
+2. OPENAPI (SWAGGER) SPEC — CONTRACT LEVEL
+
+This is a clean OpenAPI 3.0 spec. It is intentionally explicit, not bloated.
+
+2.1 OpenAPI Header
+openapi: 3.0.3
+info:
+  title: Unified System of Proof API
+  version: 1.0.0
+  description: Audit-defensible safety, compliance, and verification platform
+servers:
+  - url: https://api.yourplatform.com
+
+2.2 Security Schemes
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+2.3 Core Schemas (Examples)
+Employee
+Employee:
+  type: object
+  properties:
+    id:
+      type: string
+    firstName:
+      type: string
+    lastName:
+      type: string
+    tradeRole:
+      type: string
+    status:
+      type: string
+      enum: [active, inactive]
+
+Certification
+Certification:
+  type: object
+  properties:
+    id:
+      type: string
+    employeeId:
+      type: string
+    certificationType:
+      type: string
+    issuingAuthority:
+      type: string
+    issueDate:
+      type: string
+      format: date
+    expirationDate:
+      type: string
+      format: date
+    status:
+      type: string
+      enum: [valid, expiring, expired, revoked]
+
+QR Verification Response (PUBLIC)
+VerificationResponse:
+  type: object
+  properties:
+    employeeName:
+      type: string
+    certificationType:
+      type: string
+    status:
+      type: string
+      enum: [valid, expired, revoked]
+    issuingAuthority:
+      type: string
+    verifiedAt:
+      type: string
+      format: date-time
+
+2.4 Critical Endpoints
+QR Verification (Public)
+/api/verify/{token}:
+  get:
+    summary: Verify certification via QR code
+    parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      "200":
+        description: Verification result
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerificationResponse"
+
+Create Certification (Authenticated)
+/api/employees/{employeeId}/certifications:
+  post:
+    security:
+      - bearerAuth: []
+    summary: Issue certification to employee
+    responses:
+      "201":
+        description: Certification created
+
+Work Window Creation (Enforced)
+/api/work-windows:
+  post:
+    security:
+      - bearerAuth: []
+    summary: Create work window (cert enforcement applied)
+    responses:
+      "201":
+        description: Work window created
+      "403":
+        description: Blocked due to certification enforcement
