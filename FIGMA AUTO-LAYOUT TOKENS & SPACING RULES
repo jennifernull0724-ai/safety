@@ -1,0 +1,218 @@
+FIGMA AUTO-LAYOUT TOKENS & SPACING RULES
+
+(System of Proof UI — Production Standard)
+
+1. BASE SPACING SCALE (FOUNDATION)
+Spacing Unit
+
+Base unit = 4px
+
+All spacing must be a multiple of 4.
+No exceptions.
+
+Token Scale
+Token	px	Usage
+space-1	4px	Icon padding, tight inline gaps
+space-2	8px	Badge padding, compact rows
+space-3	12px	Form field vertical gap
+space-4	16px	Default container padding
+space-5	20px	Card internal spacing
+space-6	24px	Section separation
+space-8	32px	Major layout breaks
+space-10	40px	Page section spacing
+space-12	48px	Dashboard blocks
+space-16	64px	Page-level separation
+
+❌ Do not invent intermediate values
+❌ Do not eyeball spacing
+
+2. AUTO-LAYOUT RULES (NON-NEGOTIABLE)
+Direction Rules
+
+Vertical Auto-Layout → Pages, cards, forms, timelines
+
+Horizontal Auto-Layout → Rows, tables, toolbars, badges
+
+Padding Rules
+Component	Padding
+Page container	space-10
+Card	space-5
+Modal	space-6
+Table row	space-3 vertical / space-4 horizontal
+Badge	space-1 vertical / space-2 horizontal
+Button	space-2 vertical / space-4 horizontal
+Gap Rules
+Context	Gap
+Inline elements	space-2
+Form fields	space-4
+Card sections	space-5
+Dashboard widgets	space-8
+Timeline items	space-6
+3. TYPOGRAPHY + AUTO-LAYOUT COUPLING
+
+Typography spacing is not freeform. It is tied to layout.
+
+Text Type	Bottom Margin
+Page title (H1)	space-6
+Section header (H2)	space-4
+Subsection (H3)	space-3
+Body text	space-2
+Meta / labels	space-1
+
+Auto-layout frames containing text must:
+
+Hug contents vertically
+
+Fill container horizontally
+
+4. COMPONENT-LEVEL AUTO-LAYOUT SPECS
+4.1 StatusBadge
+Auto-layout: Horizontal
+Padding: space-1 / space-2
+Gap: space-1
+Min height: 20px
+Radius: 999px
+
+
+Status color is semantic and locked.
+
+4.2 QRCodeCard
+Auto-layout: Vertical
+Padding: space-5
+Gap: space-4
+Alignment: Center
+
+
+Children:
+
+QR image (fixed)
+
+StatusBadge
+
+Meta text (small)
+
+4.3 EvidenceTimeline Item
+Auto-layout: Vertical
+Padding: space-4
+Gap: space-2
+
+
+Timeline container gap: space-6
+
+4.4 Table / List Rows
+Auto-layout: Horizontal
+Padding: space-3 / space-4
+Gap: space-4
+Row height: Hug
+
+
+Rows must stretch full width.
+No card-style rows inside tables.
+
+4.5 Form Group
+Auto-layout: Vertical
+Gap: space-2
+
+
+Form sections separated by space-6.
+
+5. PAGE-LEVEL LAYOUT RULES
+5.1 Dashboard Pages
+Vertical auto-layout
+Padding: space-10
+Gap: space-8
+
+
+Each dashboard block:
+
+Card
+Padding: space-5
+Gap: space-4
+
+5.2 Detail Pages (Employee, Incident, Audit)
+Header block
+Gap: space-6
+
+Content blocks
+Gap: space-8
+
+
+No masonry. No floating cards.
+Linear, auditable structure only.
+
+6. MODALS & DRAWERS
+Modal
+Padding: space-6
+Gap: space-4
+Max width: 640px
+
+Side Drawer (Evidence Viewer)
+Padding: space-6
+Gap: space-5
+Width: 420–480px
+
+
+Drawer content scrolls. Header is fixed.
+
+7. MOBILE AUTO-LAYOUT OVERRIDES
+Mobile Page Container
+Padding: space-4
+Gap: space-6
+
+Mobile Cards
+Padding: space-4
+Gap: space-3
+
+Mobile Bottom Nav
+Height: 56px
+Icon gap: space-1
+
+8. WHAT DESIGNERS ARE NOT ALLOWED TO DO
+
+❌ No manual positioning
+❌ No mixed spacing scales
+❌ No visual padding adjustments
+❌ No “optical alignment” hacks
+❌ No breaking auto-layout for aesthetics
+
+Everything must survive:
+
+Dense data
+
+Missing data
+
+Audit exports
+
+Mobile stress
+
+9. HANDOFF CHECKLIST (FIGMA)
+
+Before handoff, every frame must:
+
+Use auto-layout (no absolute positioning)
+
+Use spacing tokens only
+
+Use semantic color styles
+
+Hug contents where appropriate
+
+Stretch where data grows
+
+If not, it fails review.
+
+FINAL CONFIRMATION
+
+You now have:
+
+A locked spacing system
+
+Auto-layout rules that scale
+
+Audit-safe visual hierarchy
+
+Mobile-ready constraints
+
+Direct mapping to CSS/Tailwind
+
+This is enterprise-grade UI infrastructure, not a mockup.
