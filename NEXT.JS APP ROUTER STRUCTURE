@@ -1,0 +1,44 @@
+app/
+├─ api/
+│  ├─ employees/
+│  │  ├─ route.ts
+│  │  └─ [employeeId]/
+│  │     └─ certifications/route.ts
+│  ├─ certifications/
+│  │  └─ [certId]/qr/route.ts
+│  ├─ verify/
+│  │  └─ [token]/route.ts          # PUBLIC QR
+│  ├─ audits/
+│  │  └─ [auditId]/export/route.ts
+│  └─ incidents/
+│     └─ route.ts
+│
+├─ (platform)/
+│  ├─ people/
+│  │  └─ employees/
+│  │     └─ [id]/page.tsx
+│  ├─ safety/jha/
+│  ├─ operations/work-windows/
+│  ├─ incidents/
+│  └─ compliance/audit-vault/
+│
+├─ (public)/
+│  └─ verify/
+│     └─ [token]/page.tsx           # Read-only
+│
+├─ (regulator)/
+│  └─ audit/
+│     └─ [sessionId]/page.tsx
+│
+├─ lib/
+│  ├─ services/
+│  │  ├─ certification.ts
+│  │  ├─ qr.ts
+│  │  ├─ audit.ts
+│  │  └─ evidence.ts
+│  ├─ middleware/
+│  │  ├─ auth.ts
+│  │  ├─ org-scope.ts
+│  │  └─ evidence-writer.ts
+│  └─ ai/
+│     └─ risk-engine.ts
