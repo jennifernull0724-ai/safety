@@ -1,0 +1,114 @@
+3.1 Global Middleware Stack (Order Matters)
+1️⃣ Authentication Middleware
+requireUser()
+
+
+Applies to all non-public routes
+
+Employees never authenticate
+
+2️⃣ Organization Scope Middleware
+enforceOrgBoundary()
+
+
+Prevents cross-org data access
+
+Required for audits and regulators
+
+3️⃣ Evidence Writer Middleware (MANDATORY)
+attachEvidenceNode()
+
+
+Runs on:
+
+POST
+
+PATCH
+
+Enforcement actions
+
+QR scans
+
+Writes:
+
+EvidenceNode
+
+ImmutableEventLedger entry
+
+3.2 Certification Enforcement Engine
+Runs On:
+
+JHA acknowledgment
+
+Work window assignment
+
+Dispatch eligibility
+
+Incident personnel attachment
+
+Pseudocode
+function enforceCertification(employeeId, requiredCerts) {
+  const certs = getEmployeeCertifications(employeeId)
+
+  for (cert of requiredCerts) {
+    if (!certs.hasValid(cert)) {
+      logEnforcementAction("certification_block", employeeId)
+      throw new Forbidden("Employee lacks required certification")
+    }
+  }
+}
+
+3.3 QR Verification Logic (Public, Immutable)
+function verifyQR(token) {
+  const cert = resolveToken(token)
+
+  const result = evaluateCertificationState(cert)
+
+  writeVerificationEvent(cert.id, result)
+
+  return {
+    certificationType: cert.type,
+    status: result,
+    verifiedAt: now()
+  }
+}
+
+
+Key rule:
+
+QR verification NEVER mutates certification state.
+
+3.4 Expiration & Revocation Jobs (SYSTEM)
+Nightly Job
+
+Recalculate expiring / expired
+
+Update CertificationEnforcement
+
+Write enforcement evidence
+
+3.5 Audit Vault Access Guard
+requireAuditScope(auditId)
+
+
+Ensures only linked evidence is visible
+
+Logs regulator access
+
+Time-boxed sessions only
+
+FINAL GUARANTEES
+
+With this stack:
+
+Certifications cannot be “forgotten”
+
+QR scans are legal evidence
+
+Enforcement is automatic, logged, and explainable
+
+Auditors see timelines, not screenshots
+
+Regulators trust the system
+
+This is not optional logic — this is what makes the platform sellable.
