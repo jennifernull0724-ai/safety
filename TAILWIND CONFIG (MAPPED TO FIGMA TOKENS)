@@ -1,0 +1,260 @@
+1.1 tailwind.config.ts
+import type { Config } from "tailwindcss";
+
+const config: Config = {
+  content: [
+    "./app/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./lib/**/*.{ts,tsx}",
+  ],
+  theme: {
+    extend: {
+      spacing: {
+        // Base spacing (4px scale)
+        "1": "4px",    // space-1
+        "2": "8px",    // space-2
+        "3": "12px",   // space-3
+        "4": "16px",   // space-4
+        "5": "20px",   // space-5
+        "6": "24px",   // space-6
+        "8": "32px",   // space-8
+        "10": "40px",  // space-10
+        "12": "48px",  // space-12
+        "16": "64px",  // space-16
+      },
+
+      borderRadius: {
+        sm: "4px",
+        md: "8px",
+        lg: "12px",
+        full: "9999px",
+      },
+
+      colors: {
+        // Base surfaces
+        bg: {
+          primary: "#FFFFFF",
+          secondary: "#F7F9FC",
+        },
+        text: {
+          primary: "#0F172A",
+          secondary: "#475569",
+        },
+        border: {
+          default: "#E2E8F0",
+        },
+
+        // Semantic statuses (LOCKED)
+        status: {
+          valid: "#16A34A",
+          expiring: "#F59E0B",
+          expired: "#DC2626",
+          revoked: "#7C2D12",
+          blocked: "#991B1B",
+        },
+      },
+    },
+  },
+  plugins: [],
+};
+
+export default config;
+
+Hard Rules
+
+❌ No custom spacing outside this scale
+
+❌ No arbitrary px values in JSX
+
+❌ No style={{}} overrides
+
+✅ Use Tailwind spacing tokens only
+
+2. FIGMA → REACT COMPONENT MAPPING
+
+This maps exact Figma components to React components, with required Tailwind classes.
+
+2.1 StatusBadge
+Figma
+
+Auto-layout: horizontal
+
+Padding: space-1 / space-2
+
+Radius: pill
+
+Semantic color
+
+React
+type Status = "valid" | "expiring" | "expired" | "revoked" | "blocked";
+
+export function StatusBadge({ status }: { status: Status }) {
+  return (
+    <span
+      className={`
+        inline-flex items-center
+        px-2 py-1
+        rounded-full
+        text-xs font-medium
+        text-white
+        bg-status-${status}
+      `}
+    >
+      {status.toUpperCase()}
+    </span>
+  );
+}
+
+
+❌ No custom colors
+❌ No conditional styles outside semantic map
+
+2.2 QRCodeCard
+Figma
+
+Vertical auto-layout
+
+Padding: space-5
+
+Gap: space-4
+
+Centered
+
+React
+export function QRCodeCard({
+  qr,
+  status,
+}: {
+  qr: React.ReactNode;
+  status: Status;
+}) {
+  return (
+    <div className="flex flex-col items-center gap-4 p-5 border border-border-default rounded-lg">
+      {qr}
+      <StatusBadge status={status} />
+      <p className="text-xs text-text-secondary">
+        Scan is recorded at verification time
+      </p>
+    </div>
+  );
+}
+
+2.3 EvidenceTimeline
+Figma
+
+Vertical auto-layout
+
+Item gap: space-6
+
+React
+export function EvidenceTimeline({
+  items,
+}: {
+  items: { id: string; label: string; time: string }[];
+}) {
+  return (
+    <div className="flex flex-col gap-6">
+      {items.map((item) => (
+        <div key={item.id} className="flex flex-col gap-2 p-4 border border-border-default rounded-md">
+          <span className="text-sm font-medium">{item.label}</span>
+          <span className="text-xs text-text-secondary">{item.time}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+2.4 PageContainer
+Figma
+
+Vertical auto-layout
+
+Padding: space-10
+
+Gap: space-8
+
+React
+export function PageContainer({ children }: { children: React.ReactNode }) {
+  return (
+    <main className="flex flex-col gap-8 p-10 bg-bg-primary min-h-screen">
+      {children}
+    </main>
+  );
+}
+
+2.5 Card
+Figma
+
+Padding: space-5
+
+Gap: space-4
+
+React
+export function Card({ children }: { children: React.ReactNode }) {
+  return (
+    <section className="flex flex-col gap-4 p-5 bg-bg-secondary border border-border-default rounded-lg">
+      {children}
+    </section>
+  );
+}
+
+2.6 FormGroup
+Figma
+
+Vertical auto-layout
+
+Gap: space-2
+
+React
+export function FormGroup({ children }: { children: React.ReactNode }) {
+  return <div className="flex flex-col gap-2">{children}</div>;
+}
+
+2.7 Mobile Bottom Navigation
+Figma
+
+Height: 56px
+
+Icon gap: space-1
+
+React
+export function MobileNav() {
+  return (
+    <nav className="fixed bottom-0 inset-x-0 h-14 bg-bg-primary border-t border-border-default flex justify-around items-center">
+      <button className="flex flex-col items-center gap-1 text-xs">Crew</button>
+      <button className="flex flex-col items-center gap-1 text-xs">QR</button>
+      <button className="flex flex-col items-center gap-1 text-xs">Log</button>
+      <button className="flex flex-col items-center gap-1 text-xs">Incident</button>
+    </nav>
+  );
+}
+
+3. ENFORCEMENT RULES (UI + TAILWIND)
+
+These are non-negotiable:
+
+❌ No className="p-[18px]"
+
+❌ No inline margin-top hacks
+
+❌ No visual-only spacing adjustments
+
+✅ All spacing must map to spacing tokens
+
+✅ Figma spacing token == Tailwind spacing value
+
+If it doesn’t map, it doesn’t ship.
+
+FINAL CONFIRMATION
+
+You now have:
+
+✅ Tailwind config fully mapped to Figma tokens
+
+✅ React components aligned to auto-layout rules
+
+✅ Zero divergence between design and code
+
+✅ UI that scales with real data and audits
+
+This is enterprise UI infrastructure, not theme work.
