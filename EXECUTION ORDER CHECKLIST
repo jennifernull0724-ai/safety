@@ -1,0 +1,188 @@
+🔒 SYSTEM OF PROOF — EXECUTION ORDER CHECKLIST
+
+(START → FINISH, NO DUMMY DATA, NO REWORK)
+
+PHASE 0 — HARD LOCKS (DO THIS FIRST, ONCE)
+
+☐ Confirm NO demo mode
+☐ Confirm NO seed data
+☐ Confirm NO deletes allowed (DB + Prisma middleware)
+☐ Confirm Employees ≠ Users
+☐ Confirm Evidence + Ledger are append-only
+
+🚫 If any of these are not true, STOP.
+
+PHASE 1 — DATA FOUNDATION (YOU START HERE)
+1.1 Database
+
+☐ Provision PostgreSQL
+☐ Enable uuid-ossp extension
+☐ Lock DB roles (no DELETE on evidence tables)
+
+1.2 Prisma
+
+☐ Add schema.prisma (the one we defined)
+☐ Run migrations in order
+☐ Verify all tables are EMPTY
+
+✔️ Gate: SELECT COUNT(*) = 0 for all core tables
+
+PHASE 2 — CORE INFRASTRUCTURE (NON-UI)
+2.1 Evidence + Ledger
+
+☐ Implement writeEvidenceNode()
+☐ Implement appendLedgerEntry()
+☐ Enforce: every POST/PATCH → evidence + ledger
+
+2.2 Enforcement Core
+
+☐ Certification enforcement service
+☐ Block logic (fail closed)
+☐ EnforcementAction logging
+
+🚫 No UI yet. No exceptions.
+
+PHASE 3 — QR CERTIFICATION VERIFICATION (CRITICAL PATH)
+3.1 Backend
+
+☐ Certification issuance API
+☐ QR token generation (hashed)
+☐ Public /api/verify/:token endpoint
+☐ VerificationEvent + ledger write on scan
+
+3.2 Rules
+
+☐ QR always resolves (even expired/revoked)
+☐ QR never mutates certification
+☐ Every scan = evidence
+
+✔️ Gate: Scan QR → see status → ledger entry exists
+
+PHASE 4 — BACKGROUND JOBS & CRON (AUTOMATION)
+4.1 Required Jobs
+
+☐ Certification expiration job (daily)
+☐ JHA enforcement sweep (30 min)
+☐ Fatigue risk job (2 hr)
+☐ AI near-miss clustering (nightly)
+☐ Audit readiness scoring (nightly)
+
+4.2 Rules
+
+☐ Jobs do NOT create records
+☐ Jobs only derive / flag / block
+☐ Jobs write evidence
+
+✔️ Gate: Expired cert auto-blocks work next day
+
+PHASE 5 — API LAYER (CONTRACT COMPLETE)
+
+☐ Implement all API routes exactly as defined
+☐ Enforce org scope middleware
+☐ Enforce role middleware
+☐ Enforce public-only QR verification
+
+🚫 No UI assumptions here.
+
+PHASE 6 — NEXT.JS APP ROUTER STRUCTURE
+
+☐ Create app/(platform) routes
+☐ Create app/(public)/verify/[token]
+☐ Create app/(regulator) scope
+☐ Server-only services in /lib/services
+
+✔️ Gate: Platform boots with no data rendered
+
+PHASE 7 — DESIGN SYSTEM → CODE (DO NOT SKIP)
+7.1 Figma
+
+☐ Apply spacing tokens (4px scale)
+☐ Auto-layout on ALL components
+☐ Status colors semantic + locked
+
+7.2 Tailwind
+
+☐ Apply locked tailwind.config.ts
+☐ Ban arbitrary spacing
+☐ Map tokens 1:1 with Figma
+
+🚫 If design ≠ Tailwind, design is wrong.
+
+PHASE 8 — CORE UI BUILD (ORDER MATTERS)
+8.1 Start With THESE SCREENS ONLY
+
+☐ Employee Directory
+☐ Employee Profile (Certs + QR)
+☐ Public QR Verification Page
+☐ Audit Vault (read-only)
+
+✔️ Gate:
+
+Cert uploaded → QR visible
+
+QR scan → evidence appears
+
+Audit timeline shows scan
+
+PHASE 9 — ROLE-BASED UI FLOWS
+Build in This Order
+
+☐ Admin
+☐ Safety
+☐ Dispatch
+☐ Supervisor
+☐ Executive
+☐ Regulator (last)
+
+🚫 Do NOT mix roles.
+
+PHASE 10 — AI SURFACING (ADVISORY ONLY)
+
+☐ AI insights generated server-side
+☐ AI labeled “Advisory” in UI
+☐ AI linked to evidence IDs
+☐ AI never blocks actions directly
+
+✔️ Gate: AI off → system still safe
+
+PHASE 11 — QA & DEFENSIBILITY CHECK
+
+☐ No record editable after creation
+☐ No deletes possible
+☐ Every action traceable
+☐ QR scans logged
+☐ Expired cert blocks work
+☐ Regulator sees read-only data
+
+PHASE 12 — MVP READY DEFINITION
+
+You are MVP-ready when:
+
+✅ Real employee added
+✅ Real cert uploaded
+✅ QR scanned in field
+✅ Cert expires → work blocked
+✅ Audit timeline shows proof
+✅ Zero dummy data anywhere
+
+🚨 WHAT NOT TO DO (COMMON FAILURE POINTS)
+
+❌ Don’t start with UI
+❌ Don’t seed example data
+❌ Don’t let employees log in
+❌ Don’t allow manual overrides
+❌ Don’t soften enforcement “for now”
+
+FINAL CONFIRMATION
+
+This checklist is:
+
+Complete
+
+Ordered
+
+Dependency-safe
+
+Audit-defensible
+
+If you follow it top to bottom, you will not have to redo anything later.
