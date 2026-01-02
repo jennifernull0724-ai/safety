@@ -1,0 +1,120 @@
+🔒 SYSTEM OF PROOF — FINAL HARD AUDIT
+
+Repository:
+Audit Type:
+Standard:
+Audit Date:
+Auditor:
+
+SECTION 0 — GLOBAL HARD RULES (ABSOLUTE)
+Rule	Status	Notes
+No dummy data anywhere		
+No seed / demo / placeholder logic		
+Employees ≠ Users		
+Evidence is append-only		
+No deletes on evidence-bearing records		
+Enforcement fails closed		
+QR scans generate immutable evidence		
+AI is advisory only		
+SECTION 1 — REPOSITORY STRUCTURE AUDIT
+Files Reviewed
+Findings
+SECTION 2 — DATA MODEL & PRISMA AUDIT
+schema.prisma Review
+Requirement	Status	Notes
+UUID primary keys everywhere		
+Employees non-auth entities		
+Certifications anchored to employees		
+VerificationToken → VerificationEvent chain		
+EvidenceNode generic + linkable		
+ImmutableEventLedger append-only		
+No cascading deletes		
+No soft-delete flags		
+SECTION 3 — MIGRATIONS AUDIT
+Migration Review
+Rule	Status	Notes
+Migrations ordered		
+No destructive migrations		
+No data backfill via SQL		
+Enforcement via jobs only		
+DB delete prevention enforced		
+SECTION 4 — ENFORCEMENT & MIDDLEWARE AUDIT
+Enforcement Areas
+Area	Status	Notes
+Certification enforcement		
+JHA acknowledgment blocking		
+Work window eligibility blocking		
+Dispatch override prevention		
+Enforcement actions logged		
+Middleware
+Middleware	Status	Notes
+Auth enforcement		
+Org scope enforcement		
+Evidence write middleware		
+Fail-closed behavior		
+SECTION 5 — QR CERTIFICATION VERIFICATION AUDIT
+Requirement	Status	Notes
+QR tokens hashed		
+QR resolves when expired/revoked		
+QR never mutates cert state		
+VerificationEvent created on scan		
+EvidenceNode + Ledger written		
+Public route isolated		
+SECTION 6 — BACKGROUND JOBS & CRON AUDIT
+Jobs Reviewed
+Job	Status	Notes
+Certification expiration		
+JHA re-validation		
+Fatigue aggregation		
+Near-miss clustering		
+Audit readiness scoring		
+Archival / retention		
+SECTION 7 — AI LAYER AUDIT
+Constraint	Status	Notes
+AI advisory only		
+AI linked to evidence IDs		
+AI explainable		
+AI disabled = system safe		
+SECTION 8 — NEXT.JS APP ROUTER AUDIT
+Route Boundary	Status	Notes
+(platform) scoped		
+(public)/verify isolated		
+(regulator) read-only		
+Server-only services enforced		
+SECTION 9 — UI / DESIGN SYSTEM AUDIT
+Figma
+Rule	Status	Notes
+4px spacing scale		
+Auto-layout enforced		
+Semantic status colors		
+Mobile overrides		
+Tailwind
+Rule	Status	Notes
+Token-mapped spacing only		
+No arbitrary values		
+No inline styles		
+SECTION 10 — ROLE-BASED UI AUDIT
+Role	Scope Correct	Enforcement Visible	Can Mutate Truth	Notes
+Admin				
+Safety				
+Dispatch				
+Supervisor				
+Executive				
+Regulator				
+Public QR				
+SECTION 11 — EXECUTION ORDER & GOVERNANCE AUDIT
+Item	Status	Notes
+Execution order followed		
+No UI before enforcement		
+No shortcuts taken		
+Build gates respected		
+FINAL VERDICT
+
+System Status:
+Summary:
+
+SIGN-OFF
+
+Auditor Name:
+Signature / Initials:
+Date:
