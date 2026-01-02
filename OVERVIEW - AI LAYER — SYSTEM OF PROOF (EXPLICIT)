@@ -1,0 +1,267 @@
+AI LAYER — SYSTEM OF PROOF (EXPLICIT)
+HARD RULE (IMPORTANT)
+
+AI never edits truth.
+AI never overrides humans.
+AI never mutates evidence.
+
+AI only:
+
+Analyzes evidence
+
+Predicts risk
+
+Flags anomalies
+
+Assists audits
+
+All AI outputs are annotated, explainable, and logged.
+
+WHERE AI LIVES IN THE SYSTEM
+1. AI RISK ENGINE (CORE SERVICE)
+
+Service
+
+/services/ai-risk-engine
+
+
+Consumes
+
+Evidence Nodes
+
+Immutable Event Ledger
+
+Historical incidents
+
+Near-misses
+
+Certification lapses
+
+Field logs
+
+Authority violations
+
+Produces
+
+Risk scores
+
+Predictive flags
+
+Clusters
+
+Alerts
+
+AI OUTPUTS ARE EVIDENCE-LINKED, NOT EVIDENCE
+
+2. SAFETY & NEAR-MISS AI (MODULE A)
+A. Near-Miss Clustering AI
+
+Uses
+
+Text from observations
+
+Location patterns
+
+Time-of-day
+
+Weather
+
+Crew overlap
+
+Outputs
+
+“These 3 sites are converging toward an incident”
+
+“This hazard pattern repeats every 14 days”
+
+Stored As
+
+ai_insights
+- id
+- insight_type (near_miss_cluster)
+- confidence_score
+- supporting_evidence_ids[]
+- generated_at
+
+
+Linked To
+
+Safety dashboards
+
+Audit Defense (read-only)
+
+Risk trend reports
+
+3. JHA AI ASSIST (NON-AUTHORITATIVE)
+AI-Assisted Hazard Suggestions
+
+When
+
+Creating a JHA
+
+AI Suggests
+
+Missing hazards
+
+Common mitigations
+
+Historical incident overlaps
+
+User Must Confirm
+AI suggestions are not applied automatically.
+
+Logged As
+
+ai_suggestions
+- suggestion_type (jha_hazard)
+- accepted (true/false)
+
+4. CERTIFICATION & FATIGUE AI (MODULE D)
+A. Certification Lapse Risk AI
+
+Predicts
+
+Likelihood of expired cert causing work interruption
+
+Exposure severity if ignored
+
+Feeds
+
+Certification Enforcement Engine
+
+Insurance Exposure Modeling
+
+B. Fatigue Risk Modeling
+
+Uses
+
+Field logs
+
+Hours-of-service
+
+Incident correlation
+
+Outputs
+
+Fatigue risk score (non-payroll)
+
+Supervisor alerts before violations
+
+This is huge liability protection.
+
+5. INCIDENT & EMERGENCY AI (MODULE B)
+A. Incident Escalation Prediction
+
+Uses
+
+Incident type
+
+Location
+
+Hazmat proximity
+
+Historical analogs
+
+Outputs
+
+“This incident has 78% probability of regulatory escalation”
+
+“Recommend drug/alcohol trigger now”
+
+AI does not trigger actions — it recommends.
+
+B. Cost Overrun Prediction
+
+Uses
+
+Past claims
+
+Labor/equipment usage
+
+Vendor performance
+
+Outputs
+
+Early warning for finance & insurance teams
+
+6. AUDIT & LEGAL AI (MODULE F)
+A. Audit Readiness Scoring
+
+Outputs
+
+Audit completeness %
+
+Missing evidence flags
+
+Weak documentation warnings
+
+Auditors love this because it reduces audit time.
+
+B. Legal Defense Timeline AI
+
+Generates
+
+Chronological narrative from evidence
+
+Highlighted risk points
+
+Gaps in proof
+
+Output is a draft, not a filing.
+
+7. REGULATOR TRANSPARENCY AI (LIMITED)
+
+AI is NOT exposed to regulators directly.
+
+However:
+
+AI can pre-check regulator views
+
+Flag what regulators will likely question
+
+This avoids surprises.
+
+AI DATA MODELS (ADDED)
+model AIInsight {
+  id              String   @id @default(uuid())
+  insightType     AIInsightType
+  confidenceScore Float
+  generatedAt     DateTime @default(now())
+}
+
+enum AIInsightType {
+  near_miss_cluster
+  fatigue_risk
+  certification_exposure
+  incident_escalation
+  audit_gap
+}
+
+model AISuggestion {
+  id          String   @id @default(uuid())
+  suggestionType String
+  accepted    Boolean?
+  createdAt   DateTime @default(now())
+}
+
+AI GOVERNANCE (NON-NEGOTIABLE)
+
+Every AI output is:
+
+Logged
+
+Traceable
+
+Explainable
+
+No black-box decisions
+
+No automated enforcement
+
+Humans remain accountable
+
+This is regulator-safe AI.
+
+
+
+This is the correct way to do AI in rail, construction, and emergency systems.
