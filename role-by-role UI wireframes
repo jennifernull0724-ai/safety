@@ -1,0 +1,286 @@
+GLOBAL UI FRAMEWORK (ALL ROLES)
+Shell (Persistent)
+┌───────────────────────────────────────────────┐
+│ Top Bar: Org Name | Role | Alerts | Profile   │
+├──────────────┬────────────────────────────────┤
+│ Left Nav     │ Main Content Area               │
+│ (Role-Based) │ (Evidence-Driven Views)         │
+└──────────────┴────────────────────────────────┘
+
+Universal UI Rules
+
+No edit icons on historical records
+
+Status badges are immutable
+
+Evidence links always visible
+
+Every screen shows “Last Evaluated At”
+
+AI outputs are clearly labeled Advisory
+
+1. ADMIN UI WIREFRAMES (SYSTEM OWNER)
+1.1 Admin Dashboard
+[ Certification Status Summary ]
+- Valid: 124
+- Expiring (30d): 12
+- Expired: 3
+- Revoked: 1
+
+[ Enforcement Actions ]
+- Certification blocks today: 2
+- Active work blocks: 1
+
+[ AI Risk Alerts ]
+- High fatigue risk crews: 1
+- Near-miss cluster warnings: 2
+
+
+CTA:
+
+View Audit Vault
+
+Manage Employees
+
+Issue Certification
+
+1.2 Employee Directory
+Table:
+| Name | Trade | Crew | Cert Status | Actions |
+|----- |-------|------|-------------|---------|
+
+Click → Employee Profile
+
+
+Filters:
+
+Certification status
+
+Trade
+
+Crew
+
+Blocked / Eligible
+
+1.3 Employee Profile (Admin View)
+[ Employee Header ]
+Photo | Name | Trade | Status
+
+[ Certifications ]
+------------------------------------
+| Cert | Issuer | Exp | Status | QR |
+------------------------------------
+| FRA | FRA | 12/26 | VALID | [QR] |
+| Hazmat | DOT | 10/25 | EXPIRING | [QR] |
+| Signal | ABC | 09/24 | EXPIRED | [QR] |
+
+[ Enforcement History ]
+- 09/12: Certification expired → Work blocked
+
+[ Evidence Links ]
+- JHAs
+- Field Logs
+- Incidents
+
+
+Actions:
+
+Upload certification
+
+Revoke certification (with reason)
+
+1.4 Audit Defense Vault
+Audit Case View
+
+[ Timeline ]
+07:12 Cert verified (QR)
+07:15 JHA acknowledged
+12:40 Near-miss logged
+14:02 Incident triggered
+
+[ Evidence Pane ]
+- PDFs
+- Photos
+- QR scans
+- Enforcement logs
+
+[ Export ]
+[ FRA ] [ OSHA ] [ Custom ]
+
+2. SAFETY MANAGER UI WIREFRAMES
+2.1 Safety Dashboard
+[ Active JHAs ]
+- Track Maintenance MP 120–122 (12 workers)
+
+[ Near Misses (Last 7 Days) ]
+- 3 slip hazards
+- 1 authority boundary alert
+
+[ AI Safety Insights ]
+⚠ Near-miss cluster at MP 118–120
+⚠ Fatigue risk rising for Crew B
+
+2.2 JHA Creation / Review
+[ JHA Header ]
+Work Type | Location | Weather | Status
+
+[ Required Certifications ]
+✔ FRA Track
+✔ Hazmat
+
+[ Crew Eligibility ]
+Employee A – ELIGIBLE
+Employee B – BLOCKED (Expired Cert)
+
+[ Hazards ]
+☐ Slip
+☐ Moving equipment
+☐ Weather exposure
+
+[ Acknowledgments ]
+Employee | Time | Status
+
+
+Blocked acknowledgment is visually enforced.
+
+2.3 Near-Miss Feed
+Card View:
+[ Photo ]
+Description
+Location
+Time
+Risk Category
+Linked Evidence
+
+3. DISPATCH / OPERATIONS UI WIREFRAMES
+3.1 Operations Dashboard
+[ Today’s Work Windows ]
+- Approved: 4
+- Pending: 1
+- Blocked: 1 (Cert issue)
+
+[ Authority Alerts ]
+⚠ Crew approaching boundary MP 130
+
+3.2 Work Window Assignment
+[ Work Window ]
+Time | Location | Scope
+
+[ Crew Assignment ]
+Employee | Cert Status | Eligible?
+----------------------------------
+A | VALID | YES
+B | EXPIRED | ❌ BLOCKED
+
+[ Approve Window ] (disabled if blocked)
+
+4. SUPERVISOR (FIELD LEAD) UI WIREFRAMES
+4.1 Crew View
+[ Crew Roster ]
+Employee | Trade | Cert Status
+--------------------------------
+A | Track | VALID
+B | Signal | EXPIRING
+C | Labor | VALID
+
+
+QR icon available per employee.
+
+4.2 Field Logs
+[ Daily Log ]
+Weather (auto)
+Crew
+Equipment
+Notes
+Photos
+
+[ Submit ]
+
+
+After submit:
+
+Read-only
+
+Evidence locked
+
+4.3 Incident Trigger
+[ Incident Trigger ]
+Type
+Location
+Employees involved
+Photos
+
+[ Submit Incident ]
+
+5. EXECUTIVE / LEGAL UI WIREFRAMES
+5.1 Risk Overview
+[ Risk Summary ]
+- Active Incidents: 1
+- Cert Lapse Exposure: LOW
+- Audit Readiness: 92%
+
+[ Trends ]
+Near-misses ↓
+Fatigue risk ↑
+
+5.2 Legal Defense View
+[ Incident Timeline ]
+Chronological evidence
+QR scans
+Cert status at time
+Enforcement actions
+
+[ Export Legal Package ]
+
+6. REGULATOR UI WIREFRAMES (READ-ONLY)
+6.1 Regulator Session Landing
+Scope:
+- Date range
+- Locations
+- Employees
+
+[ Enter Review ]
+
+6.2 Regulator Evidence View
+Employee Name
+Certification Status (at scan time)
+QR Scan History
+JHA acknowledgments
+Incident records
+
+[ Access Log ]
+
+
+No navigation outside scope.
+
+7. PUBLIC QR VERIFICATION UI
+7.1 QR Scan Page (No Login)
+✔ CERTIFICATION VERIFIED
+
+Employee: J. Smith
+Certification: FRA Track
+Status: VALID
+Issuer: FRA
+Verified At: 07:14 AM
+
+This verification has been recorded.
+
+
+If expired/revoked:
+
+❌ CERTIFICATION NOT VALID
+Status: EXPIRED
+
+FINAL CONFIRMATION
+
+These wireframes:
+
+Do not rely on fake data
+
+Enforce eligibility visually and functionally
+
+Surface QR verification correctly
+
+Match the database, API, and enforcement logic
+
+Are regulator- and court-defensible
