@@ -1,0 +1,286 @@
+0. CORE SYSTEM TABLES (NON-NEGOTIABLE)
+0.1 organizations
+organizations
+- id (PK)
+- name
+- type (railroad | contractor | emergency | municipality)
+- status (active | inactive)
+- created_at
+
+0.2 users (AUTHENTICATED USERS ONLY)
+users
+- id (PK)
+- organization_id (FK)
+- email
+- role (admin | safety | dispatcher | supervisor | executive)
+- status (active | disabled)
+- created_at
+
+0.3 employees (FIELD PERSONNEL – NOT USERS)
+employees
+- id (PK)
+- organization_id (FK)
+- first_name
+- last_name
+- trade_role
+- photo_id
+- status (active | inactive)
+- created_at
+
+
+Employees never authenticate.
+Employees are verified via evidence.
+
+0.4 crews
+crews
+- id (PK)
+- organization_id (FK)
+- name
+- created_at
+
+crew_members
+- crew_id (FK)
+- employee_id (FK)
+
+1. CERTIFICATIONS & QR VERIFICATION (CRITICAL)
+1.1 certifications
+certifications
+- id (PK)
+- employee_id (FK)
+- certification_type
+- issuing_authority
+- issue_date
+- expiration_date
+- status (valid | expiring | expired | revoked)
+- certificate_media_id
+- created_by (user_id)
+- created_at
+
+1.2 verification_tokens (QR TOKENS)
+verification_tokens
+- id (PK)
+- certification_id (FK)
+- token_hash
+- status (active | revoked)
+- created_at
+
+
+Tokens are rotatable without changing certification history.
+
+1.3 verification_events (QR SCANS)
+verification_events
+- id (PK)
+- verification_token_id (FK)
+- scanned_at
+- location_id (FK, nullable)
+- verification_result (valid | expired | revoked)
+
+
+Every scan = immutable evidence.
+
+2. EVIDENCE & LEDGER (SPINE)
+2.1 evidence_nodes
+evidence_nodes
+- id (PK)
+- entity_type
+- entity_id
+- actor_type (user | employee | system)
+- actor_id
+- timestamp
+- location_id (nullable)
+
+2.2 immutable_event_ledger
+immutable_event_ledger
+- id (PK)
+- evidence_node_id (FK)
+- event_type
+- event_payload (JSON)
+- created_at
+
+
+Append-only. No deletes.
+
+2.3 media_assets
+media_assets
+- id (PK)
+- file_url
+- media_type (photo | pdf | video)
+- uploaded_at
+
+3. SAFETY & COMPLIANCE
+3.1 job_hazard_analyses (JHA)
+job_hazard_analyses
+- id (PK)
+- organization_id (FK)
+- work_type
+- location_id (FK)
+- weather_snapshot
+- status (draft | active | closed)
+- created_at
+
+jha_acknowledgments
+- jha_id (FK)
+- employee_id (FK)
+- acknowledged_at
+
+3.2 safety_observations
+safety_observations
+- id (PK)
+- organization_id (FK)
+- employee_id (nullable)
+- description
+- location_id (FK)
+- media_id
+- created_at
+
+3.3 audit_cases
+audit_cases
+- id (PK)
+- organization_id (FK)
+- audit_type (FRA | OSHA | internal)
+- status (open | closed)
+- created_at
+
+audit_evidence_links
+- audit_case_id (FK)
+- evidence_node_id (FK)
+
+4. FIELD EXECUTION
+4.1 work_windows
+work_windows
+- id (PK)
+- organization_id (FK)
+- location_id (FK)
+- start_time
+- end_time
+- status (approved | denied | overrun)
+
+4.2 field_logs
+field_logs
+- id (PK)
+- work_window_id (FK)
+- created_by (employee_id)
+- weather_snapshot
+- notes
+- created_at
+
+4.3 authority_limits
+authority_limits
+- id (PK)
+- subdivision
+- milepost_start
+- milepost_end
+
+5. INCIDENT & EMERGENCY
+5.1 incidents
+incidents
+- id (PK)
+- organization_id (FK)
+- incident_type
+- location_id (FK)
+- occurred_at
+- severity
+
+incident_employees
+- incident_id (FK)
+- employee_id (FK)
+
+5.2 incident_costs
+incident_costs
+- id (PK)
+- incident_id (FK)
+- cost_type (labor | equipment | material)
+- amount
+- created_at
+
+5.3 drug_alcohol_tests
+drug_alcohol_tests
+- id (PK)
+- incident_id (FK)
+- employee_id (FK)
+- test_type
+- status (ordered | completed)
+- result
+
+6. ASSETS & ENVIRONMENTAL
+6.1 assets
+assets
+- id (PK)
+- organization_id (FK)
+- asset_type
+- identifier
+
+6.2 damage_reports
+damage_reports
+- id (PK)
+- asset_id (FK)
+- incident_id (FK)
+- description
+- media_id
+- created_at
+
+6.3 environmental_records
+environmental_records
+- id (PK)
+- incident_id (FK)
+- spill_type
+- reported_at
+
+7. LEGAL, INSURANCE & REGULATORS
+7.1 legal_cases
+legal_cases
+- id (PK)
+- organization_id (FK)
+- related_incident_id (FK)
+- status
+
+7.2 insurance_policies
+insurance_policies
+- id (PK)
+- organization_id (FK)
+- policy_number
+- coverage_type
+- expiration_date
+
+7.3 regulator_sessions
+regulator_sessions
+- id (PK)
+- organization_id (FK)
+- regulator_name
+- access_start
+- access_end
+
+regulator_access_logs
+- session_id (FK)
+- evidence_node_id (FK)
+- accessed_at
+
+8. LOCATION & GIS (SHARED)
+8.1 locations
+locations
+- id (PK)
+- subdivision
+- milepost
+- latitude
+- longitude
+
+FINAL NOTES (IMPORTANT)
+This schema guarantees:
+
+No orphan data
+
+Full historical truth
+
+QR scans as legal evidence
+
+Employee-anchored compliance
+
+Regulator-safe read-only access
+
+What this is NOT:
+
+Not a CRM
+
+Not user-centric
+
+Not editable after the fact
