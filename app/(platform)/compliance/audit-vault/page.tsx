@@ -4,7 +4,7 @@ import Link from 'next/link';
 export default async function ComplianceAuditVaultPage() {
   const auditCases = await prisma.auditCase.findMany({
     include: { 
-      evidenceLinks: { include: { evidenceNode: true } },
+      evidenceLinks: { include: { EvidenceNode: true } },
       organization: true 
     },
     orderBy: { createdAt: 'desc' },
@@ -61,7 +61,15 @@ export default async function ComplianceAuditVaultPage() {
         </div>
         <div className="overflow-x-auto">
           {auditCases.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">No audit cases found</p>
+            <div className="text-center py-12">
+              <p className="text-gray-500 mb-4">No audit cases found</p>
+              <Link
+                href="/compliance/audit-vault/new"
+                className="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                + Create Your First Audit Case
+              </Link>
+            </div>
           ) : (
             <table className="w-full">
               <thead className="bg-gray-50">

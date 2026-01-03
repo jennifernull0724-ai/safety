@@ -1,40 +1,54 @@
 // jobs/jhaEnforcementSweep.ts
-import prisma from '../lib/prisma';
-import { writeEvidenceNode, appendLedgerEntry } from '../lib/evidence';
+import { prisma } from '../lib/prisma.js';
 
 /**
  * JHA enforcement sweep (every 30 min):
- * Flags missing acknowledgments and blocks work if not signed.
- * Writes evidence and ledger for each enforcement action.
+ * Detects mid-shift certification expirations and flags JHAs.
  */
-export async function jhaEnforcementSweep() {
+export async function runJHAEnforcementSweep() {
+  console.log('[CRON] Running JHA enforcement sweep...');
+
   const activeJHAs = await prisma.jobHazardAnalysis.findMany({
     where: { status: 'active' },
-    include: { acknowledgments: true },
+    include: {
+      acknowledgments: {
+        include: {
+          employee: {
+            include: {
+              certifications: {
+                include: { enforcement: true },
+              },
+            },
+          },
+        },
+      },
+    },
   });
 
+  let flaggedCount = 0;
+
   for (const jha of activeJHAs) {
-    // Find employees who have not acknowledged
-    const crew = await prisma.crewMember.findMany({
-      where: { crew: { organizationId: jha.organizationId } },
-      include: { employee: true },
-    });
-    const acknowledgedIds = jha.acknowledgments.map(a => a.employeeId);
-    for (const member of crew) {
-      if (!acknowledgedIds.includes(member.employeeId)) {
-        // Block work for this employee (implementation depends on your system)
-        const evidence = await writeEvidenceNode({
-          entityType: 'JobHazardAnalysis',
-          entityId: jha.id,
-          actorType: 'system',
-          actorId: 'jha-enforcement-job',
+    for (const ack of jha.acknowledgments) {
+      const blockedCerts = ack.employee.certifications.filter(
+        c => c.enforcement?.isBlocked
+      );
+
+      if (blockedCerts.length > 0) {
+        await prisma.enforcementAction.create({
+          data: {
+            actionType: 'jha_block',
+            targetType: 'jha',
+            targetId: jha.id,
+            reason: `Employee ${ack.employeeId} cert expired mid-shift: ${blockedCerts.map(c => c.certificationType).join(', ')}`,
+            triggeredBy: 'jha_enforcement_sweep',
+          },
         });
-        await appendLedgerEntry({
-          evidenceNodeId: evidence.id,
-          eventType: 'JHA_ACK_MISSING',
-          payload: { jhaId: jha.id, employeeId: member.employeeId },
-        });
+
+        flaggedCount++;
       }
     }
   }
+
+  console.log(`[CRON] Flagged ${flaggedCount} JHA violations`);
+  return { flaggedCount };
 }

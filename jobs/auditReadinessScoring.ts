@@ -1,33 +1,31 @@
 // jobs/auditReadinessScoring.ts
-import { prisma } from '../lib/prisma';
-import { writeEvidenceNode, appendLedgerEntry } from '../lib/evidence';
+import { prisma } from '../lib/prisma.js';
 
 /**
- * Audit readiness scoring job (nightly):
- * Scores organizations for audit readiness based on evidence and compliance.
- * Writes evidence and ledger for each score.
+ * Audit readiness scoring (nightly):
+ * Advisory only - scores orgs for compliance gaps.
  */
-export async function auditReadinessScoring() {
-  const orgs = await prisma.organization.findMany();
-  for (const org of orgs) {
-    // Score based on number of valid certifications through employees
-    const certCount = await prisma.certification.count({
-      where: { 
-        employee: { organizationId: org.id }, 
-        status: 'valid' 
+export async function runAuditReadinessScoring() {
+  console.log('[CRON] Running audit readiness scoring...');
+
+  const orgs = await prisma.organization.findMany({
+    include: {
+      employees: {
+        include: { certifications: true },
       },
-    });
-    const score = Math.min(100, certCount * 10); // Example scoring logic
-    const evidence = await writeEvidenceNode({
-      entityType: 'AuditReadiness',
-      entityId: org.id,
-      actorType: 'system',
-      actorId: 'audit-readiness-job',
-    });
-    await appendLedgerEntry({
-      evidenceNodeId: evidence.id,
-      eventType: 'AUDIT_READINESS_SCORED',
-      payload: { organizationId: org.id, score },
-    });
+    },
+  });
+
+  const scores: Record<string, number> = {};
+  for (const org of orgs) {
+    const totalCerts = org.employees.flatMap(e => e.certifications).length;
+    const passingCerts = org.employees
+      .flatMap(e => e.certifications)
+      .filter(c => c.status === 'PASS').length;
+    const score = totalCerts > 0 ? Math.round((passingCerts / totalCerts) * 100) : 0;
+    scores[org.id] = score;
   }
+
+  console.log('[CRON] Audit readiness scores:', scores);
+  return { scores };
 }

@@ -1,56 +1,82 @@
 import { prisma } from '@/lib/prisma';
+import { AppShell, PageContainer, Card } from '@/components';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { getSession } from '@/lib/auth';
 
 export default async function DispatchDashboardPage() {
-  const jhas = await prisma.jobHazardAnalysis.findMany({ 
-    take: 20,
-    orderBy: { createdAt: 'desc' },
-    include: { acknowledgments: true },
-  });
+  const session = await getSession();
+  if (!session || !['admin', 'dispatch'].includes(session.user.role)) {
+    notFound();
+  }
   const workWindows = await prisma.workWindow.findMany({
-    take: 10,
+    include: {
+      employees: {
+        include: {
+          certifications: true
+        }
+      }
+    },
     orderBy: { startTime: 'desc' },
+    take: 20
   });
 
-  const activeJHAs = jhas.filter(j => j.status === 'active');
+  const approved = workWindows.filter(ww => ww.approvedAt !== null).length;
+  const pending = workWindows.filter(ww => ww.approvedAt === null).length;
+  const blocked = workWindows.filter(ww => 
+    ww.employees.some(emp => emp.certifications.some((c: any) => c.status === 'FAIL'))
+  ).length;
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold">Dispatch Dashboard</h1>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white rounded-lg shadow p-4">
-          <h2 className="font-semibold text-gray-600">Active JHAs</h2>
-          <p className="text-3xl font-bold">{activeJHAs.length}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-4">
-          <h2 className="font-semibold text-gray-600">Total JHAs</h2>
-          <p className="text-3xl font-bold">{jhas.length}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-4">
-          <h2 className="font-semibold text-gray-600">Work Windows</h2>
-          <p className="text-3xl font-bold">{workWindows.length}</p>
-        </div>
-      </div>
+    <AppShell orgName="System of Proof" userRole="DISPATCH" userName="Dispatch" evidenceStatus="PASS">
+      <PageContainer title="Operations Dashboard" description="Work windows and authority alerts">
+        <section>
+          <h2 className="text-lg font-bold text-text-primary mb-4">Work Windows</h2>
+          <div className="grid grid-cols-3 gap-4">
+            <Card>
+              <div className="flex flex-col gap-2">
+                <span className="text-text-secondary text-sm">Approved</span>
+                <span className="text-3xl font-bold text-status-valid">{approved}</span>
+              </div>
+            </Card>
+            <Card>
+              <div className="flex flex-col gap-2">
+                <span className="text-text-secondary text-sm">Pending</span>
+                <span className="text-3xl font-bold text-status-expiring">{pending}</span>
+              </div>
+            </Card>
+            <Card>
+              <div className="flex flex-col gap-2">
+                <span className="text-text-secondary text-sm">Blocked</span>
+                <span className="text-3xl font-bold text-status-blocked">{blocked}</span>
+              </div>
+            </Card>
+          </div>
+        </section>
 
-      <div className="bg-white rounded-lg shadow p-4">
-        <h2 className="font-semibold mb-4">Recent Job Hazard Analyses</h2>
-        {jhas.length === 0 ? (
-          <p className="text-gray-500">No JHAs found</p>
-        ) : (
-          <ul className="space-y-2">
-            {jhas.slice(0, 5).map(jha => (
-              <li key={jha.id} className="border-b pb-2">
-                <span className="font-medium">{jha.jobName || jha.workType}</span>
-                <span className={`ml-2 px-2 py-1 text-xs rounded ${
-                  jha.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                }`}>
-                  {jha.status}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </div>
+        <section>
+          <h2 className="text-lg font-bold text-text-primary mb-4">Authority Alerts</h2>
+          <Card>
+            <div className="flex items-center gap-3 p-3">
+              <span className="text-2xl">⚠️</span>
+              <span className="text-text-primary">Crew approaching boundary MP 130</span>
+            </div>
+          </Card>
+        </section>
+
+        <section>
+          <Link 
+            href="/dispatch/work-windows"
+            className="px-4 py-2 bg-status-valid text-white rounded-md hover:opacity-90 inline-block"
+          >
+            Manage Work Windows
+          </Link>
+        </section>
+
+        <div className="text-xs text-text-secondary">
+          Last Evaluated At: {new Date().toISOString()}
+        </div>
+      </PageContainer>
+    </AppShell>
   );
 }

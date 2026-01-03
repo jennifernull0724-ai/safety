@@ -1,34 +1,166 @@
 import { prisma } from '@/lib/prisma';
+import { AppShell, PageContainer, Card, AICallout } from '@/components';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { getSession } from '@/lib/auth';
+
+/**
+ * SAFETY MANAGER DASHBOARD
+ * 
+ * Overview with:
+ * - Active JHAs
+ * - Near-miss summary (7 days)
+ * - AI Safety Insights (advisory)
+ * 
+ * Rules:
+ * - AI insights labeled as advisory
+ * - All data immutable (read-only view)
+ * - Evidence-linked metrics
+ */
 
 export default async function SafetyDashboardPage() {
-  const nearMisses = await prisma.nearMiss.findMany({ 
-    take: 20,
-    orderBy: { reportedAt: 'desc' },
-  });
-  const incidents = await prisma.incident.findMany({
-    take: 10,
-    orderBy: { occurredAt: 'desc' },
-  });
-  const certifications = await prisma.certification.findMany({
-    where: { status: 'valid' },
-  });
-  const expiringCerts = await prisma.certification.findMany({
-    where: { status: 'expiring' },
+  const session = await getSession();
+  if (!session || !['admin', 'safety'].includes(session.user.role)) {
+    notFound();
+  }
+  // Active JHAs
+  const activeJHAs = await prisma.jHA.findMany({
+    where: {
+      status: 'ACTIVE'
+    },
+    include: {
+      acknowledgments: {
+        include: {
+          employee: {
+            include: {
+              user: true
+            }
+          }
+        }
+      }
+    },
+    take: 5,
+    orderBy: { createdAt: 'desc' }
   });
 
+  // Near-miss summary (last 7 days)
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const nearMisses = await prisma.nearMiss.findMany({
+    where: {
+      reportedAt: {
+        gte: sevenDaysAgo
+      }
+    }
+  });
+
+  const nearMissByType = {
+    slipHazards: nearMisses.filter(nm => nm.category === 'SLIP_HAZARD').length,
+    authorityAlerts: nearMisses.filter(nm => nm.category === 'AUTHORITY').length,
+  };
+
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold">Safety Dashboard</h1>
-      
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-green-50 rounded-lg shadow p-4">
-          <h2 className="font-semibold text-green-800">Valid Certifications</h2>
-          <p className="text-3xl font-bold text-green-600">{certifications.length}</p>
+    <AppShell
+      orgName="System of Proof"
+      userRole="SAFETY_MANAGER"
+      userName="Safety Manager"
+      evidenceStatus="PASS"
+    >
+      <PageContainer
+        title="Safety Dashboard"
+        description="Active JHAs, near-miss summary, and AI safety insights"
+      >
+        {/* Active JHAs */}
+        <section>
+          <h2 className="text-lg font-bold text-text-primary mb-4">Active JHAs</h2>
+          <Card>
+            {activeJHAs.map((jha) => (
+              <div key={jha.id} className="flex items-center justify-between p-3 border-b border-border-default last:border-b-0">
+                <div className="flex flex-col gap-1">
+                  <Link 
+                    href={`/safety/jha/${jha.id}`}
+                    className="text-text-primary font-bold hover:text-status-valid"
+                  >
+                    {jha.workType} {jha.location}
+                  </Link>
+                  <span className="text-sm text-text-secondary">
+                    {jha.acknowledgments.length} workers
+                  </span>
+                </div>
+                <Link 
+                  href={`/safety/jha/${jha.id}`}
+                  className="text-status-valid text-sm hover:underline"
+                >
+                  View →
+                </Link>
+              </div>
+            ))}
+            {activeJHAs.length === 0 && (
+              <p className="text-text-secondary">No active JHAs</p>
+            )}
+          </Card>
+        </section>
+
+        {/* Near-Miss Summary */}
+        <section>
+          <h2 className="text-lg font-bold text-text-primary mb-4">Near-Miss Summary (7 days)</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <Card>
+              <div className="flex flex-col gap-2">
+                <span className="text-text-secondary text-sm">Slip hazards</span>
+                <span className="text-3xl font-bold text-status-expiring">{nearMissByType.slipHazards}</span>
+              </div>
+            </Card>
+            <Card>
+              <div className="flex flex-col gap-2">
+                <span className="text-text-secondary text-sm">Authority alerts</span>
+                <span className="text-3xl font-bold text-status-expired">{nearMissByType.authorityAlerts}</span>
+              </div>
+            </Card>
+          </div>
+        </section>
+
+        {/* AI Safety Insights */}
+        <section>
+          <h2 className="text-lg font-bold text-text-primary mb-4">AI Safety Insights (Advisory)</h2>
+          <div className="flex flex-col gap-3">
+            <AICallout
+              insightType="near_miss_cluster"
+              confidenceScore={78}
+              advisoryText="Near-miss cluster detected at MP 118–120"
+            />
+            <AICallout
+              insightType="fatigue_risk"
+              confidenceScore={65}
+              advisoryText="Fatigue risk rising — Crew B"
+            />
+          </div>
+        </section>
+
+        {/* Actions */}
+        <section>
+          <div className="flex gap-4">
+            <Link 
+              href="/safety/jha/create"
+              className="px-4 py-2 bg-status-valid text-white rounded-md hover:opacity-90"
+            >
+              ➕ Create New JHA
+            </Link>
+            <Link 
+              href="/safety/near-miss"
+              className="px-4 py-2 bg-bg-secondary border border-border-default rounded-md hover:bg-bg-primary"
+            >
+              View All Near-Misses
+            </Link>
+          </div>
+        </section>
+
+        <div className="text-xs text-text-secondary">
+          Last Evaluated At: {new Date().toISOString()}
         </div>
-        <div className="bg-yellow-50 rounded-lg shadow p-4">
-          <h2 className="font-semibold text-yellow-800">Expiring Soon</h2>
-          <p className="text-3xl font-bold text-yellow-600">{expiringCerts.length}</p>
-        </div>
+      </PageContainer>
+    </AppShell>
+  );
+}
         <div className="bg-blue-50 rounded-lg shadow p-4">
           <h2 className="font-semibold text-blue-800">Near Misses (30d)</h2>
           <p className="text-3xl font-bold text-blue-600">{nearMisses.length}</p>

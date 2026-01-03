@@ -20,7 +20,7 @@ export default async function EmployeeProfilePage({ params }: { params: { id: st
           <p className="text-gray-500">No certifications</p>
         ) : (
           <ul className="space-y-2">
-            {employee.certifications.map(cert => (
+            {employee.certifications.map((cert: any) => (
               <li key={cert.id} className="border-b pb-2">
                 <span className="font-medium">{cert.certType || cert.certificationType}</span>
                 <span className={`ml-2 px-2 py-1 text-xs rounded ${

@@ -1,10 +1,39 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getUserFromRequest } from './getUserFromRequest';
 
 export interface AuthUser {
   id: string;
   role: 'admin' | 'supervisor' | 'dispatcher' | 'safety_officer' | 'executive' | 'regulator' | 'employee';
   organizationId: string;
   email: string;
+}
+
+/**
+ * AUTH MIDDLEWARE — AUTHENTICATION ONLY
+ * 
+ * Purpose: Verify user is authenticated
+ * Applied to: /dashboard routes
+ * 
+ * Rules:
+ * - Extract user via getUserFromRequest
+ * - If unauthenticated → redirect /login
+ * 
+ * Does NOT:
+ * - Check pricing
+ * - Check organization
+ * - Touch QR logic
+ */
+export async function auth(req: NextRequest): Promise<NextResponse | null> {
+  // Extract user from request headers
+  const user = getUserFromRequest(req);
+
+  // If no user session, redirect to login
+  if (!user) {
+    return NextResponse.redirect(new URL('/login', req.url));
+  }
+
+  // Authentication passed, allow to proceed to next middleware
+  return null;
 }
 
 // Placeholder for auth middleware - integrate with your auth provider

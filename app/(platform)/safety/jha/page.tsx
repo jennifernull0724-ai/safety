@@ -1,7 +1,13 @@
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { getSession } from '@/lib/auth';
 
 export default async function JHAPage() {
+  const session = await getSession();
+  if (!session || !['admin', 'safety'].includes(session.user.role)) {
+    notFound();
+  }
   const jhas = await prisma.jobHazardAnalysis.findMany({
     include: { organization: true, acknowledgments: { include: { employee: true } } },
     orderBy: { createdAt: 'desc' },
@@ -47,7 +53,15 @@ export default async function JHAPage() {
         </div>
         <div className="overflow-x-auto">
           {jhas.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">No JHAs found</p>
+            <div className="text-center py-12">
+              <p className="text-gray-500 mb-4">No JHAs found</p>
+              <Link
+                href="/safety/jha/new"
+                className="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                + Create Your First JHA
+              </Link>
+            </div>
           ) : (
             <table className="w-full">
               <thead className="bg-gray-50">

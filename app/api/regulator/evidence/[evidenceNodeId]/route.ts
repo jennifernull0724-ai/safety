@@ -6,7 +6,7 @@ import { appendLedgerEntry, writeEvidenceNode } from '@/lib/evidence';
 export async function GET(req: NextRequest, { params }: { params: { evidenceNodeId: string } }) {
   const evidenceNode = await prisma.evidenceNode.findUnique({
     where: { id: params.evidenceNodeId },
-    include: { ledgerEntries: true },
+    include: { ImmutableEventLedger: true },
   });
   if (!evidenceNode) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 

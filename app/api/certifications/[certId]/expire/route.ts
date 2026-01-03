@@ -12,8 +12,8 @@ export async function POST(req: NextRequest, { params }: { params: { certId: str
     actorId: 'expiration_job',
     eventType: 'certification_expired',
     payload: {},
-    action: async () => {
-      return prisma.certification.update({
+    action: async (tx) => {
+      return tx.certification.update({
         where: { id: params.certId },
         data: { status: 'expired' },
       });

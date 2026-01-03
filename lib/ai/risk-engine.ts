@@ -25,7 +25,7 @@ export interface RiskFactor {
 export async function calculateCertificationRisk(employeeId: string): Promise<RiskAssessment> {
   const employee = await prisma.employee.findUnique({
     where: { id: employeeId },
-    include: { certifications: true },
+    include: { Certification: true },
   });
 
   if (!employee) {
@@ -36,7 +36,7 @@ export async function calculateCertificationRisk(employeeId: string): Promise<Ri
   const now = new Date();
 
   // Factor 1: Expired certifications
-  const expiredCount = employee.certifications.filter(c => c.status === 'EXPIRED').length;
+  const expiredCount = employee.Certification.filter(c => c.status === 'EXPIRED').length;
   factors.push({
     factor: 'Expired Certifications',
     weight: 0.4,
@@ -45,7 +45,7 @@ export async function calculateCertificationRisk(employeeId: string): Promise<Ri
   });
 
   // Factor 2: Certifications expiring soon (30 days)
-  const expiringCount = employee.certifications.filter(c => 
+  const expiringCount = employee.Certification.filter(c => 
     c.status === 'VALID' && 
     c.expirationDate && 
     c.expirationDate.getTime() - now.getTime() < 30 * 24 * 60 * 60 * 1000
@@ -58,7 +58,7 @@ export async function calculateCertificationRisk(employeeId: string): Promise<Ri
   });
 
   // Factor 3: Revoked certifications (historical)
-  const revokedCount = employee.certifications.filter(c => c.status === 'REVOKED').length;
+  const revokedCount = employee.Certification.filter(c => c.status === 'REVOKED').length;
   factors.push({
     factor: 'Revoked Certifications',
     weight: 0.3,

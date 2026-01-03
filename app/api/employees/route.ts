@@ -5,7 +5,7 @@ import { withEvidence } from '@/lib/withEvidence';
 // GET /api/employees - List all employees
 export async function GET(req: NextRequest) {
   const employees = await prisma.employee.findMany({
-    include: { certifications: true, organization: true },
+    include: { Certification: true, Organization: true },
     orderBy: { lastName: 'asc' },
   });
   return NextResponse.json(employees);

@@ -1,0 +1,552 @@
+openapi: 3.0.3
+info:
+  title: Unified System of Proof API
+  version: 1.0.0
+  description: |
+    Audit-defensible safety, compliance, and verification platform.
+    
+    **Hard Rules**:
+    - Public QR routes do NOT require authentication
+    - All mutation routes REQUIRE bearerAuth
+    - Evidence is append-only (no deletes, no overwrites)
+    - Enforcement is fail-closed (blocked state prevents action)
+    - All certifications tracked with enforcement state
+    
+servers:
+  - url: https://api.yourplatform.com
+    description: Production API
+  - url: http://localhost:3000
+    description: Local development
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token for authenticated requests. Public QR routes exempt.
+
+  schemas:
+    # ==========================================
+    # CORE ENTITIES
+    # ==========================================
+    
+    Employee:
+      type: object
+      required:
+        - id
+        - firstName
+        - lastName
+        - status
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        firstName:
+          type: string
+          example: "Jennifer"
+        lastName:
+          type: string
+          example: "Null"
+        tradeRole:
+          type: string
+          example: "TRACK_MAINTENANCE"
+          enum:
+            - TRACK_MAINTENANCE
+            - SIGNAL
+            - ELECTRICAL
+            - MECHANICAL
+        status:
+          type: string
+          enum:
+            - active
+            - inactive
+          example: "active"
+
+    Certification:
+      type: object
+      required:
+        - id
+        - employeeId
+        - certificationType
+        - expirationDate
+        - status
+      properties:
+        id:
+          type: string
+          format: uuid
+        employeeId:
+          type: string
+          format: uuid
+        certificationType:
+          type: string
+          example: "FRA_TRACK_SAFETY"
+        issuingAuthority:
+          type: string
+          example: "Federal Railroad Administration"
+        issueDate:
+          type: string
+          format: date
+          example: "2024-01-01"
+        expirationDate:
+          type: string
+          format: date
+          example: "2025-01-01"
+        status:
+          type: string
+          enum:
+            - PASS
+            - FAIL
+            - INCOMPLETE
+          example: "PASS"
+          description: |
+            **PASS**: All requirements met, not expired
+            **FAIL**: Expired or revoked
+            **INCOMPLETE**: Missing proof or pending verification
+
+    # ==========================================
+    # PUBLIC QR VERIFICATION (NO AUTH)
+    # ==========================================
+    
+    VerificationResponse:
+      type: object
+      required:
+        - employeeName
+        - certificationType
+        - status
+        - verifiedAt
+      properties:
+        employeeName:
+          type: string
+          example: "Jennifer Null"
+          description: "Employee full name (read-only)"
+        certificationType:
+          type: string
+          example: "FRA Track Safety Certification"
+        status:
+          type: string
+          enum:
+            - valid
+            - expired
+            - revoked
+          example: "valid"
+          description: "Public-facing status (simplified from internal PASS/FAIL/INCOMPLETE)"
+        issuingAuthority:
+          type: string
+          example: "Federal Railroad Administration"
+        verifiedAt:
+          type: string
+          format: date-time
+          example: "2026-01-03T12:00:00Z"
+          description: "Timestamp of this verification event (immutable)"
+
+    # ==========================================
+    # ENFORCEMENT MODELS
+    # ==========================================
+    
+    CertificationEnforcement:
+      type: object
+      required:
+        - id
+        - certificationId
+        - isBlocked
+        - evaluatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        certificationId:
+          type: string
+          format: uuid
+        isBlocked:
+          type: boolean
+          example: false
+          description: "True if certification failure blocks work assignment"
+        blockedReason:
+          type: string
+          nullable: true
+          example: "Certification expired on 2025-12-31"
+        evaluatedAt:
+          type: string
+          format: date-time
+          example: "2026-01-03T12:00:00Z"
+          description: "When this enforcement state was evaluated (frozen)"
+
+    EnforcementAction:
+      type: object
+      required:
+        - id
+        - actionType
+        - targetType
+        - targetId
+        - reason
+        - triggeredBy
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        actionType:
+          type: string
+          enum:
+            - certification_block
+            - work_window_block
+            - jha_block
+          example: "certification_block"
+        targetType:
+          type: string
+          example: "Employee"
+          description: "Entity type being blocked (Employee, WorkWindow, JHA)"
+        targetId:
+          type: string
+          format: uuid
+          description: "ID of the blocked entity"
+        reason:
+          type: string
+          example: "FRA Track Safety certification expired"
+        triggeredBy:
+          type: string
+          example: "system"
+          description: "User ID or 'system' for automated enforcement"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2026-01-03T12:00:00Z"
+
+    # ==========================================
+    # REQUEST BODIES
+    # ==========================================
+    
+    CreateCertificationRequest:
+      type: object
+      required:
+        - certificationType
+        - expirationDate
+      properties:
+        certificationType:
+          type: string
+          example: "FRA_TRACK_SAFETY"
+        issuingAuthority:
+          type: string
+          example: "Federal Railroad Administration"
+        issueDate:
+          type: string
+          format: date
+        expirationDate:
+          type: string
+          format: date
+        proofDocumentUrl:
+          type: string
+          format: uri
+          nullable: true
+
+    CreateWorkWindowRequest:
+      type: object
+      required:
+        - startTime
+        - endTime
+        - location
+        - employeeIds
+      properties:
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        location:
+          type: string
+          example: "MP 120-122"
+        employeeIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+          description: "Employee IDs assigned to this work window"
+
+    # ==========================================
+    # ERROR RESPONSES
+    # ==========================================
+    
+    Error:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          example: "ENFORCEMENT_BLOCK"
+        message:
+          type: string
+          example: "Employee blocked due to expired certification"
+        details:
+          type: object
+          additionalProperties: true
+
+paths:
+  # ==========================================
+  # PUBLIC QR VERIFICATION (NO AUTH)
+  # ==========================================
+  
+  /api/verify/{token}:
+    get:
+      summary: Verify certification via QR code
+      description: |
+        **PUBLIC ENDPOINT** - No authentication required.
+        
+        Verifies an employee's certification status via QR token.
+        
+        **Hard Rules**:
+        - Creates VerificationEvent (evidence record)
+        - Does NOT mutate certification
+        - Returns simplified status (valid/expired/revoked)
+        - No internal IDs leaked
+        
+      tags:
+        - Public QR Verification
+      security: []
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+          description: QR token (format emp-{employeeId})
+          example: "emp-123e4567-e89b-12d3-a456-426614174000"
+      responses:
+        '200':
+          description: Verification successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerificationResponse'
+        '404':
+          description: Token not found or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ==========================================
+  # CERTIFICATION MANAGEMENT (AUTHENTICATED)
+  # ==========================================
+  
+  /api/employees/{employeeId}/certifications:
+    post:
+      summary: Issue certification to employee
+      description: |
+        **AUTHENTICATED** - Requires bearerAuth.
+        
+        Creates new certification and evaluates enforcement state.
+        
+        **Hard Rules**:
+        - Uses withEvidence() transactional wrapper
+        - Creates Certification + CertificationEnforcement
+        - Appends EvidenceLedger entry
+        - Sets status based on expirationDate
+        
+      tags:
+        - Certifications
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: employeeId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCertificationRequest'
+      responses:
+        '201':
+          description: Certification created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Certification'
+        '400':
+          description: Invalid request body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized - missing or invalid token
+        '404':
+          description: Employee not found
+
+    get:
+      summary: List employee certifications
+      description: |
+        **AUTHENTICATED** - Requires bearerAuth.
+        
+        Returns all certifications for an employee with enforcement state.
+        
+      tags:
+        - Certifications
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: employeeId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of certifications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Certification'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Employee not found
+
+  # ==========================================
+  # WORK WINDOW MANAGEMENT (ENFORCEMENT-AWARE)
+  # ==========================================
+  
+  /api/work-windows:
+    post:
+      summary: Create work window (cert enforcement applied)
+      description: |
+        **AUTHENTICATED** - Requires bearerAuth.
+        
+        Creates work window with fail-closed enforcement.
+        
+        **Hard Rules**:
+        - Enforcement evaluated BEFORE creation
+        - Blocked if ANY employee has FAIL certification
+        - Blocked state writes EnforcementAction (audit trail)
+        - Returns 403 if blocked (fail-closed)
+        
+      tags:
+        - Work Windows
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWorkWindowRequest'
+      responses:
+        '201':
+          description: Work window created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  startTime:
+                    type: string
+                    format: date-time
+                  endTime:
+                    type: string
+                    format: date-time
+                  status:
+                    type: string
+                    example: "approved"
+        '403':
+          description: Blocked due to certification enforcement
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+                  - type: object
+                    properties:
+                      blockedEmployees:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            employeeId:
+                              type: string
+                              format: uuid
+                            reason:
+                              type: string
+                              example: "FRA Track Safety certification expired"
+        '401':
+          description: Unauthorized
+
+  # ==========================================
+  # ENFORCEMENT ACTIONS (READ-ONLY)
+  # ==========================================
+  
+  /api/enforcement-actions:
+    get:
+      summary: List enforcement actions (audit trail)
+      description: |
+        **AUTHENTICATED** - Requires bearerAuth.
+        
+        Returns enforcement actions for audit review.
+        
+        **Hard Rules**:
+        - Read-only endpoint
+        - No mutations allowed
+        - Used for legal defense and regulator review
+        
+      tags:
+        - Enforcement
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: targetType
+          in: query
+          schema:
+            type: string
+          description: Filter by entity type (Employee, WorkWindow, JHA)
+        - name: actionType
+          in: query
+          schema:
+            type: string
+            enum:
+              - certification_block
+              - work_window_block
+              - jha_block
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date
+          description: Filter actions after this date
+      responses:
+        '200':
+          description: List of enforcement actions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EnforcementAction'
+        '401':
+          description: Unauthorized
+
+tags:
+  - name: Public QR Verification
+    description: Public endpoints for QR code verification (no auth)
+  - name: Certifications
+    description: Certification management (authenticated)
+  - name: Work Windows
+    description: Work window creation and management (enforcement-aware)
+  - name: Enforcement
+    description: Enforcement action audit trail (read-only)

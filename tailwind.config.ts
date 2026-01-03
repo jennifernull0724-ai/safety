@@ -51,7 +51,9 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('./tailwindcss-ban-arbitrary'),
+  ],
 };
 
 export default config;

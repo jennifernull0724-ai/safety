@@ -1,7 +1,13 @@
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { getSession } from '@/lib/auth';
 
 export default async function WorkWindowsPage() {
+  const session = await getSession();
+  if (!session || !['admin', 'operations', 'dispatch'].includes(session.user.role)) {
+    notFound();
+  }
   const workWindows = await prisma.workWindow.findMany({
     include: { organization: true },
     orderBy: { startTime: 'desc' },
@@ -50,7 +56,15 @@ export default async function WorkWindowsPage() {
         </div>
         <div className="overflow-x-auto">
           {workWindows.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">No work windows found</p>
+            <div className="text-center py-12">
+              <p className="text-gray-500 mb-4">No work windows found</p>
+              <Link
+                href="/operations/work-windows/new"
+                className="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                + Create Your First Work Window
+              </Link>
+            </div>
           ) : (
             <table className="w-full">
               <thead className="bg-gray-50">

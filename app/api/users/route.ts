@@ -5,7 +5,7 @@ import { withEvidence } from '@/lib/withEvidence';
 // GET /api/users - List all users
 export async function GET(req: NextRequest) {
   const users = await prisma.user.findMany({
-    include: { organization: true },
+    include: { Organization: true },
     orderBy: { createdAt: 'desc' },
   });
   return NextResponse.json(users);

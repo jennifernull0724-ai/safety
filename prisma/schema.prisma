@@ -409,3 +409,34 @@ model Location {
 
   verificationEvents VerificationEvent[]
 }
+
+//////////////////////////////////////////////////////
+// AI LAYER (ADVISORY ONLY - NO ENFORCEMENT)
+//////////////////////////////////////////////////////
+
+model AIInsight {
+  id            String   @id @default(uuid())
+  insightType   String
+  summary       String
+  confidence    Float
+  evidenceIds   String[] // references EvidenceNode IDs (no FK - read-only)
+  createdAt     DateTime @default(now())
+
+  @@index([insightType])
+  @@index([createdAt])
+}
+
+model AISuggestion {
+  id              String   @id @default(uuid())
+  suggestionType  String
+  description     String
+  severity        String
+  relatedEntity   String
+  relatedEntityId String
+  evidenceIds     String[] // references EvidenceNode IDs (no FK - read-only)
+  createdAt       DateTime @default(now())
+
+  @@index([suggestionType])
+  @@index([relatedEntity, relatedEntityId])
+  @@index([createdAt])
+}

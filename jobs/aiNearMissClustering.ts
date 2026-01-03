@@ -1,33 +1,24 @@
 // jobs/aiNearMissClustering.ts
-import prisma from '../lib/prisma';
-import { writeEvidenceNode, appendLedgerEntry } from '../lib/evidence';
+import { prisma } from '../lib/prisma.js';
 
 /**
- * AI near-miss clustering job (nightly):
- * Clusters near-miss incidents for pattern detection.
- * Writes evidence and ledger for each cluster.
+ * AI near-miss clustering (nightly):
+ * Advisory only - groups near-misses by pattern.
  */
-export async function aiNearMissClustering() {
-  // Example: group incidents by type (real AI logic would be more advanced)
+export async function runAINearMissClustering() {
+  console.log('[CRON] Running AI near-miss clustering...');
+
   const nearMisses = await prisma.incident.findMany({
-    where: { incidentType: 'near-miss' },
+    where: { incidentType: 'near_miss' },
+    select: { id: true, severity: true, description: true },
   });
-  const clusters: Record<string, string[]> = {};
+
+  const clusters: Record<string, number> = {};
   for (const incident of nearMisses) {
-    clusters[incident.severity] = clusters[incident.severity] || [];
-    clusters[incident.severity].push(incident.id);
+    const key = incident.severity || 'unknown';
+    clusters[key] = (clusters[key] || 0) + 1;
   }
-  for (const [severity, ids] of Object.entries(clusters)) {
-    const evidence = await writeEvidenceNode({
-      entityType: 'NearMissCluster',
-      entityId: severity,
-      actorType: 'system',
-      actorId: 'ai-near-miss-job',
-    });
-    await appendLedgerEntry({
-      evidenceNodeId: evidence.id,
-      eventType: 'NEAR_MISS_CLUSTERED',
-      payload: { severity, incidentIds: ids },
-    });
-  }
+
+  console.log(`[CRON] Clustered ${nearMisses.length} near-misses:`, clusters);
+  return { clusters };
 }

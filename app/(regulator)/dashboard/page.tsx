@@ -5,7 +5,7 @@ export default async function RegulatorDashboardPage() {
   const evidenceNodes = await prisma.evidenceNode.findMany({ 
     take: 50,
     orderBy: { createdAt: 'desc' },
-    include: { ledgerEntries: true },
+    include: { ImmutableEventLedger: true },
   });
   const auditCases = await prisma.auditCase.findMany({
     take: 20,
@@ -49,7 +49,7 @@ export default async function RegulatorDashboardPage() {
                 <tr key={node.id} className="border-t">
                   <td className="px-4 py-2">{node.entityType}</td>
                   <td className="px-4 py-2 font-mono text-xs">{node.entityId.substring(0, 8)}...</td>
-                  <td className="px-4 py-2">{node.ledgerEntries.length}</td>
+                  <td className="px-4 py-2">{node.ImmutableEventLedger?.length || 0}</td>
                   <td className="px-4 py-2 text-gray-500">{new Date(node.createdAt).toLocaleDateString()}</td>
                 </tr>
               ))}

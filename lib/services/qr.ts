@@ -89,6 +89,52 @@ export async function verifyCertificationByToken(token: string): Promise<{
     return { valid: false, error: 'Certification not found' };
   }
 
+  // CRITICAL: Create immutable scan record (P0 requirement)
+  // Every QR scan MUST create evidence trail
+  try {
+    // 1. Find verification token
+    const verificationToken = await prisma.verificationToken.findFirst({
+      where: { certificationId: certification.id },
+    });
+
+    if (verificationToken) {
+      // 2. Create immutable scan record
+      await prisma.verificationEvent.create({
+        data: {
+          verificationTokenId: verificationToken.id,
+          verificationResult: certification.status,
+        },
+      });
+
+      // 3. Write evidence node
+      const evidenceNode = await prisma.evidenceNode.create({
+        data: {
+          entityType: 'Certification',
+          entityId: certification.id,
+          actorType: 'system',
+          actorId: 'qr-scanner',
+        },
+      });
+
+      // 4. Append ledger entry
+      await prisma.immutableEventLedger.create({
+        data: {
+          evidenceNodeId: evidenceNode.id,
+          eventType: 'QR_SCAN',
+          payload: {
+            certificationId: certification.id,
+            statusAtScan: certification.status,
+            scannedAt: new Date().toISOString(),
+          },
+        },
+      });
+    }
+  } catch (error) {
+    // If evidence write fails, scan fails (fail closed)
+    console.error('[QR] Evidence write failed:', error);
+    return { valid: false, error: 'Failed to record scan evidence' };
+  }
+
   if (certification.status !== 'VALID') {
     return { valid: false, error: `Certification is ${certification.status}`, certification };
   }

@@ -12,8 +12,8 @@ export async function POST(req: NextRequest) {
     actorId: data.createdByUserId || 'system',
     eventType: 'certification_created',
     payload: data,
-    action: async () => {
-      return prisma.certification.create({
+    action: async (tx) => {
+      return tx.certification.create({
         data: {
           ...data,
           status: 'valid',
@@ -34,8 +34,8 @@ export async function PATCH(req: NextRequest) {
     actorId: data.updatedBy || 'system',
     eventType: 'certification_updated',
     payload: data,
-    action: async () => {
-      return prisma.certification.update({
+    action: async (tx) => {
+      return tx.certification.update({
         where: { id: data.id },
         data: data.update,
       });

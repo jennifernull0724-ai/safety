@@ -12,8 +12,8 @@ export async function POST(req: NextRequest, { params }: { params: { certId: str
     actorId: data.revokedBy || 'system',
     eventType: 'certification_revoked',
     payload: { reason: data.reason },
-    action: async () => {
-      return prisma.certification.update({
+    action: async (tx) => {
+      return tx.certification.update({
         where: { id: params.certId },
         data: { status: 'revoked', revokedAt: new Date(), revokedReason: data.reason },
       });

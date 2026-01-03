@@ -1,6 +1,12 @@
 import { prisma } from '@/lib/prisma';
+import { notFound } from 'next/navigation';
+import { getSession } from '@/lib/auth';
 
 export default async function AIAdvisoryPage() {
+  const session = await getSession();
+  if (!session || !['admin', 'safety', 'executive'].includes(session.user.role)) {
+    notFound();
+  }
   // Get near misses for AI clustering insights (advisory only)
   const nearMisses = await prisma.nearMiss.findMany({ 
     take: 50,

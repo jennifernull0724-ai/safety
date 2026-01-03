@@ -4,7 +4,7 @@ import Link from 'next/link';
 export default async function RegulatorAuditPage({ params }: { params: { sessionId: string } }) {
   // Log every regulator access
   const evidenceNodes = await prisma.evidenceNode.findMany({
-    include: { ledgerEntries: true },
+    include: { ImmutableEventLedger: true },
     orderBy: { createdAt: 'desc' },
     take: 100,
   });
@@ -41,7 +41,7 @@ export default async function RegulatorAuditPage({ params }: { params: { session
                   <td className="px-4 py-3 font-mono text-sm">{node.id.substring(0, 12)}...</td>
                   <td className="px-4 py-3">{node.entityType}</td>
                   <td className="px-4 py-3 font-mono text-sm">{node.entityId.substring(0, 8)}...</td>
-                  <td className="px-4 py-3">{node.ledgerEntries.length}</td>
+                  <td className="px-4 py-3">{node.ImmutableEventLedger?.length || 0}</td>
                   <td className="px-4 py-3 text-sm text-gray-500">
                     {new Date(node.createdAt).toLocaleString()}
                   </td>

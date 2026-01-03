@@ -6,7 +6,7 @@ import { withEvidence } from '@/lib/withEvidence';
 export async function GET(req: NextRequest, { params }: { params: { employeeId: string } }) {
   const employee = await prisma.employee.findUnique({
     where: { id: params.employeeId },
-    include: { certifications: true, organization: true },
+    include: { Certification: true, Organization: true },
   });
   if (!employee) return NextResponse.json({ error: 'Not found' }, { status: 404 });
   return NextResponse.json(employee);

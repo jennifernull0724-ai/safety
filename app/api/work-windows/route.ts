@@ -5,7 +5,7 @@ import { withEvidence } from '@/lib/withEvidence';
 // GET /api/work-windows - List all work windows
 export async function GET(req: NextRequest) {
   const workWindows = await prisma.workWindow.findMany({
-    include: { organization: true },
+    include: { Organization: true },
     orderBy: { startTime: 'desc' },
   });
   return NextResponse.json(workWindows);

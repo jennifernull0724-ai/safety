@@ -105,8 +105,8 @@ export async function exportAuditPackage(
     include: {
       evidenceLinks: {
         include: {
-          evidenceNode: {
-            include: { ledgerEntries: true },
+          EvidenceNode: {
+            include: { ImmutableEventLedger: true },
           },
         },
       },
@@ -191,7 +191,7 @@ export async function getAuditReadinessForCase(auditCaseId: string): Promise<{
     where: { id: auditCaseId },
     include: {
       evidenceLinks: {
-        include: { evidenceNode: { include: { ledgerEntries: true } } },
+        include: { EvidenceNode: { include: { ImmutableEventLedger: true } } },
       },
     },
   });
@@ -221,4 +221,33 @@ export async function getAuditReadinessForCase(auditCaseId: string): Promise<{
     verifiedEvidence,
     issues,
   };
+}
+
+// Build chronological timeline of all evidence for an audit case
+export async function buildAuditTimeline(auditId: string) {
+  const links = await prisma.auditCaseEvidence.findMany({
+    where: { auditCaseId: auditId },
+    include: {
+      EvidenceNode: {
+        include: {
+          ImmutableEventLedger: {
+            orderBy: { createdAt: 'asc' },
+          },
+        },
+      },
+    },
+  });
+
+  const timeline = links.flatMap(link =>
+    link.evidenceNode.ledgerEntries.map(entry => ({
+      evidenceNodeId: link.evidenceNode.id,
+      entityType: link.evidenceNode.entityType,
+      entityId: link.evidenceNode.entityId,
+      eventType: entry.eventType,
+      payload: entry.payload,
+      timestamp: entry.createdAt,
+    }))
+  );
+
+  return timeline.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
 }

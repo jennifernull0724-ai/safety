@@ -6,39 +6,39 @@ import { prisma } from '@/lib/prisma';
 export async function POST(req: NextRequest) {
   const data = await req.json();
   
-  return withEvidence({
+  const result = await withEvidence({
     entityType: 'nearMiss',
     entityId: 'new',
     actorType: 'user',
     actorId: 'system',
     eventType: 'nearMiss.created',
     payload: data,
-    action: async () => {
-      const nearMiss = await prisma.nearMiss.create({
+    action: async (tx) => {
+      return tx.nearMiss.create({
         data,
       });
-      return NextResponse.json({ nearMiss });
     }
   });
+  return NextResponse.json({ nearMiss: result });
 }
 
 // PATCH /api/nearMiss/:id - Update near-miss (regulated, org/role enforced)
 export async function PATCH(req: NextRequest) {
   const data = await req.json();
   
-  return withEvidence({
+  const result = await withEvidence({
     entityType: 'nearMiss',
     entityId: data.id || 'unknown',
     actorType: 'user',
     actorId: 'system',
     eventType: 'nearMiss.updated',
     payload: data,
-    action: async () => {
-      const nearMiss = await prisma.nearMiss.update({
+    action: async (tx) => {
+      return tx.nearMiss.update({
         where: { id: data.id },
         data: data.update,
       });
-      return NextResponse.json({ nearMiss });
     }
   });
+  return NextResponse.json({ nearMiss: result });
 }

@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma';
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   const log = await prisma.fieldLog.findUnique({
     where: { id: params.id },
-    include: { employee: true },
+    include: { Employee: true },
   });
   if (!log) return NextResponse.json({ error: 'Not found' }, { status: 404 });
   return NextResponse.json(log);

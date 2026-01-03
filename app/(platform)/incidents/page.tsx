@@ -1,7 +1,13 @@
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { getSession } from '@/lib/auth';
 
 export default async function IncidentsPage() {
+  const session = await getSession();
+  if (!session || !['admin', 'safety', 'operations'].includes(session.user.role)) {
+    notFound();
+  }
   const incidents = await prisma.incident.findMany({
     include: { employees: { include: { employee: true } }, organization: true },
     orderBy: { occurredAt: 'desc' },

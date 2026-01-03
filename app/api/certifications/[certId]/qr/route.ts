@@ -15,7 +15,7 @@ export async function POST(req: NextRequest, { params }: { params: { certId: str
     actorId: data.createdBy || 'system',
     eventType: 'qr_token_generated',
     payload: { certificationId: params.certId },
-    action: async () => {
+    action: async (tx) => {
       return { token: rawToken, verificationToken };
     },
   });

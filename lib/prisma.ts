@@ -1,16 +1,54 @@
 // lib/prisma.ts
-import { PrismaClient } from '@prisma/client';
-import { middlewares } from '../prisma/middleware';
+import { PrismaClient } from "@prisma/client"
 
-const prismaClient = new PrismaClient();
-
-// Register all middlewares
-for (const mw of middlewares) {
-  prismaClient.$use(mw);
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined
 }
 
-// Named export for convenience
-export const prisma = prismaClient;
+// CRITICAL: Global delete middleware (P0 production hardening)
+// Evidence-bearing records are immutable - no deletes allowed
+const prismaClientWithMiddleware = new PrismaClient({
+  log: ["error", "warn"],
+}).$extends({
+  query: {
+    evidenceNode: {
+      async delete() {
+        throw new Error('❌ DELETE is forbidden on EvidenceNode. Evidence-bearing records are immutable.');
+      },
+      async deleteMany() {
+        throw new Error('❌ DELETE is forbidden on EvidenceNode. Evidence-bearing records are immutable.');
+      },
+    },
+    immutableEventLedger: {
+      async delete() {
+        throw new Error('❌ DELETE is forbidden on ImmutableEventLedger. Evidence-bearing records are immutable.');
+      },
+      async deleteMany() {
+        throw new Error('❌ DELETE is forbidden on ImmutableEventLedger. Evidence-bearing records are immutable.');
+      },
+    },
+    verificationEvent: {
+      async delete() {
+        throw new Error('❌ DELETE is forbidden on VerificationEvent. Evidence-bearing records are immutable.');
+      },
+      async deleteMany() {
+        throw new Error('❌ DELETE is forbidden on VerificationEvent. Evidence-bearing records are immutable.');
+      },
+    },
+    certification: {
+      async delete() {
+        throw new Error('❌ DELETE is forbidden on Certification. Evidence-bearing records are immutable.');
+      },
+      async deleteMany() {
+        throw new Error('❌ DELETE is forbidden on Certification. Evidence-bearing records are immutable.');
+      },
+    },
+  },
+});
 
-// Default export for backward compatibility
-export default prismaClient;
+export const prisma =
+  globalForPrisma.prisma ?? prismaClientWithMiddleware;
+
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = prisma
+}
