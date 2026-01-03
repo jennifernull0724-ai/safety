@@ -1,5 +1,5 @@
 // lib/enforcement.ts
-import prisma from './prisma';
+import { prisma } from './prisma';
 
 /**
  * Certification enforcement service: checks if an employee is certified for a given type.
@@ -38,10 +38,14 @@ export async function enforceCertification({ employeeId, certificationType }: { 
 export async function logEnforcementAction({ employeeId, certificationType, action, reason }: { employeeId: string; certificationType: string; action: 'BLOCK' | 'ALLOW'; reason: string }) {
   await prisma.enforcementAction.create({
     data: {
+      actionType: 'certification_block',
+      targetType: 'employee',
+      targetId: employeeId,
       employeeId,
       certificationType,
       action,
       reason,
+      triggeredBy: 'system',
       timestamp: new Date(),
     },
   });

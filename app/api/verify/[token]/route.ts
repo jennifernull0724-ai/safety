@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import { writeEvidenceNode, appendLedgerEntry } from '@/lib/evidence';
+
+// Map certification status to verification result
+function mapToVerificationResult(certStatus: string): 'valid' | 'expired' | 'revoked' {
+  if (certStatus === 'valid' || certStatus === 'expiring') return 'valid';
+  if (certStatus === 'expired') return 'expired';
+  return 'revoked';
+}
 
 export async function GET(req: NextRequest, { params }: { params: { token: string } }) {
   const { token } = params;
@@ -18,7 +25,7 @@ export async function GET(req: NextRequest, { params }: { params: { token: strin
     data: {
       verificationTokenId: verificationToken.id,
       result: verificationToken.status === 'active'
-        ? (verificationToken.certification.status === 'valid' ? 'valid' : verificationToken.certification.status)
+        ? mapToVerificationResult(verificationToken.certification.status)
         : 'revoked',
     },
   });

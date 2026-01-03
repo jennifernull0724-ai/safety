@@ -1,5 +1,5 @@
 // lib/evidence.ts
-import prisma from './prisma';
+import { prisma } from './prisma';
 
 export async function writeEvidenceNode({
   entityType,
@@ -10,7 +10,7 @@ export async function writeEvidenceNode({
 }: {
   entityType: string;
   entityId: string;
-  actorType: 'user' | 'employee' | 'system';
+  actorType: 'user' | 'employee' | 'system' | 'regulator';
   actorId: string;
   locationId?: string | null;
 }) {

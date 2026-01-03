@@ -1,36 +1,44 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withEvidence } from '@/lib/withEvidence';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 // POST /api/nearMiss - Create near-miss (regulated, org/role enforced)
 export async function POST(req: NextRequest) {
-  return withEvidence({ req, actorType: 'user' }, async (context) => {
-    // Enforce org/role middleware (pseudo, replace with actual logic)
-    // await enforceOrgScope(context);
-    // await enforceRole(context, ['admin', 'safety', 'supervisor']);
-
-    const data = await req.json();
-    // ...validate data...
-    const nearMiss = await prisma.nearMiss.create({
-      data,
-    });
-    return NextResponse.json({ nearMiss });
+  const data = await req.json();
+  
+  return withEvidence({
+    entityType: 'nearMiss',
+    entityId: 'new',
+    actorType: 'user',
+    actorId: 'system',
+    eventType: 'nearMiss.created',
+    payload: data,
+    action: async () => {
+      const nearMiss = await prisma.nearMiss.create({
+        data,
+      });
+      return NextResponse.json({ nearMiss });
+    }
   });
 }
 
 // PATCH /api/nearMiss/:id - Update near-miss (regulated, org/role enforced)
 export async function PATCH(req: NextRequest) {
-  return withEvidence({ req, actorType: 'user' }, async (context) => {
-    // Enforce org/role middleware (pseudo, replace with actual logic)
-    // await enforceOrgScope(context);
-    // await enforceRole(context, ['admin', 'safety', 'supervisor']);
-
-    const data = await req.json();
-    // ...validate data...
-    const nearMiss = await prisma.nearMiss.update({
-      where: { id: data.id },
-      data: data.update,
-    });
-    return NextResponse.json({ nearMiss });
+  const data = await req.json();
+  
+  return withEvidence({
+    entityType: 'nearMiss',
+    entityId: data.id || 'unknown',
+    actorType: 'user',
+    actorId: 'system',
+    eventType: 'nearMiss.updated',
+    payload: data,
+    action: async () => {
+      const nearMiss = await prisma.nearMiss.update({
+        where: { id: data.id },
+        data: data.update,
+      });
+      return NextResponse.json({ nearMiss });
+    }
   });
 }

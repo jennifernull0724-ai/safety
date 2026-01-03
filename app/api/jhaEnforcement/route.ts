@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 // GET /api/jhaEnforcement - Get JHA enforcement flags (regulated, org/role enforced)
 export async function GET(req: NextRequest) {
@@ -7,7 +7,9 @@ export async function GET(req: NextRequest) {
   // await enforceOrgScope(req);
   // await enforceRole(req, ['admin', 'safety', 'executive', 'regulator']);
 
-  const flags = await prisma.jhaEnforcementFlag.findMany({
+  // Query enforcement actions filtered to JHA blocks
+  const flags = await prisma.enforcementAction.findMany({
+    where: { actionType: 'jha_block' },
     orderBy: { createdAt: 'desc' },
     take: 100,
   });

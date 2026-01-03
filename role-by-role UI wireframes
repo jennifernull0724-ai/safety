@@ -1,286 +1,443 @@
-GLOBAL UI FRAMEWORK (ALL ROLES)
-Shell (Persistent)
-┌───────────────────────────────────────────────┐
-│ Top Bar: Org Name | Role | Alerts | Profile   │
-├──────────────┬────────────────────────────────┤
-│ Left Nav     │ Main Content Area               │
-│ (Role-Based) │ (Evidence-Driven Views)         │
-└──────────────┴────────────────────────────────┘
+GLOBAL UI FRAMEWORK (ALL ROLES — SYSTEM OF PROOF)
+Application Shell (Persistent for All Authenticated Roles)
+┌─────────────────────────────────────────────────────────┐
+│ Top Bar                                                  │
+│ Org Name | Active Role | Alerts | Evidence Status | User │
+├───────────────┬─────────────────────────────────────────┤
+│ Left Nav      │ Main Content Area                        │
+│ (Role-Based)  │ Evidence-Driven, Immutable Views         │
+└───────────────┴─────────────────────────────────────────┘
 
-Universal UI Rules
+Universal UI Rules (ABSOLUTE)
 
-No edit icons on historical records
+❌ No edit icons on historical records
 
-Status badges are immutable
+❌ No delete actions on regulated data
 
-Evidence links always visible
+❌ No overwrite of evidence
 
-Every screen shows “Last Evaluated At”
+✅ Status badges are system-derived and immutable
 
-AI outputs are clearly labeled Advisory
+✅ Evidence links are always visible when present
 
-1. ADMIN UI WIREFRAMES (SYSTEM OWNER)
+✅ Every screen shows “Last Evaluated At”
+
+✅ All AI outputs are explicitly labeled “Advisory (Non-Authoritative)”
+
+✅ Any blocked action is visually disabled AND server-enforced
+
+❌ No UI-only enforcement
+
+1️⃣ ADMIN UI WIREFRAMES (SYSTEM OWNER)
 1.1 Admin Dashboard
-[ Certification Status Summary ]
-- Valid: 124
-- Expiring (30d): 12
-- Expired: 3
-- Revoked: 1
 
-[ Enforcement Actions ]
-- Certification blocks today: 2
-- Active work blocks: 1
+Certification & Compliance Summary
 
-[ AI Risk Alerts ]
-- High fatigue risk crews: 1
-- Near-miss cluster warnings: 2
+Valid: 124
 
+Expiring (≤30 days): 12
 
-CTA:
+Expired: 3
 
-View Audit Vault
+Revoked: 1
+
+Incomplete: 9
+
+Enforcement State
+
+Certification-based work blocks today: 2
+
+Active job eligibility blocks: 1
+
+AI Risk Alerts (Advisory)
+
+High fatigue risk crews: 1
+
+Near-miss clustering warnings: 2
+
+Primary Actions
+
+View Audit Defense Vault
 
 Manage Employees
 
-Issue Certification
+Create Employee (QR Generated)
+
+View Compliance Presets (Read-only)
 
 1.2 Employee Directory
+
 Table:
-| Name | Trade | Crew | Cert Status | Actions |
-|----- |-------|------|-------------|---------|
 
-Click → Employee Profile
+Name	Trade	Crew	Compliance State	QR	Actions
 
+Compliance State
 
-Filters:
+PASS / INCOMPLETE / FAIL (derived)
 
-Certification status
+Filters
+
+Compliance state
 
 Trade
 
 Crew
 
-Blocked / Eligible
+Blocked vs Eligible
 
-1.3 Employee Profile (Admin View)
-[ Employee Header ]
-Photo | Name | Trade | Status
+Expiring soon
 
-[ Certifications ]
-------------------------------------
-| Cert | Issuer | Exp | Status | QR |
-------------------------------------
-| FRA | FRA | 12/26 | VALID | [QR] |
-| Hazmat | DOT | 10/25 | EXPIRING | [QR] |
-| Signal | ABC | 09/24 | EXPIRED | [QR] |
+Click → Employee Profile (Admin View)
 
-[ Enforcement History ]
-- 09/12: Certification expired → Work blocked
+1.3 Employee Profile (Admin View — Internal QR Page)
 
-[ Evidence Links ]
-- JHAs
-- Field Logs
-- Incidents
+Employee Header
 
+Photo
 
-Actions:
+Full Name
 
-Upload certification
+Trade Role
 
-Revoke certification (with reason)
+Status (Active / Inactive)
+
+Company
+
+QR Code (downloadable)
+
+Compliance Table (Preset-Driven)
+
+Category	Certification	Issuer	Issue	Exp	Status	Proof	Action
+
+Rules:
+
+Status auto-derived
+
+Proof = view-only if present
+
+Action = Upload Proof only if INCOMPLETE or FAIL
+
+❌ No edit / delete
+
+Enforcement History (Read-only)
+
+Certification expired → Work blocked
+
+Verification scan recorded
+
+Snapshot generated
+
+Linked Evidence
+
+JHAs
+
+Field Logs
+
+Incidents
+
+Snapshots
 
 1.4 Audit Defense Vault
+
 Audit Case View
 
-[ Timeline ]
-07:12 Cert verified (QR)
-07:15 JHA acknowledged
-12:40 Near-miss logged
-14:02 Incident triggered
+Timeline (Immutable)
 
-[ Evidence Pane ]
-- PDFs
-- Photos
-- QR scans
-- Enforcement logs
+QR verified
 
-[ Export ]
-[ FRA ] [ OSHA ] [ Custom ]
+JHA acknowledged
 
-2. SAFETY MANAGER UI WIREFRAMES
+Near-miss logged
+
+Incident triggered
+
+Enforcement applied
+
+Evidence Pane
+
+Certificates
+
+Photos
+
+QR scans
+
+Logs
+
+Snapshots
+
+Exports
+
+FRA
+
+OSHA
+
+Custom (Scope-limited)
+
+❌ No edits
+❌ No deletes
+
+2️⃣ SAFETY MANAGER UI WIREFRAMES
 2.1 Safety Dashboard
-[ Active JHAs ]
-- Track Maintenance MP 120–122 (12 workers)
 
-[ Near Misses (Last 7 Days) ]
-- 3 slip hazards
-- 1 authority boundary alert
+Active JHAs
 
-[ AI Safety Insights ]
-⚠ Near-miss cluster at MP 118–120
-⚠ Fatigue risk rising for Crew B
+Track Maintenance MP 120–122 (12 workers)
+
+Near-Miss Summary (7 days)
+
+Slip hazards: 3
+
+Authority alerts: 1
+
+AI Safety Insights (Advisory)
+⚠ Near-miss cluster MP 118–120
+⚠ Fatigue risk rising — Crew B
 
 2.2 JHA Creation / Review
-[ JHA Header ]
-Work Type | Location | Weather | Status
 
-[ Required Certifications ]
+JHA Header
+
+Work Type
+
+Location
+
+Weather (auto)
+
+Status
+
+Required Certifications (Derived)
 ✔ FRA Track
 ✔ Hazmat
 
-[ Crew Eligibility ]
-Employee A – ELIGIBLE
-Employee B – BLOCKED (Expired Cert)
+Crew Eligibility
 
-[ Hazards ]
+Employee A — ELIGIBLE
+
+Employee B — ❌ BLOCKED (Expired Cert)
+
+Hazards
 ☐ Slip
-☐ Moving equipment
-☐ Weather exposure
+☐ Moving Equipment
+☐ Weather Exposure
 
-[ Acknowledgments ]
-Employee | Time | Status
+Acknowledgments
+| Employee | Time | Status |
 
-
-Blocked acknowledgment is visually enforced.
+Blocked acknowledgment is visually and functionally enforced.
 
 2.3 Near-Miss Feed
+
 Card View:
-[ Photo ]
+
+Photo
+
 Description
+
 Location
-Time
+
+Timestamp
+
 Risk Category
+
 Linked Evidence
 
-3. DISPATCH / OPERATIONS UI WIREFRAMES
+3️⃣ DISPATCH / OPERATIONS UI WIREFRAMES
 3.1 Operations Dashboard
-[ Today’s Work Windows ]
-- Approved: 4
-- Pending: 1
-- Blocked: 1 (Cert issue)
 
-[ Authority Alerts ]
+Work Windows
+
+Approved: 4
+
+Pending: 1
+
+Blocked: 1 (Compliance)
+
+Authority Alerts
 ⚠ Crew approaching boundary MP 130
 
 3.2 Work Window Assignment
-[ Work Window ]
-Time | Location | Scope
 
-[ Crew Assignment ]
-Employee | Cert Status | Eligible?
-----------------------------------
-A | VALID | YES
-B | EXPIRED | ❌ BLOCKED
+Work Window
 
-[ Approve Window ] (disabled if blocked)
+Time
 
-4. SUPERVISOR (FIELD LEAD) UI WIREFRAMES
+Location
+
+Scope
+
+Crew Assignment
+
+Employee	Compliance State	Eligible
+A	PASS	YES
+B	FAIL	❌ BLOCKED
+
+Approve Window
+
+Disabled if ANY crew member is blocked
+
+4️⃣ SUPERVISOR / FIELD LEAD UI WIREFRAMES
 4.1 Crew View
-[ Crew Roster ]
-Employee | Trade | Cert Status
---------------------------------
-A | Track | VALID
-B | Signal | EXPIRING
-C | Labor | VALID
 
+Crew Roster
 
-QR icon available per employee.
+Employee	Trade	Compliance
+
+QR icon available per employee → Public QR Page (Read-only)
 
 4.2 Field Logs
-[ Daily Log ]
+
+Daily Log
+
 Weather (auto)
+
 Crew
+
 Equipment
+
 Notes
+
 Photos
 
-[ Submit ]
+Submit
 
+Creates evidence
 
-After submit:
+Locks record
 
-Read-only
+Post-submit:
 
-Evidence locked
+Fully read-only
+
+Evidence-linked
 
 4.3 Incident Trigger
-[ Incident Trigger ]
+
+Incident Trigger Form
+
 Type
+
 Location
-Employees involved
+
+Employees
+
 Photos
 
-[ Submit Incident ]
+Submit:
 
-5. EXECUTIVE / LEGAL UI WIREFRAMES
+Creates Incident
+
+Appends ledger
+
+Locks incident state
+
+5️⃣ EXECUTIVE / LEGAL UI WIREFRAMES
 5.1 Risk Overview
-[ Risk Summary ]
-- Active Incidents: 1
-- Cert Lapse Exposure: LOW
-- Audit Readiness: 92%
 
-[ Trends ]
+Risk Summary
+
+Active Incidents: 1
+
+Compliance Exposure: LOW
+
+Audit Readiness: 92%
+
+Trends
+
 Near-misses ↓
+
 Fatigue risk ↑
 
 5.2 Legal Defense View
-[ Incident Timeline ]
+
+Incident Timeline
+
 Chronological evidence
+
 QR scans
-Cert status at time
+
+Cert state at event time
+
 Enforcement actions
 
-[ Export Legal Package ]
+Export Legal Package
 
-6. REGULATOR UI WIREFRAMES (READ-ONLY)
+Snapshot-based
+
+Immutable
+
+6️⃣ REGULATOR UI WIREFRAMES (READ-ONLY)
 6.1 Regulator Session Landing
-Scope:
-- Date range
-- Locations
-- Employees
 
-[ Enter Review ]
+Scope defined:
+
+Date range
+
+Locations
+
+Employees
+
+Enter Review
 
 6.2 Regulator Evidence View
-Employee Name
-Certification Status (at scan time)
-QR Scan History
+
+Employee identity
+
+Certification state at scan time
+
+QR scan history
+
 JHA acknowledgments
+
 Incident records
 
-[ Access Log ]
+Snapshots
 
+Access Log Visible
 
-No navigation outside scope.
+❌ No navigation outside scope
+❌ No mutation
 
-7. PUBLIC QR VERIFICATION UI
-7.1 QR Scan Page (No Login)
-✔ CERTIFICATION VERIFIED
+7️⃣ PUBLIC QR VERIFICATION UI (NO AUTH)
+7.1 QR Scan Page
 
-Employee: J. Smith
-Certification: FRA Track
-Status: VALID
-Issuer: FRA
-Verified At: 07:14 AM
+Verification Banner
 
-This verification has been recorded.
+✔ VERIFIED
 
+⚠ INCOMPLETE
 
-If expired/revoked:
+❌ NOT COMPLIANT
 
-❌ CERTIFICATION NOT VALID
-Status: EXPIRED
+Employee
 
-FINAL CONFIRMATION
+Name
 
-These wireframes:
+Company
 
-Do not rely on fake data
+Trade
 
-Enforce eligibility visually and functionally
+Status
 
-Surface QR verification correctly
+Certification Table
 
-Match the database, API, and enforcement logic
+Certification
 
-Are regulator- and court-defensible
+Issuer
+
+Issue date
+
+Expiration date
+
+Status
+
+View proof (read-only)
+
+Verification Metadata
+
+Verified At
+
+Location (if available)
+
+Text:
+
+“This verification has been recorded and is immutable.”

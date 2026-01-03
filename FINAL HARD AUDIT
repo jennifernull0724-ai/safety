@@ -17,16 +17,19 @@ Enforcement fails closed
 QR scans generate immutable evidence		
 AI is advisory only		
 SECTION 1 — REPOSITORY STRUCTURE AUDIT
+
 Files Reviewed
+
 Findings
+
 SECTION 2 — DATA MODEL & PRISMA AUDIT
 schema.prisma Review
 Requirement	Status	Notes
 UUID primary keys everywhere		
-Employees non-auth entities		
+Employees are non-auth entities		
 Certifications anchored to employees		
 VerificationToken → VerificationEvent chain		
-EvidenceNode generic + linkable		
+EvidenceNode generic & linkable		
 ImmutableEventLedger append-only		
 No cascading deletes		
 No soft-delete flags		
@@ -48,18 +51,18 @@ Dispatch override prevention
 Enforcement actions logged		
 Middleware
 Middleware	Status	Notes
-Auth enforcement		
-Org scope enforcement		
-Evidence write middleware		
+Authentication enforcement		
+Organization scope enforcement		
+Evidence write enforcement (withEvidence)		
 Fail-closed behavior		
 SECTION 5 — QR CERTIFICATION VERIFICATION AUDIT
 Requirement	Status	Notes
 QR tokens hashed		
 QR resolves when expired/revoked		
-QR never mutates cert state		
+QR never mutates certification state		
 VerificationEvent created on scan		
 EvidenceNode + Ledger written		
-Public route isolated		
+Public route fully isolated		
 SECTION 6 — BACKGROUND JOBS & CRON AUDIT
 Jobs Reviewed
 Job	Status	Notes
@@ -77,7 +80,7 @@ AI explainable
 AI disabled = system safe		
 SECTION 8 — NEXT.JS APP ROUTER AUDIT
 Route Boundary	Status	Notes
-(platform) scoped		
+(platform) scoped routes		
 (public)/verify isolated		
 (regulator) read-only		
 Server-only services enforced		

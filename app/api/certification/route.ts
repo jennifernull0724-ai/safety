@@ -1,39 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withEvidence } from '@/lib/withEvidence';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
-// POST /api/certification - Issue a new certification (regulated, org/role enforced)
+// POST /api/certification - Issue a new certification
 export async function POST(req: NextRequest) {
-  return withEvidence({ req, actorType: 'user' }, async (context) => {
-    // Enforce org/role middleware (pseudo, replace with actual logic)
-    // await enforceOrgScope(context);
-    // await enforceRole(context, ['admin', 'safety']);
-
-    const data = await req.json();
-    // ...validate data...
-    const certification = await prisma.certification.create({
-      data: {
-        ...data,
-        status: 'valid',
-      },
-    });
-    return NextResponse.json({ certification });
+  const data = await req.json();
+  const result = await withEvidence({
+    entityType: 'Certification',
+    entityId: 'pending',
+    actorType: 'user',
+    actorId: data.createdByUserId || 'system',
+    eventType: 'certification_created',
+    payload: data,
+    action: async () => {
+      return prisma.certification.create({
+        data: {
+          ...data,
+          status: 'valid',
+        },
+      });
+    },
   });
+  return NextResponse.json({ certification: result });
 }
 
-// PATCH /api/certification/:id - Update certification (regulated, org/role enforced)
+// PATCH /api/certification/:id - Update certification
 export async function PATCH(req: NextRequest) {
-  return withEvidence({ req, actorType: 'user' }, async (context) => {
-    // Enforce org/role middleware (pseudo, replace with actual logic)
-    // await enforceOrgScope(context);
-    // await enforceRole(context, ['admin', 'safety']);
-
-    const data = await req.json();
-    // ...validate data...
-    const certification = await prisma.certification.update({
-      where: { id: data.id },
-      data: data.update,
-    });
-    return NextResponse.json({ certification });
+  const data = await req.json();
+  const result = await withEvidence({
+    entityType: 'Certification',
+    entityId: data.id,
+    actorType: 'user',
+    actorId: data.updatedBy || 'system',
+    eventType: 'certification_updated',
+    payload: data,
+    action: async () => {
+      return prisma.certification.update({
+        where: { id: data.id },
+        data: data.update,
+      });
+    },
   });
+  return NextResponse.json({ certification: result });
 }

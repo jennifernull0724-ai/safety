@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 // GET /api/verificationEvent - List verification events (regulated, org/role enforced)
 export async function GET(req: NextRequest) {
@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
   // await enforceRole(req, ['admin', 'safety', 'executive', 'regulator']);
 
   const events = await prisma.verificationEvent.findMany({
-    orderBy: { createdAt: 'desc' },
+    orderBy: { verifiedAt: 'desc' },
     take: 100,
   });
   return NextResponse.json({ events });

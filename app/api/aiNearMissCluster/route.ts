@@ -1,15 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
+import { calculateNearMissClusterRisk } from '@/lib/ai/risk-engine';
 
-// GET /api/aiNearMissCluster - Get AI near-miss clusters (regulated, org/role enforced)
+// GET /api/aiNearMissCluster - Get AI near-miss clusters (advisory only)
 export async function GET(req: NextRequest) {
-  // Enforce org/role middleware (pseudo, replace with actual logic)
-  // await enforceOrgScope(req);
-  // await enforceRole(req, ['admin', 'safety', 'executive', 'regulator']);
-
-  const clusters = await prisma.aiNearMissCluster.findMany({
-    orderBy: { createdAt: 'desc' },
+  // Fetch near misses for clustering analysis
+  const nearMisses = await prisma.nearMiss.findMany({
+    orderBy: { reportedAt: 'desc' },
     take: 100,
   });
-  return NextResponse.json({ clusters });
+
+  // Group by category for clustering
+  const categories = nearMisses.reduce((acc, nm) => {
+    const cat = nm.category || 'UNCATEGORIZED';
+    if (!acc[cat]) acc[cat] = [];
+    acc[cat].push(nm);
+    return acc;
+  }, {} as Record<string, typeof nearMisses>);
+
+  const clusters = Object.entries(categories).map(([category, items]) => ({
+    category,
+    count: items.length,
+    items: items.slice(0, 5),
+    aiAdvisory: 'This is an AI-generated advisory insight. It does not block operations.',
+  }));
+
+  return NextResponse.json({ 
+    clusters,
+    isAdvisoryOnly: true,
+    disclaimer: 'AI insights are advisory only and do not affect system enforcement',
+  });
 }

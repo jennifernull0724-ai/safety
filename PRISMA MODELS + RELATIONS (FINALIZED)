@@ -1,11 +1,17 @@
-1. PRISMA MODELS + RELATIONS (FINALIZED)
+1️⃣ PRISMA MODELS + RELATIONS (FINALIZED, ENFORCEMENT-READY)
 
-You already have the core schema. Below are the critical additions and clarifications that make enforcement and audits work correctly.
+You already have the core schema. The following three additions are REQUIRED to make enforcement deterministic, auditable, and regulator-safe.
 
-1.1 Required Additions to Existing Prisma Schema
-A. Certification Enforcement State (derived but persisted)
+1.1 REQUIRED ADDITIONS TO schema.prisma
+A. Certification Enforcement State (Persisted, Derived)
 
-This avoids recalculating status inconsistently during audits.
+Why this exists
+
+Prevents inconsistent recalculation during audits
+
+Freezes the evaluated compliance state at a point in time
+
+Supports fail-closed enforcement
 
 model CertificationEnforcement {
   id               String   @id @default(uuid())
@@ -14,33 +20,73 @@ model CertificationEnforcement {
   blockedReason    String?
   evaluatedAt      DateTime @default(now())
 
-  certification Certification @relation(fields: [certificationId], references: [id])
+  certification Certification
+    @relation(fields: [certificationId], references: [id], onDelete: Restrict)
 }
 
-B. Evidence Linking Helper (Many-to-Many, Generic)
 
-This lets any entity pull evidence cleanly.
+Hard rules:
+
+Written only by enforcement logic
+
+Never edited by UI
+
+Never deleted
+
+Re-evaluation creates a new record only if design later requires history
+(for now: single authoritative row)
+
+B. Generic Evidence Linking (Many-to-Many, Cross-Entity)
+
+Why this exists
+
+Allows any entity to pull evidence without hard FK coupling
+
+Preserves evidence graph flexibility
+
+Avoids schema churn as system expands
 
 model EntityEvidenceLink {
-  id             String @id @default(uuid())
+  id             String   @id @default(uuid())
   entityType     String
   entityId       String
   evidenceNodeId String
 
-  evidenceNode EvidenceNode @relation(fields: [evidenceNodeId], references: [id])
+  evidenceNode EvidenceNode
+    @relation(fields: [evidenceNodeId], references: [id], onDelete: Restrict)
 
   @@index([entityType, entityId])
 }
 
-C. Enforcement Actions (Auditable)
+
+Hard rules:
+
+No deletes
+
+No updates
+
+Links are append-only
+
+EvidenceNode is the immutable source of truth
+
+C. Enforcement Actions (Auditable Control Plane)
+
+Why this exists
+
+Makes enforcement visible, reviewable, and defensible
+
+Separates decision from evidence
+
+Supports legal review and regulator inspection
+
 model EnforcementAction {
-  id              String   @id @default(uuid())
-  actionType      EnforcementType
-  targetType      String
-  targetId        String
-  reason          String
-  triggeredBy     String   // system | userId
-  createdAt       DateTime @default(now())
+  id            String           @id @default(uuid())
+  actionType    EnforcementType
+  targetType    String
+  targetId      String
+  reason        String
+  triggeredBy   String           // "system" | userId
+  createdAt     DateTime         @default(now())
 }
 
 enum EnforcementType {
@@ -49,11 +95,27 @@ enum EnforcementType {
   jha_block
 }
 
-2. OPENAPI (SWAGGER) SPEC — CONTRACT LEVEL
 
-This is a clean OpenAPI 3.0 spec. It is intentionally explicit, not bloated.
+Hard rules:
 
-2.1 OpenAPI Header
+EnforcementAction is never deleted
+
+Every block must have:
+
+reason
+
+target
+
+timestamp
+
+UI displays these read-only
+
+2️⃣ OPENAPI (SWAGGER) SPEC — CONTRACT LEVEL (LOCKED)
+
+This is not documentation fluff.
+This is a binding contract between UI, backend, and auditors.
+
+2.1 OPENAPI HEADER
 openapi: 3.0.3
 info:
   title: Unified System of Proof API
@@ -62,7 +124,7 @@ info:
 servers:
   - url: https://api.yourplatform.com
 
-2.2 Security Schemes
+2.2 SECURITY SCHEMES
 components:
   securitySchemes:
     bearerAuth:
@@ -70,7 +132,14 @@ components:
       scheme: bearer
       bearerFormat: JWT
 
-2.3 Core Schemas (Examples)
+
+Rules:
+
+Public QR routes do NOT use bearerAuth
+
+All mutation routes REQUIRE bearerAuth
+
+2.3 CORE SCHEMAS (AUTHORITATIVE)
 Employee
 Employee:
   type: object
@@ -126,8 +195,17 @@ VerificationResponse:
       type: string
       format: date-time
 
-2.4 Critical Endpoints
-QR Verification (Public)
+
+Hard rules:
+
+Public response is read-only
+
+No internal IDs leaked
+
+No mutation possible
+
+2.4 CRITICAL ENDPOINTS (ENFORCEMENT-AWARE)
+Public QR Verification
 /api/verify/{token}:
   get:
     summary: Verify certification via QR code
@@ -145,6 +223,15 @@ QR Verification (Public)
             schema:
               $ref: "#/components/schemas/VerificationResponse"
 
+
+Rules:
+
+Creates VerificationEvent
+
+Writes evidence
+
+Does NOT mutate certification
+
 Create Certification (Authenticated)
 /api/employees/{employeeId}/certifications:
   post:
@@ -154,6 +241,15 @@ Create Certification (Authenticated)
     responses:
       "201":
         description: Certification created
+
+
+Rules:
+
+Uses withEvidence()
+
+Creates Certification + Enforcement state
+
+Appends ledger entry
 
 Work Window Creation (Enforced)
 /api/work-windows:
@@ -166,3 +262,12 @@ Work Window Creation (Enforced)
         description: Work window created
       "403":
         description: Blocked due to certification enforcement
+
+
+Rules:
+
+Enforcement evaluated before creation
+
+Blocked state must write EnforcementAction
+
+Fail-closed behavior only

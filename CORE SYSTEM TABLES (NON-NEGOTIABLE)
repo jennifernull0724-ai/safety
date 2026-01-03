@@ -1,172 +1,276 @@
-0. CORE SYSTEM TABLES (NON-NEGOTIABLE)
+🔒 CORE SYSTEM TABLES (NON-NEGOTIABLE)
+
+This system is evidence-first, employee-anchored, and append-only where regulated.
+Employees are not users.
+QR scans and uploads are legal evidence.
+
+0. CORE IDENTITY
 0.1 organizations
 organizations
-- id (PK)
+- id (PK, UUID)
 - name
 - type (railroad | contractor | emergency | municipality)
 - status (active | inactive)
 - created_at
 
+
+Rules:
+
+All operational data must anchor to an organization
+
+No orphaned records permitted
+
 0.2 users (AUTHENTICATED USERS ONLY)
 users
-- id (PK)
-- organization_id (FK)
-- email
+- id (PK, UUID)
+- organization_id (FK → organizations.id)
+- email (unique)
 - role (admin | safety | dispatcher | supervisor | executive)
 - status (active | disabled)
 - created_at
 
-0.3 employees (FIELD PERSONNEL – NOT USERS)
+
+Rules:
+
+Users authenticate
+
+Users never represent field labor
+
+Users may create evidence but are not evidence subjects
+
+0.3 employees (FIELD PERSONNEL — NOT USERS)
 employees
-- id (PK)
-- organization_id (FK)
+- id (PK, UUID)
+- organization_id (FK → organizations.id)
 - first_name
 - last_name
 - trade_role
-- photo_id
+- photo_id (FK → media_assets.id, nullable)
 - status (active | inactive)
 - created_at
 
 
-Employees never authenticate.
-Employees are verified via evidence.
+Hard rules:
+
+Employees never authenticate
+
+Employees are verified only via evidence
+
+Employees are the primary subject of compliance, QR, and certification
 
 0.4 crews
 crews
-- id (PK)
-- organization_id (FK)
+- id (PK, UUID)
+- organization_id (FK → organizations.id)
 - name
 - created_at
 
 crew_members
-- crew_id (FK)
-- employee_id (FK)
+- crew_id (FK → crews.id)
+- employee_id (FK → employees.id)
+
+PK (crew_id, employee_id)
+
+
+Rules:
+
+Crews are operational groupings
+
+Crew membership affects eligibility but not evidence ownership
 
 1. CERTIFICATIONS & QR VERIFICATION (CRITICAL)
 1.1 certifications
 certifications
-- id (PK)
-- employee_id (FK)
+- id (PK, UUID)
+- employee_id (FK → employees.id)
 - certification_type
 - issuing_authority
 - issue_date
 - expiration_date
 - status (valid | expiring | expired | revoked)
-- certificate_media_id
-- created_by (user_id)
+- certificate_media_id (FK → media_assets.id, nullable)
+- created_by (FK → users.id)
 - created_at
+
+
+Rules:
+
+Certifications are immutable records
+
+Replacement = new certification + new evidence
+
+Status is derived, not user-editable
 
 1.2 verification_tokens (QR TOKENS)
 verification_tokens
-- id (PK)
-- certification_id (FK)
-- token_hash
+- id (PK, UUID)
+- certification_id (FK → certifications.id)
+- token_hash (unique)
 - status (active | revoked)
 - created_at
 
 
-Tokens are rotatable without changing certification history.
+Rules:
+
+Tokens may rotate without altering certification history
+
+Token hashes are never exposed raw
 
 1.3 verification_events (QR SCANS)
 verification_events
-- id (PK)
-- verification_token_id (FK)
+- id (PK, UUID)
+- verification_token_id (FK → verification_tokens.id)
 - scanned_at
-- location_id (FK, nullable)
+- location_id (FK → locations.id, nullable)
 - verification_result (valid | expired | revoked)
 
 
-Every scan = immutable evidence.
+Rules:
 
-2. EVIDENCE & LEDGER (SPINE)
+Every scan = immutable evidence
+
+Public QR pages may only create scan evidence
+
+No scan mutates certification state
+
+2. EVIDENCE & LEDGER (SYSTEM SPINE)
 2.1 evidence_nodes
 evidence_nodes
-- id (PK)
+- id (PK, UUID)
 - entity_type
 - entity_id
 - actor_type (user | employee | system)
 - actor_id
 - timestamp
-- location_id (nullable)
+- location_id (FK → locations.id, nullable)
+
+
+Rules:
+
+Every regulated action creates exactly one EvidenceNode
+
+Nodes are linkable, never edited
 
 2.2 immutable_event_ledger
 immutable_event_ledger
-- id (PK)
-- evidence_node_id (FK)
+- id (PK, UUID)
+- evidence_node_id (FK → evidence_nodes.id)
 - event_type
 - event_payload (JSON)
 - created_at
 
 
-Append-only. No deletes.
+Rules:
+
+Append-only
+
+No deletes
+
+No updates
+
+Ledger = legal timeline
 
 2.3 media_assets
 media_assets
-- id (PK)
+- id (PK, UUID)
 - file_url
 - media_type (photo | pdf | video)
 - uploaded_at
 
+
+Rules:
+
+Stored in secure object storage
+
+Never overwritten
+
+Linked via evidence
+
 3. SAFETY & COMPLIANCE
-3.1 job_hazard_analyses (JHA)
+3.1 job_hazard_analyses
 job_hazard_analyses
-- id (PK)
-- organization_id (FK)
+- id (PK, UUID)
+- organization_id (FK → organizations.id)
 - work_type
-- location_id (FK)
-- weather_snapshot
+- location_id (FK → locations.id)
+- weather_snapshot (JSON)
 - status (draft | active | closed)
 - created_at
 
 jha_acknowledgments
-- jha_id (FK)
-- employee_id (FK)
+- jha_id (FK → job_hazard_analyses.id)
+- employee_id (FK → employees.id)
 - acknowledged_at
+
+PK (jha_id, employee_id)
+
+
+Rules:
+
+Blocked employees cannot acknowledge
+
+Acknowledgment creates evidence
 
 3.2 safety_observations
 safety_observations
-- id (PK)
-- organization_id (FK)
-- employee_id (nullable)
+- id (PK, UUID)
+- organization_id (FK → organizations.id)
+- employee_id (FK → employees.id, nullable)
 - description
-- location_id (FK)
-- media_id
+- location_id (FK → locations.id)
+- media_id (FK → media_assets.id)
 - created_at
 
 3.3 audit_cases
 audit_cases
-- id (PK)
-- organization_id (FK)
+- id (PK, UUID)
+- organization_id (FK → organizations.id)
 - audit_type (FRA | OSHA | internal)
 - status (open | closed)
 - created_at
 
 audit_evidence_links
-- audit_case_id (FK)
-- evidence_node_id (FK)
+- audit_case_id (FK → audit_cases.id)
+- evidence_node_id (FK → evidence_nodes.id)
+
+PK (audit_case_id, evidence_node_id)
+
+
+Rules:
+
+Audits are read-only after closure
+
+Evidence is referenced, never copied
 
 4. FIELD EXECUTION
 4.1 work_windows
 work_windows
-- id (PK)
-- organization_id (FK)
-- location_id (FK)
+- id (PK, UUID)
+- organization_id (FK → organizations.id)
+- location_id (FK → locations.id)
 - start_time
 - end_time
 - status (approved | denied | overrun)
 
 4.2 field_logs
 field_logs
-- id (PK)
-- work_window_id (FK)
-- created_by (employee_id)
-- weather_snapshot
+- id (PK, UUID)
+- work_window_id (FK → work_windows.id)
+- created_by (FK → employees.id)
+- weather_snapshot (JSON)
 - notes
 - created_at
 
+
+Rules:
+
+Logs lock after submission
+
+Evidence-backed
+
 4.3 authority_limits
 authority_limits
-- id (PK)
+- id (PK, UUID)
 - subdivision
 - milepost_start
 - milepost_end
@@ -174,30 +278,32 @@ authority_limits
 5. INCIDENT & EMERGENCY
 5.1 incidents
 incidents
-- id (PK)
-- organization_id (FK)
+- id (PK, UUID)
+- organization_id (FK → organizations.id)
 - incident_type
-- location_id (FK)
+- location_id (FK → locations.id)
 - occurred_at
 - severity
 
 incident_employees
-- incident_id (FK)
-- employee_id (FK)
+- incident_id (FK → incidents.id)
+- employee_id (FK → employees.id)
+
+PK (incident_id, employee_id)
 
 5.2 incident_costs
 incident_costs
-- id (PK)
-- incident_id (FK)
+- id (PK, UUID)
+- incident_id (FK → incidents.id)
 - cost_type (labor | equipment | material)
 - amount
 - created_at
 
 5.3 drug_alcohol_tests
 drug_alcohol_tests
-- id (PK)
-- incident_id (FK)
-- employee_id (FK)
+- id (PK, UUID)
+- incident_id (FK → incidents.id)
+- employee_id (FK → employees.id)
 - test_type
 - status (ordered | completed)
 - result
@@ -205,66 +311,74 @@ drug_alcohol_tests
 6. ASSETS & ENVIRONMENTAL
 6.1 assets
 assets
-- id (PK)
-- organization_id (FK)
+- id (PK, UUID)
+- organization_id (FK → organizations.id)
 - asset_type
 - identifier
 
 6.2 damage_reports
 damage_reports
-- id (PK)
-- asset_id (FK)
-- incident_id (FK)
+- id (PK, UUID)
+- asset_id (FK → assets.id)
+- incident_id (FK → incidents.id)
 - description
-- media_id
+- media_id (FK → media_assets.id)
 - created_at
 
 6.3 environmental_records
 environmental_records
-- id (PK)
-- incident_id (FK)
+- id (PK, UUID)
+- incident_id (FK → incidents.id)
 - spill_type
 - reported_at
 
 7. LEGAL, INSURANCE & REGULATORS
 7.1 legal_cases
 legal_cases
-- id (PK)
-- organization_id (FK)
-- related_incident_id (FK)
+- id (PK, UUID)
+- organization_id (FK → organizations.id)
+- related_incident_id (FK → incidents.id)
 - status
 
 7.2 insurance_policies
 insurance_policies
-- id (PK)
-- organization_id (FK)
+- id (PK, UUID)
+- organization_id (FK → organizations.id)
 - policy_number
 - coverage_type
 - expiration_date
 
 7.3 regulator_sessions
 regulator_sessions
-- id (PK)
-- organization_id (FK)
+- id (PK, UUID)
+- organization_id (FK → organizations.id)
 - regulator_name
 - access_start
 - access_end
 
 regulator_access_logs
-- session_id (FK)
-- evidence_node_id (FK)
+- session_id (FK → regulator_sessions.id)
+- evidence_node_id (FK → evidence_nodes.id)
 - accessed_at
+
+
+Rules:
+
+Regulator access is time-boxed
+
+All access is logged as evidence
 
 8. LOCATION & GIS (SHARED)
 8.1 locations
 locations
-- id (PK)
+- id (PK, UUID)
 - subdivision
 - milepost
 - latitude
 - longitude
 
-FINAL NOTES (IMPORTANT)
+FINAL NOTES (AUTHORITATIVE)
+
 This schema guarantees:
 
 No orphan data
@@ -275,12 +389,4 @@ QR scans as legal evidence
 
 Employee-anchored compliance
 
-Regulator-safe read-only access
-
-What this is NOT:
-
-Not a CRM
-
-Not user-centric
-
-Not editable after the fact
+Regulator-safe, read-only access

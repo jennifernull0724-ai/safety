@@ -1,5 +1,5 @@
 // jobs/auditReadinessScoring.ts
-import prisma from '../lib/prisma';
+import { prisma } from '../lib/prisma';
 import { writeEvidenceNode, appendLedgerEntry } from '../lib/evidence';
 
 /**
@@ -10,9 +10,12 @@ import { writeEvidenceNode, appendLedgerEntry } from '../lib/evidence';
 export async function auditReadinessScoring() {
   const orgs = await prisma.organization.findMany();
   for (const org of orgs) {
-    // Example: score based on number of valid certifications
+    // Score based on number of valid certifications through employees
     const certCount = await prisma.certification.count({
-      where: { organizationId: org.id, status: 'valid' },
+      where: { 
+        employee: { organizationId: org.id }, 
+        status: 'valid' 
+      },
     });
     const score = Math.min(100, certCount * 10); // Example scoring logic
     const evidence = await writeEvidenceNode({

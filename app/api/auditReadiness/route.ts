@@ -1,15 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
-// GET /api/auditReadiness - Get audit readiness scores (regulated, org/role enforced)
+// GET /api/auditReadiness - Get audit readiness scores
 export async function GET(req: NextRequest) {
-  // Enforce org/role middleware (pseudo, replace with actual logic)
-  // await enforceOrgScope(req);
-  // await enforceRole(req, ['admin', 'safety', 'executive', 'regulator']);
-
-  const scores = await prisma.auditReadinessScore.findMany({
+  // Get audit cases and evidence counts for readiness calculation
+  const auditCases = await prisma.auditCase.findMany({
+    include: { evidenceLinks: true },
     orderBy: { createdAt: 'desc' },
-    take: 100,
   });
+
+  // Calculate readiness score for each audit case
+  const scores = auditCases.map(audit => {
+    const evidenceCount = audit.evidenceLinks.length;
+    const score = evidenceCount > 10 ? 100 : evidenceCount * 10;
+    return {
+      auditCaseId: audit.id,
+      title: audit.title,
+      status: audit.status,
+      evidenceCount,
+      readinessScore: score,
+      createdAt: audit.createdAt,
+    };
+  });
+
   return NextResponse.json({ scores });
 }
