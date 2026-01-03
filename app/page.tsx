@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
   Shield,
@@ -8,16 +8,14 @@ import {
   Lock,
   FileCheck,
   Users,
-  CheckCircle2,
   ArrowRight,
-  Fingerprint,
-  Eye,
   AlertTriangle,
   Building2,
   HardHat,
   Train,
   Leaf,
-  Scale
+  Scale,
+  Eye
 } from 'lucide-react';
 
 /**
@@ -28,15 +26,10 @@ import {
  * - Public access (no auth, no pricing checks)
  * - Smart CTA routing based on state
  * 
- * CTA Logic:
- * - Not authenticated → Login
- * - Authenticated + has license → Dashboard
- * - Authenticated + no license → Pricing Select
- * 
  * NO Base44, NO React Router, NO Framer Motion
  */
 
-export default function Landing() {
+export default function Page() {
   const [dashboardLink, setDashboardLink] = useState('/login');
   const [loading, setLoading] = useState(true);
 
