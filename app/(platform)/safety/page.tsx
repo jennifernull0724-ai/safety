@@ -1,4 +1,3 @@
-import { prisma } from '@/lib/prisma';
 import { AppShell, PageContainer, Card, AICallout } from '@/components';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -23,39 +22,14 @@ export default async function SafetyDashboardPage() {
   if (!session || !['admin', 'safety'].includes(session.user.role)) {
     notFound();
   }
-  // Active JHAs
-  const activeJHAs = await prisma.jHA.findMany({
-    where: {
-      status: 'ACTIVE'
-    },
-    include: {
-      acknowledgments: {
-        include: {
-          employee: {
-            include: {
-              user: true
-            }
-          }
-        }
-      }
-    },
-    take: 5,
-    orderBy: { createdAt: 'desc' }
-  });
-
-  // Near-miss summary (last 7 days)
-  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-  const nearMisses = await prisma.nearMiss.findMany({
-    where: {
-      reportedAt: {
-        gte: sevenDaysAgo
-      }
-    }
-  });
-
+  
+  // Placeholder data until schema models are implemented
+  const activeJHAs: any[] = [];
+  const nearMisses: any[] = [];
+  
   const nearMissByType = {
-    slipHazards: nearMisses.filter(nm => nm.category === 'SLIP_HAZARD').length,
-    authorityAlerts: nearMisses.filter(nm => nm.category === 'AUTHORITY').length,
+    slipHazards: 0,
+    authorityAlerts: 0,
   };
 
   return (

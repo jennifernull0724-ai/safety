@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { LoginLayout } from '@/components/LoginLayout';
 import {
   Shield,
   Mail,
@@ -49,22 +50,23 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-6">
-      <div
-        className="w-full max-w-md"
-        style={{
-          animation: 'fadeInUp 0.6s ease-out both'
-        }}
-      >
+    <LoginLayout>
+      <div className="min-h-screen bg-white pt-12 pb-16 px-6 flex items-center justify-center">
+        <div
+          className="w-full max-w-md"
+          style={{
+            animation: 'fadeInUp 0.6s ease-out both'
+          }}
+        >
         {/* Header */}
         <div className="text-center mb-8">
           <img src="/trex-logo.png" alt="T-REX AI OS" className="h-16 w-auto mx-auto mb-6" />
-          <h1 className="text-2xl font-bold">T-REX AI OS</h1>
-          <p className="text-slate-400 mt-1">Secure Login</p>
+          <h1 className="text-2xl font-bold text-slate-900">T-REX AI OS</h1>
+          <p className="text-slate-600 mt-1">Secure Login</p>
         </div>
 
         {/* Card */}
-        <div className="p-8 rounded-3xl bg-slate-800/50 border border-slate-700/50">
+        <div className="p-8 rounded-3xl bg-blue-600 border border-blue-700">
           <form onSubmit={handleLogin} className="space-y-6">
             {/* Error */}
             {error && (
@@ -76,18 +78,18 @@ export default function Login() {
 
             {/* Email */}
             <div className="space-y-2">
-              <label htmlFor="email" className="block text-sm font-medium text-slate-300">
+              <label htmlFor="email" className="block text-sm font-medium text-white">
                 Email
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <input
-                  id="email"
                   type="email"
+                  id="email"
                   required
                   value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-lg bg-slate-900/50 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-blue-500 bg-blue-700 text-white placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-white"
                   placeholder="you@company.com"
                 />
               </div>
@@ -95,18 +97,18 @@ export default function Login() {
 
             {/* Password */}
             <div className="space-y-2">
-              <label htmlFor="password" className="block text-sm font-medium text-slate-300">
+              <label htmlFor="password" className="block text-sm font-medium text-white">
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <input
-                  id="password"
                   type="password"
+                  id="password"
                   required
                   value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-lg bg-slate-900/50 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-blue-500 bg-blue-700 text-white placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-white"
                   placeholder="••••••••"
                 />
               </div>
@@ -138,11 +140,24 @@ export default function Login() {
           </form>
         </div>
 
-        {/* Footer */}
+        {/* Footer Text */}
         <div className="text-center mt-6 text-sm text-slate-500">
           Unauthorized access is prohibited.
         </div>
+        </div>
       </div>
+
+      {/* FOOTER */}
+      <footer className="border-t border-slate-200 bg-white py-10 text-center text-sm text-slate-500">
+        <div className="mb-4">
+          <Link href="/contact-support" className="text-slate-600 hover:text-slate-900 font-medium">
+            Contact Support
+          </Link>
+        </div>
+        <div>
+          © {new Date().getFullYear()} T-REX AI OS. All rights reserved.
+        </div>
+      </footer>
 
       <style jsx>{`
         @keyframes fadeInUp {
@@ -156,6 +171,6 @@ export default function Login() {
           }
         }
       `}</style>
-    </div>
+    </LoginLayout>
   );
 }

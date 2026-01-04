@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { PublicLayout } from '@/components/PublicLayout';
 import {
   Shield,
   CheckCircle2,
@@ -61,21 +62,9 @@ export default function Pricing() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
-      {/* Header */}
-      <header className="border-b border-slate-800/50 bg-slate-950/80 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 py-6 flex items-center gap-4">
-          <img src="/trex-logo.png" alt="T-REX AI OS" className="h-10 w-auto" />
-          <div>
-            <h1 className="text-xl font-semibold">Verification License</h1>
-            <p className="text-sm text-slate-400">
-              Flat Annual Pricing
-            </p>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-7xl mx-auto px-6 py-20 space-y-24">
+    <PublicLayout>
+      <div className="min-h-screen bg-slate-950 text-white">
+      <main className="max-w-7xl mx-auto px-6 pt-12 pb-20 space-y-24">
         {/* Intro */}
         <section className="max-w-4xl mx-auto text-center">
           <h2
@@ -207,17 +196,6 @@ export default function Pricing() {
           </div>
         </section>
 
-        {/* CTA */}
-        <section className="text-center space-y-6">
-          <Link
-            href="/create-account"
-            className="inline-flex items-center gap-2 px-10 py-6 rounded-lg bg-blue-600 hover:bg-blue-500 font-medium text-lg transition-colors"
-          >
-            Get Started
-            <ArrowRight className="w-5 h-5" />
-          </Link>
-        </section>
-
         {/* Pricing FAQ */}
         <section className="max-w-4xl mx-auto">
           <h3 className="text-2xl font-semibold mb-8 text-center">Pricing FAQ</h3>
@@ -232,7 +210,11 @@ export default function Pricing() {
             <div className="p-6 rounded-lg bg-slate-800/50 border border-slate-700">
               <h4 className="font-semibold mb-2 text-white">What happens if we grow mid-contract?</h4>
               <p className="text-slate-400">
-                If your employee count exceeds 250 during your contract period, contact us to discuss enterprise pricing. Pricing adjustments, if needed, are prorated and applied at renewal.
+                If your employee count exceeds 250 during your contract period, contact us at{' '}
+                <a href="mailto:support@trexaios.com" className="text-blue-400 hover:text-blue-300">
+                  support@trexaios.com
+                </a>{' '}
+                to discuss enterprise pricing. Pricing adjustments, if needed, are prorated and applied at renewal.
               </p>
             </div>
 
@@ -258,20 +240,27 @@ export default function Pricing() {
             </div>
           </div>
         </section>
-      </main>
 
-      <style jsx>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
-    </div>
+        {/* CTA */}
+        <section className="text-center space-y-6">
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Link
+              href="/create-account"
+              className="inline-flex items-center justify-center gap-2 px-10 py-6 rounded-lg bg-blue-600 hover:bg-blue-500 font-medium text-lg transition-colors"
+            >
+              Create an Account
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+            <Link
+              href="/request-demo"
+              className="inline-flex items-center justify-center gap-2 px-10 py-6 rounded-lg border-2 border-slate-600 text-slate-200 hover:bg-slate-800 font-medium text-lg transition-colors"
+            >
+              Request a Demo
+            </Link>
+          </div>
+        </section>
+      </main>
+      </div>
+    </PublicLayout>
   );
 }

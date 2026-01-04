@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { PublicLayout } from '@/components/PublicLayout';
 import {
   Shield,
   CreditCard,
@@ -86,8 +87,9 @@ export default function Payment() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-6 py-12">
-      <div className="w-full max-w-4xl">
+    <PublicLayout>
+      <div className="pt-32 pb-16 px-6 flex items-center justify-center">
+        <div className="w-full max-w-4xl">
         {/* Header */}
         <div className="text-center mb-8">
           <img src="/trex-logo.png" alt="T-REX AI OS" className="h-16 w-auto mx-auto mb-6" />
@@ -299,14 +301,15 @@ export default function Payment() {
           </div>
         </div>
 
-        {/* Footer */}
+        {/* Footer Text */}
         <div className="text-center mt-8 text-sm text-slate-500">
           Need help?{' '}
           <Link href="/pricing" className="text-blue-400 hover:text-blue-300 transition-colors">
             View Pricing Details
           </Link>
         </div>
+        </div>
       </div>
-    </div>
+    </PublicLayout>
   );
 }

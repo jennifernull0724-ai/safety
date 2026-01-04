@@ -9,7 +9,8 @@ import {
   CheckSquare, 
   FileText, 
   Building2, 
-  Settings 
+  Settings,
+  Shield
 } from 'lucide-react';
 
 const NAV_ITEMS = [

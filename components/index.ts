@@ -17,6 +17,9 @@
 export { StatusBadge } from './StatusBadge';
 export type { StatusType } from './StatusBadge';
 
+export { PublicLayout } from './PublicLayout';
+export { LoginLayout } from './LoginLayout';
+
 export { EvidenceLink } from './EvidenceLink';
 export { EvidenceDrawer } from './EvidenceDrawer';
 export { EvidenceTimeline } from './EvidenceTimeline';

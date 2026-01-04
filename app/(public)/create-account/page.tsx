@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { PublicLayout } from '@/components/PublicLayout';
 import {
   Shield,
   Mail,
@@ -58,13 +59,14 @@ export default function CreateAccount() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-6">
-      <div
-        className="w-full max-w-md"
-        style={{
-          animation: 'fadeInUp 0.6s ease-out both'
-        }}
-      >
+    <PublicLayout>
+      <div className="pt-32 pb-16 px-6 flex items-center justify-center">
+        <div
+          className="w-full max-w-md"
+          style={{
+            animation: 'fadeInUp 0.6s ease-out both'
+          }}
+        >
         {/* Header */}
         <div className="text-center mb-8">
           <img src="/trex-logo.png" alt="T-REX AI OS" className="h-16 w-auto mx-auto mb-6" />
@@ -177,7 +179,7 @@ export default function CreateAccount() {
           </form>
         </div>
 
-        {/* Footer */}
+        {/* Footer Text */}
         <div className="text-center mt-6 text-sm text-slate-500">
           Already have an account?{' '}
           <Link
@@ -186,6 +188,7 @@ export default function CreateAccount() {
           >
             Sign in
           </Link>
+        </div>
         </div>
       </div>
 
@@ -201,6 +204,6 @@ export default function CreateAccount() {
           }
         }
       `}</style>
-    </div>
+    </PublicLayout>
   );
 }

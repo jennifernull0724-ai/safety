@@ -23,10 +23,10 @@ export default async function SupervisorDashboardPage() {
 
   // Derive compliance per employee
   const employeesWithCompliance = employees.map(emp => {
-    const hasFail = emp.certifications.some(c => c.status === 'FAIL');
-    const hasIncomplete = emp.certifications.some(c => c.status === 'INCOMPLETE');
-    const complianceState: 'PASS' | 'INCOMPLETE' | 'FAIL' = 
-      hasFail ? 'FAIL' : hasIncomplete ? 'INCOMPLETE' : 'PASS';
+    const hasFail = emp.certifications.some(c => c.status === 'revoked');
+    const hasExpired = emp.certifications.some(c => c.status === 'expired');
+    const complianceState: 'valid' | 'expiring' | 'expired' | 'revoked' = 
+      hasFail ? 'revoked' : hasExpired ? 'expired' : 'valid';
     return { ...emp, complianceState };
   });
 
