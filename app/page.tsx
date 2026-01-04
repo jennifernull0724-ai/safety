@@ -72,7 +72,7 @@ export default function Page() {
           </h1>
           
           <p className="text-base sm:text-lg md:text-xl text-slate-300 mb-8 md:mb-10 max-w-3xl mx-auto leading-relaxed">
-            Records employee certifications, preserves historical compliance state, and provides regulator-safe verification through immutable records and QR-based evidence access.
+            Records employee certifications, preserves historical compliance state, and provides regulator-safe verification through tamper-evident, append-only records and QR-based evidence access.
           </p>
 
           <div className="flex flex-col sm:flex-row justify-center gap-3 md:gap-4">
@@ -272,10 +272,10 @@ export default function Page() {
           <div className="space-y-6 md:space-y-10">
             <div>
               <h3 className="text-xl md:text-2xl font-bold mb-2 md:mb-3 text-white">
-                Immutable Compliance Records
+                Tamper-Evident Compliance Records
               </h3>
               <p className="text-base md:text-lg text-slate-300 leading-relaxed">
-                Certification data is preserved as entered. Corrections create new records; prior states remain intact.
+                Certification data is preserved as entered using append-only architecture. Corrections create new records; prior states remain intact.
               </p>
             </div>
 
@@ -721,7 +721,7 @@ export default function Page() {
             </li>
             <li className="flex items-start gap-3">
               <span className="text-blue-400 font-bold mt-1">•</span>
-              <span>Read-only regulator access</span>
+              <span>Official inspection interface (read-only)</span>
             </li>
             <li className="flex items-start gap-3">
               <span className="text-blue-400 font-bold mt-1">•</span>

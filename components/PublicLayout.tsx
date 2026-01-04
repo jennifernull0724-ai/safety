@@ -75,6 +75,11 @@ export function PublicLayout({ children }: PublicLayoutProps) {
                     Data & Security
                   </Link>
                 </li>
+                <li>
+                  <Link href="/regulator-access" className="text-slate-600 hover:text-slate-900">
+                    Regulator Access
+                  </Link>
+                </li>
               </ul>
             </div>
 

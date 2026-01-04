@@ -109,9 +109,17 @@ export default function PrivacyPolicy() {
 
           <section>
             <h2 className="text-2xl font-semibold text-slate-900 mb-4">6. Data Retention</h2>
+            
+            <h3 className="text-xl font-semibold text-slate-900 mt-4 mb-3">Record Retention</h3>
             <p>
-              Verification records and audit trails are retained indefinitely as part of the Service's 
-              immutable ledger functionality. This ensures historical compliance evidence remains available 
+              All compliance records and verification logs are retained for a minimum of 10 years unless 
+              a longer period is required by applicable regulation or legal hold. This retention period 
+              ensures records remain available for regulatory review, legal proceedings, and audit purposes.
+            </p>
+            
+            <p className="mt-4">
+              Verification records and audit trails are retained as part of the Service's tamper-evident, 
+              append-only ledger functionality. This ensures historical compliance evidence remains available 
               for legal and regulatory purposes.
             </p>
             <p className="mt-4">
