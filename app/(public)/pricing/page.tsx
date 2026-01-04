@@ -36,7 +36,7 @@ import {
 export default function Pricing() {
   const flatPrice = '$9,500 / year';
 
-  const included = [
+  const coreFeatures = [
     'Unlimited public QR verification pages',
     'Read-only, regulator-safe public access',
     'Verification state shown exactly as of scan time',
@@ -49,16 +49,21 @@ export default function Pricing() {
     'Exportable legal packages (PDF / ZIP)',
     'Court-defensible proof of compliance at time of work',
     'Fail-closed enforcement guarantees',
-    'AI risk scoring and predictions',
-    'Fatigue modeling and analytics',
-    'Near-miss clustering',
-    'Incident escalation analytics',
     'Advanced compliance dashboards'
+  ];
+
+  const aiFeatures = [
+    'AI risk scoring and predictions (up to 50,000 events/year)',
+    'Fatigue modeling and analytics (up to 10,000 employee-days/year)',
+    'Near-miss clustering (up to 5,000 incidents/year)',
+    'Incident escalation analytics'
   ];
 
   const excluded = [
     'Financial or cost overrun modeling',
-    'Blockchain anchoring'
+    'Blockchain anchoring',
+    'Third-party training integrations (available as add-on)',
+    'Custom regulatory report templates (available as add-on)'
   ];
 
   return (
@@ -85,46 +90,94 @@ export default function Pricing() {
         </section>
 
         {/* Pricing */}
-        <section className="max-w-2xl mx-auto">
-          <div
-            className="p-6 md:p-12 rounded-2xl md:rounded-3xl bg-slate-800/50 border-2 border-blue-500/50 text-center"
-            style={{
-              animation: 'fadeInUp 0.3s ease-out both'
-            }}
-          >
-            <h3 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4">Annual License</h3>
-            <div className="text-4xl md:text-6xl font-bold text-white mb-4 md:mb-6">{flatPrice}</div>
-            <p className="text-base md:text-xl text-slate-400 mb-6 md:mb-8">
-              Pricing is per organization, billed annually.
-            </p>
-            <div className="text-left bg-slate-900/50 rounded-lg p-6 border border-slate-700">
-              <h4 className="text-lg font-semibold mb-4 text-white">Included with $9,500/year</h4>
-              <ul className="space-y-2 text-slate-300">
+        <section className="max-w-4xl mx-auto">
+          <h3 className="text-2xl md:text-3xl font-bold mb-8 text-center">Pricing Tiers</h3>
+          <div className="grid md:grid-cols-3 gap-6 mb-8">
+            {/* Standard Tier */}
+            <div className="p-6 rounded-xl bg-slate-800/50 border-2 border-blue-500/50">
+              <h4 className="text-xl font-bold mb-2 text-white">Standard</h4>
+              <div className="text-3xl font-bold text-white mb-2">$9,500</div>
+              <p className="text-sm text-slate-400 mb-4">per year</p>
+              <ul className="space-y-2 text-sm text-slate-300">
                 <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0" />
-                  <span>Up to 250 employees</span>
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                  <span>1-250 active employees</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0" />
-                  <span>Unlimited QR verification events</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0" />
-                  <span>Unlimited historical audit retention</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0" />
-                  <span>Read-only regulator access</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0" />
-                  <span>No per-scan or per-user fees</span>
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                  <span>All core features</span>
                 </li>
               </ul>
-              <p className="text-sm text-slate-400 mt-4 pt-4 border-t border-slate-700">
-                Organizations exceeding 250 employees require enterprise pricing.
-              </p>
             </div>
+
+            {/* Enterprise Tier 1 */}
+            <div className="p-6 rounded-xl bg-slate-800/50 border border-slate-700">
+              <h4 className="text-xl font-bold mb-2 text-white">Enterprise</h4>
+              <div className="text-3xl font-bold text-white mb-2">$18,000</div>
+              <p className="text-sm text-slate-400 mb-4">per year</p>
+              <ul className="space-y-2 text-sm text-slate-300">
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                  <span>251-500 active employees</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                  <span>All core features</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Enterprise Tier 2 */}
+            <div className="p-6 rounded-xl bg-slate-800/50 border border-slate-700">
+              <h4 className="text-xl font-bold mb-2 text-white">Enterprise Plus</h4>
+              <div className="text-3xl font-bold text-white mb-2">Custom</div>
+              <p className="text-sm text-slate-400 mb-4">contact sales</p>
+              <ul className="space-y-2 text-sm text-slate-300">
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                  <span>500+ active employees</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                  <span>Volume discounts available</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Pricing Terms */}
+          <div className="p-6 rounded-lg bg-slate-900/50 border border-slate-700">
+            <h4 className="text-lg font-semibold mb-4 text-white">Pricing Terms</h4>
+            <ul className="space-y-2 text-sm text-slate-300">
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                <span><strong>Billing:</strong> Annual payment in advance, Net 30 terms available</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                <span><strong>Employee Definition:</strong> Active employees with certification records as of annual billing date, excluding terminated employees with historical-only records</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                <span><strong>Organization:</strong> Single legal entity under one U.S. EIN or equivalent tax ID, all locations included</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                <span><strong>Mid-Contract Growth:</strong> Service continues uninterrupted if employee count exceeds tier during contract term. Pricing adjustment applies at renewal only.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                <span><strong>Renewal:</strong> Pricing locked for initial term. Annual adjustments capped at 8% with 60-day notice.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                <span><strong>Multi-Year:</strong> 3-year commitment: 5% discount | 5-year commitment: 10% discount</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                <span><strong>Payment Methods:</strong> ACH, wire transfer, credit card, or invoice/PO (Net 30)</span>
+              </li>
+            </ul>
           </div>
         </section>
 
@@ -161,25 +214,45 @@ export default function Pricing() {
 
         {/* Included / Excluded */}
         <section className="grid lg:grid-cols-2 gap-12">
-          <div>
-            <h3 className="text-2xl font-semibold mb-6 flex items-center gap-2">
-              <CheckCircle2 className="w-6 h-6 text-emerald-400" />
-              What This License Includes
-            </h3>
-            <ul className="space-y-3">
-              {included.map((item, i) => (
-                <li key={i} className="flex items-start gap-3 text-slate-300">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" />
-                  {item}
-                </li>
-              ))}
-            </ul>
+          <div className="space-y-8">
+            <div>
+              <h3 className="text-2xl font-semibold mb-6 flex items-center gap-2">
+                <CheckCircle2 className="w-6 h-6 text-emerald-400" />
+                Core Features (All Tiers)
+              </h3>
+              <ul className="space-y-3">
+                {coreFeatures.map((item, i) => (
+                  <li key={i} className="flex items-start gap-3 text-slate-300">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                <CheckCircle2 className="w-6 h-6 text-blue-400" />
+                AI Features (Fair Use Caps)
+              </h3>
+              <ul className="space-y-3">
+                {aiFeatures.map((item, i) => (
+                  <li key={i} className="flex items-start gap-3 text-slate-300">
+                    <CheckCircle2 className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <p className="text-sm text-slate-400 mt-4 p-3 bg-slate-900/50 rounded border border-slate-700">
+                <strong>Fair Use Policy:</strong> AI features process data in batch mode (nightly). Caps prevent abuse while accommodating normal business use. Enterprise customers exceeding caps should contact support for optimization review.
+              </p>
+            </div>
           </div>
 
           <div>
             <h3 className="text-2xl font-semibold mb-6 flex items-center gap-2">
               <XCircle className="w-6 h-6 text-red-400" />
-              Explicitly Not Included
+              Not Included
             </h3>
             <ul className="space-y-3">
               {excluded.map((item, i) => (
@@ -190,8 +263,7 @@ export default function Pricing() {
               ))}
             </ul>
             <p className="text-sm text-slate-500 mt-4">
-              This license covers verification and proof — not analytics or
-              advisory systems.
+              This license covers verification and compliance proof. Additional integrations and custom reporting available as add-ons.
             </p>
           </div>
         </section>
@@ -201,41 +273,51 @@ export default function Pricing() {
           <h3 className="text-2xl font-semibold mb-8 text-center">Pricing FAQ</h3>
           <div className="space-y-6">
             <div className="p-6 rounded-lg bg-slate-800/50 border border-slate-700">
-              <h4 className="font-semibold mb-2 text-white">Is pricing per organization or per employee?</h4>
+              <h4 className="font-semibold mb-2 text-white">How is "employee" defined for billing?</h4>
               <p className="text-slate-400">
-                Pricing is per organization. The $9,500/year fee covers your entire organization for up to 250 employees. Organizations with more than 250 employees require enterprise pricing.
+                Active employees with certification records as of the annual billing date. Terminated employees with historical-only records do not count toward your employee limit. Contractors and temporary workers with certification records do count.
               </p>
             </div>
 
             <div className="p-6 rounded-lg bg-slate-800/50 border border-slate-700">
               <h4 className="font-semibold mb-2 text-white">What happens if we grow mid-contract?</h4>
               <p className="text-slate-400">
-                If your employee count exceeds 250 during your contract period, contact us at{' '}
-                <a href="mailto:support@trexaios.com" className="text-blue-400 hover:text-blue-300">
-                  support@trexaios.com
-                </a>{' '}
-                to discuss enterprise pricing. Pricing adjustments, if needed, are prorated and applied at renewal.
+                Service continues uninterrupted. No mid-contract invoicing. If your employee count exceeds your tier during the contract period, pricing adjustment applies at renewal only. You will not be locked out or charged overage fees.
               </p>
             </div>
 
             <div className="p-6 rounded-lg bg-slate-800/50 border border-slate-700">
-              <h4 className="font-semibold mb-2 text-white">Does pricing apply per location?</h4>
+              <h4 className="font-semibold mb-2 text-white">What defines "one organization"?</h4>
               <p className="text-slate-400">
-                No. The annual fee covers all locations operated by your organization under a single account.
+                A single legal entity under one U.S. EIN (or equivalent tax ID). All physical locations operated by that entity are included. Separate subsidiaries or legal entities require separate licenses.
               </p>
             </div>
 
             <div className="p-6 rounded-lg bg-slate-800/50 border border-slate-700">
-              <h4 className="font-semibold mb-2 text-white">Are there storage or usage caps?</h4>
+              <h4 className="font-semibold mb-2 text-white">Are there usage caps beyond employee count?</h4>
               <p className="text-slate-400">
-                No. The system includes unlimited QR scans, unlimited historical retention, and unlimited verification events. Employee count is the only limit.
+                Core verification features (QR scans, historical retention, regulator access) are unlimited under normal business use. AI features have fair use caps (see above) to prevent abuse. Excessive automated scanning (&gt;100,000 scans/day) may require optimization review.
               </p>
             </div>
 
             <div className="p-6 rounded-lg bg-slate-800/50 border border-slate-700">
-              <h4 className="font-semibold mb-2 text-white">Can pricing be locked for multi-year terms?</h4>
+              <h4 className="font-semibold mb-2 text-white">Can we lock pricing for multiple years?</h4>
               <p className="text-slate-400">
-                Yes. Multi-year pricing agreements are available for organizations seeking cost predictability. Contact us to discuss terms.
+                Yes. 3-year commitments receive 5% discount. 5-year commitments receive 10% discount. Pricing is locked for the commitment term with no annual adjustments.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-lg bg-slate-800/50 border border-slate-700">
+              <h4 className="font-semibold mb-2 text-white">What are your payment terms?</h4>
+              <p className="text-slate-400">
+                Annual payment in advance. Net 30 terms available for invoice/PO customers. We accept ACH, wire transfer, credit card, or traditional invoicing. No setup fees or implementation charges.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-lg bg-slate-800/50 border border-slate-700">
+              <h4 className="font-semibold mb-2 text-white">What happens at renewal?</h4>
+              <p className="text-slate-400">
+                Pricing is locked for your initial term. At renewal, your rate may be adjusted based on current employee count and tier. Annual adjustments are capped at 8% with 60-day advance notice. No surprise price increases.
               </p>
             </div>
           </div>
