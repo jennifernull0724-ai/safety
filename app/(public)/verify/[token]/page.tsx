@@ -138,7 +138,7 @@ export default async function PublicQRVerificationPage({ params }: Props) {
             <tbody>
               {employee.certifications.map((cert) => (
                 <tr key={cert.id} className="border-b border-border-default">
-                  <td className="p-3 text-text-primary">{cert.certificationTypeId}</td>
+                  <td className="p-3 text-text-primary">{cert.certificationType}</td>
                   <td className="p-3 text-text-secondary">{cert.issuingAuthority || 'N/A'}</td>
                   <td className="p-3 text-text-secondary">
                     {cert.issueDate ? new Date(cert.issueDate).toLocaleDateString() : 'N/A'}
