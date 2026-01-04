@@ -93,6 +93,139 @@ export default function Page() {
         </div>
       </section>
 
+      {/* SYSTEM ROLE & BOUNDARIES */}
+      <section className="py-12 md:py-20 px-4 md:px-6 bg-slate-900/50">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8 text-white">
+            System Role & Boundaries
+          </h2>
+
+          <div className="space-y-4 text-base md:text-lg text-slate-300">
+            <p>
+              T-REX AI OS is a system of verification and evidence preservation.
+            </p>
+
+            <div className="p-6 bg-slate-800/50 rounded-lg border border-slate-700">
+              <h3 className="text-lg font-semibold text-white mb-3">What This System Does NOT Replace</h3>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span>HRIS (Human Resource Information Systems) — employment records remain in your existing HR system</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span>LMS (Learning Management Systems) — training delivery and completion tracking remain in your existing systems</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span>Access control or badge systems — physical access control remains separate</span>
+                </li>
+              </ul>
+            </div>
+
+            <p>
+              <strong>Existing systems remain the system of record.</strong> T-REX AI OS records certification state, verification events, and historical status at the time of verification.
+            </p>
+
+            <p>
+              The platform preserves evidence of compliance state without mutating source systems.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* INTEGRATIONS & APIS */}
+      <section className="py-12 md:py-20 px-4 md:px-6 bg-slate-950">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8 text-white">
+            Integrations & APIs
+          </h2>
+
+          <div className="space-y-4 text-base md:text-lg text-slate-300">
+            <p>
+              This system can integrate with existing HR, training, and compliance systems.
+            </p>
+
+            <div className="p-6 bg-slate-800/50 rounded-lg border border-slate-700">
+              <h3 className="text-lg font-semibold text-white mb-3">How Data Can Enter the System</h3>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span>Manual administrative entry</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span>Bulk import (CSV or structured upload)</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span>API-based ingestion (where enabled)</span>
+                </li>
+              </ul>
+            </div>
+
+            <p>
+              The platform exposes controlled integration surfaces for certification data ingestion and verification event logging.
+            </p>
+
+            <p>
+              API availability and documentation are provided during technical review. This system is designed to coexist with existing enterprise systems, not replace them.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* HOW CERTIFICATION DATA ENTERS THE SYSTEM */}
+      <section className="py-12 md:py-20 px-4 md:px-6 bg-slate-900/50">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8 text-white">
+            How Certification Data Enters the System
+          </h2>
+
+          <div className="space-y-4 text-base md:text-lg text-slate-300">
+            <p>
+              Certification data is entered by authorized administrators. Employees do not edit or modify certification records.
+            </p>
+
+            <div className="p-6 bg-slate-800/50 rounded-lg border border-slate-700">
+              <h3 className="text-lg font-semibold text-white mb-3">Supported Ingestion Methods</h3>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span>Manual administrative entry</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span>Bulk upload for existing records</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span>Integration from external systems (where configured)</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="p-6 bg-slate-800/50 rounded-lg border border-slate-700">
+              <h3 className="text-lg font-semibold text-white mb-3">Record Integrity</h3>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span>Corrections do not overwrite records</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span>Updates create new, time-stamped entries linked to prior records</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span>Original evidence is preserved for historical review</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* WHAT IT DOES */}
       <section className="py-12 md:py-20 px-4 md:px-6 bg-slate-950">
         <div className="max-w-4xl mx-auto">
