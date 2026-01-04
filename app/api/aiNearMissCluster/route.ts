@@ -14,14 +14,17 @@ export async function GET(req: NextRequest) {
     if (!acc[cat]) acc[cat] = [];
     acc[cat].push(nm);
     return acc;
-  }, {} as Record<string, typeof nearMisses>);
+  }, {} as Record<string, any[]>);
 
-  const clusters = Object.entries(categories).map(([category, items]) => ({
-    category,
-    count: items.length,
-    items: items.slice(0, 5),
-    aiAdvisory: 'This is an AI-generated advisory insight. It does not block operations.',
-  }));
+  const clusters = Object.entries(categories).map(([category, items]) => {
+    const itemsArray = items as any[];
+    return {
+      category,
+      count: itemsArray.length,
+      items: itemsArray.slice(0, 5),
+      aiAdvisory: 'This is an AI-generated advisory insight. It does not block operations.',
+    };
+  });
 
   return NextResponse.json({ 
     clusters,

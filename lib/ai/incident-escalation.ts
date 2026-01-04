@@ -129,9 +129,9 @@ export async function getEscalationPatterns(organizationId: string): Promise<{
       i.severity === 'FATAL' || i.incidentType.includes('derailment')
     ).length;
 
-    const commonPatterns = [
-      ...new Set(incidents.map(i => i.incidentType)),
-    ].slice(0, 5);
+    const commonPatterns = Array.from(
+      new Set(incidents.map(i => i.incidentType))
+    ).slice(0, 5);
 
     return {
       totalIncidents,

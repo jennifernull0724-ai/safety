@@ -109,7 +109,7 @@ export async function calculateNearMissClusterRisk(organizationId: string): Prom
     return acc;
   }, {} as Record<string, number>);
   
-  const maxCategoryCount = Math.max(...Object.values(categoryCounts), 0);
+  const maxCategoryCount = Math.max(...(Object.values(categoryCounts) as number[]), 0);
   factors.push({
     factor: 'Category Clustering',
     weight: 0.3,
