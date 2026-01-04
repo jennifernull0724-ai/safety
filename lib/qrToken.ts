@@ -1,6 +1,6 @@
 // lib/qrToken.ts
 import crypto from 'crypto';
-import prisma from './prisma';
+import { prisma } from './prisma';
 
 /**
  * Generates a hashed QR token for an employee and stores it.

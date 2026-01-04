@@ -6,7 +6,7 @@ import {
   Shield,
   ShieldCheck,
   ShieldAlert,
-  ShieldX,
+  ShieldOff,
   User,
   Building2,
   FileCheck,
@@ -57,7 +57,7 @@ const statusConfig: any = {
   blocked: {
     label: 'BLOCKED',
     sublabel: 'Work authorization suspended',
-    icon: ShieldX,
+    icon: ShieldOff,
     color: 'red'
   }
 };
@@ -118,7 +118,7 @@ export default function QRVerification() {
     return (
       <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
         <div className="text-center">
-          <ShieldX className="w-14 h-14 text-red-400 mx-auto mb-4" />
+          <ShieldOff className="w-14 h-14 text-red-400 mx-auto mb-4" />
           <h1 className="text-xl font-bold mb-2">Verification Failed</h1>
           <p className="text-slate-400">{error || 'Invalid QR code'}</p>
         </div>

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 // GET /api/certificationExpiration - Get expired certifications (regulated, org/role enforced)
 export async function GET(req: NextRequest) {

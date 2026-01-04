@@ -48,7 +48,7 @@ export default async function SupervisorDashboardPage() {
               <tbody>
                 {employeesWithCompliance.map((emp) => (
                   <tr key={emp.id} className="border-b border-border-default">
-                    <td className="p-3 text-text-primary">{emp.user?.name || 'Unknown'}</td>
+                    <td className="p-3 text-text-primary">{`${emp.firstName} ${emp.lastName}`}</td>
                     <td className="p-3 text-text-secondary">{emp.tradeRole || 'N/A'}</td>
                     <td className="p-3">
                       <StatusBadge status={emp.complianceState} timestamp={new Date()} />

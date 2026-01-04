@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { writeEvidenceNode, appendLedgerEntry } from '@/lib/evidence';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 // POST /api/scan - Log a QR scan (public, append-only, no mutation)
 export async function POST(req: NextRequest) {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 // GET /api/public/certification/:id - Public QR verification (public-only, no org/role enforcement)
 export async function GET(req: NextRequest) {
