@@ -161,33 +161,3 @@ export default async function SafetyDashboardPage() {
     </AppShell>
   );
 }
-        <div className="bg-blue-50 rounded-lg shadow p-4">
-          <h2 className="font-semibold text-blue-800">Near Misses (30d)</h2>
-          <p className="text-3xl font-bold text-blue-600">{nearMisses.length}</p>
-        </div>
-        <div className="bg-red-50 rounded-lg shadow p-4">
-          <h2 className="font-semibold text-red-800">Incidents</h2>
-          <p className="text-3xl font-bold text-red-600">{incidents.length}</p>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-lg shadow p-4">
-        <h2 className="font-semibold mb-4">Recent Near Misses</h2>
-        {nearMisses.length === 0 ? (
-          <p className="text-gray-500">No near misses reported</p>
-        ) : (
-          <ul className="space-y-2">
-            {nearMisses.slice(0, 5).map(nm => (
-              <li key={nm.id} className="border-b pb-2">
-                <span className="font-medium">{nm.title || 'Untitled'}</span>
-                <span className="ml-2 text-sm text-gray-500">
-                  {new Date(nm.reportedAt).toLocaleDateString()}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </div>
-  );
-}

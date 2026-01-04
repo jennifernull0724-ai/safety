@@ -135,10 +135,8 @@ export default function QRVerification() {
       <div className="max-w-md mx-auto space-y-6">
         {/* Header */}
         <div className="text-center">
-          <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mx-auto mb-3">
-            <Shield className="w-6 h-6 text-white" />
-          </div>
-          <h1 className="font-semibold">System of Proof</h1>
+          <img src="/trex-logo.png" alt="T-REX AI OS" className="h-12 w-auto mx-auto mb-3" />
+          <h1 className="font-semibold">T-REX AI OS</h1>
           <p className="text-xs text-slate-500">QR Verification</p>
         </div>
 

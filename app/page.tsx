@@ -17,6 +17,8 @@ import {
   Scale,
   Eye
 } from 'lucide-react';
+import { ContactForm } from '@/components/ContactForm';
+import { DemoRequestForm } from '@/components/DemoRequestForm';
 
 /**
  * ROOT LANDING PAGE
@@ -59,212 +61,367 @@ export default function Page() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white overflow-hidden">
+    <div className="min-h-screen bg-slate-950 text-white">
       {/* NAV */}
-      <nav className="fixed top-0 inset-x-0 z-50 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/50">
+      <nav className="fixed top-0 inset-x-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
-              <Shield className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-semibold">System of Proof</span>
+            <img src="/trex-logo.png" alt="T-REX AI OS" className="h-10 w-auto" />
+            <span className="text-xl font-semibold text-slate-900">T-REX AI OS</span>
           </div>
-          <Link
-            href={dashboardLink}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-500 font-medium transition-colors"
-          >
-            Enter Dashboard
-            <ArrowRight className="w-4 h-4" />
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/pricing"
+              className="text-slate-600 hover:text-slate-900 transition-colors font-medium"
+            >
+              Pricing
+            </Link>
+            <Link
+              href="/create-account"
+              className="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors font-medium"
+            >
+              Create Account
+            </Link>
+            <Link
+              href="/login"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors"
+            >
+              Login
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
         </div>
       </nav>
 
       {/* HERO */}
-      <section className="relative pt-36 pb-28 px-6">
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:4rem_4rem]" />
-          <div className="absolute inset-0 bg-gradient-to-b from-slate-950 via-slate-950/80 to-slate-950" />
-        </div>
+      <section className="pt-32 pb-20 px-6 bg-slate-900">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6 text-white">
+            Employee Certification & Compliance Record System for Regulated Work
+          </h1>
+          
+          <p className="text-xl text-slate-300 mb-10 max-w-3xl mx-auto leading-relaxed">
+            Records employee certifications, preserves historical compliance state, and provides regulator-safe verification through immutable records and QR-based evidence access.
+          </p>
 
-        <div className="relative max-w-5xl mx-auto text-center">
-          <div
-            style={{
-              animation: 'fadeInUp 0.8s ease-out both'
-            }}
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800/50 border border-slate-700/50 mb-8">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-sm text-slate-300">
-                Employee-Anchored · QR-Verified · Audit-Defensible
-              </span>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Link
+              href="/create-account"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-lg transition-colors"
+            >
+              Create Account
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+            <Link
+              href="/pricing"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg border-2 border-slate-700 text-slate-300 hover:bg-slate-800 font-semibold text-lg transition-colors"
+            >
+              View Pricing
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* WHAT IT DOES */}
+      <section className="py-20 px-6 bg-slate-950">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold mb-8 text-white">
+            What This System Does
+          </h2>
+
+          <ul className="space-y-4 text-lg text-slate-300">
+            <li className="flex items-start gap-3">
+              <span className="text-blue-400 font-bold mt-1">•</span>
+              <span>Records employee certification data and supporting documents</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-blue-400 font-bold mt-1">•</span>
+              <span>Preserves the exact compliance state of each employee at any point in time</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-blue-400 font-bold mt-1">•</span>
+              <span>Prevents silent edits, overwrites, or retroactive changes</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-blue-400 font-bold mt-1">•</span>
+              <span>Creates an append-only audit history of all certification events</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-blue-400 font-bold mt-1">•</span>
+              <span>Provides read-only access for inspectors and regulators</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-blue-400 font-bold mt-1">•</span>
+              <span>Supports public QR-based verification of historical compliance status</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      {/* CORE CAPABILITIES */}
+      <section className="py-20 px-6 bg-slate-900/50">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold mb-12 text-white">
+            Core Capabilities
+          </h2>
+
+          <div className="space-y-10">
+            <div>
+              <h3 className="text-2xl font-bold mb-3 text-white">
+                Immutable Compliance Records
+              </h3>
+              <p className="text-lg text-slate-300 leading-relaxed">
+                Certification data is preserved as entered. Corrections create new records; prior states remain intact.
+              </p>
             </div>
 
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 bg-gradient-to-b from-white to-slate-400 bg-clip-text text-transparent">
-              System of Proof
-            </h1>
+            <div>
+              <h3 className="text-2xl font-bold mb-3 text-white">
+                Employee-Anchored Historical State
+              </h3>
+              <p className="text-lg text-slate-300 leading-relaxed">
+                The system can answer: "What was this employee's certification status on a specific date?"
+              </p>
+            </div>
 
-            <p className="text-xl md:text-2xl text-slate-400 mb-6">
-              Compliance verification built for industries where proof matters.
-            </p>
-
-            <p className="text-lg text-slate-500 max-w-3xl mx-auto mb-12">
-              Not checklists. Not spreadsheets.  
-              Immutable, verifiable evidence — tied to people, time, and place.
-            </p>
-
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Link
-                href={dashboardLink}
-                className="inline-flex items-center justify-center gap-2 px-10 py-6 rounded-lg bg-blue-600 hover:bg-blue-500 font-medium text-lg transition-colors"
-              >
-                Enter Dashboard
-                <ArrowRight className="w-5 h-5" />
-              </Link>
-              <Link
-                href="/pricing"
-                className="inline-flex items-center justify-center gap-2 px-10 py-6 rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800 font-medium text-lg transition-colors"
-              >
-                View Licensing
-              </Link>
+            <div>
+              <h3 className="text-2xl font-bold mb-3 text-white">
+                QR-Based Verification for Audits & Inspections
+              </h3>
+              <p className="text-lg text-slate-300 leading-relaxed">
+                QR codes resolve to read-only records showing compliance status exactly as it existed at the time of issuance.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* WHY */}
-      <section className="py-24 px-6 bg-slate-900/50">
-        <div className="max-w-6xl mx-auto text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Why System of Proof Exists
+      {/* QR VERIFICATION */}
+      <section className="py-20 px-6 bg-slate-950">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold mb-8 text-white">
+            QR Verification (How It Works)
           </h2>
-          <p className="text-xl text-slate-400">
-            Regulators don't ask what you intended.  
-            They ask what you can prove.
-          </p>
-        </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-          {[
-            { icon: AlertTriangle, text: 'Editable after the fact' },
-            { icon: Users, text: 'User-centric instead of employee-centric' },
-            { icon: Eye, text: 'Missing verification history' },
-            { icon: FileCheck, text: 'No immutable evidence' }
-          ].map((item, i) => (
-            <div
-              key={i}
-              className="p-6 rounded-2xl bg-slate-800/40 border border-slate-700/50"
-              style={{
-                animation: `fadeInUp 0.3s ease-out ${i * 0.1}s both`
-              }}
-            >
-              <item.icon className="w-8 h-8 text-red-400 mb-4" />
-              <p className="text-slate-300">
-                Most systems fail because they are:
-              </p>
-              <p className="text-white font-medium mt-2">{item.text}</p>
-            </div>
-          ))}
+          <div className="mb-8">
+            <p className="text-lg text-slate-300 leading-relaxed mb-6">
+              QR codes provide inspectors and regulators with immediate, read-only access to an employee's recorded compliance status at a specific point in time, preserved exactly as it existed and immune to later modification.
+            </p>
+          </div>
+
+          <ul className="space-y-3 text-lg text-slate-300">
+            <li className="flex items-start gap-3">
+              <span className="text-blue-400 font-bold mt-1">•</span>
+              <span>QR codes link to public, read-only verification pages</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-blue-400 font-bold mt-1">•</span>
+              <span>No login required</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-blue-400 font-bold mt-1">•</span>
+              <span>Displays employee certification status, issuer, and validity dates</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-blue-400 font-bold mt-1">•</span>
+              <span>Reflects the recorded state at the time of issuance</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-blue-400 font-bold mt-1">•</span>
+              <span>Does not update when certifications change</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-blue-400 font-bold mt-1">•</span>
+              <span>Does not grant access or permissions</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-blue-400 font-bold mt-1">•</span>
+              <span>Does not authenticate users</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-blue-400 font-bold mt-1">•</span>
+              <span>Exists solely for inspection, audit, and post-incident verification</span>
+            </li>
+          </ul>
         </div>
       </section>
 
-      {/* CORE PRINCIPLES */}
-      <section className="py-24 px-6">
-        <div className="max-w-6xl mx-auto grid lg:grid-cols-3 gap-10">
-          {[
-            {
-              icon: Lock,
-              title: 'Immutable Evidence',
-              desc: 'Nothing is overwritten. Nothing is deleted. Ever.'
-            },
-            {
-              icon: QrCode,
-              title: 'QR-Based Verification',
-              desc: 'Every scan resolves to identity, status, and timestamp.'
-            },
-            {
-              icon: Scale,
-              title: 'Audit-Defensible',
-              desc: 'Designed to survive inspections, investigations, and court.'
-            }
-          ].map((item, i) => (
-            <div
-              key={i}
-              className="p-8 rounded-3xl bg-slate-800/40 border border-slate-700/50"
-              style={{
-                animation: `fadeInUp 0.3s ease-out ${i * 0.1}s both`
-              }}
-            >
-              <item.icon className="w-10 h-10 text-blue-400 mb-6" />
-              <h3 className="text-2xl font-semibold mb-3">{item.title}</h3>
-              <p className="text-slate-400">{item.desc}</p>
-            </div>
-          ))}
+      {/* WHAT IT DOES NOT DO */}
+      <section className="py-20 px-6 bg-slate-900/50">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold mb-8 text-white">
+            What This System Does Not Do
+          </h2>
+
+          <ul className="space-y-4 text-lg text-slate-300">
+            <li className="flex items-start gap-3">
+              <span className="text-blue-400 font-bold mt-1">•</span>
+              <span>This system records and verifies compliance; it does not assign work</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-blue-400 font-bold mt-1">•</span>
+              <span>Enforcement decisions occur outside the verification layer</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-blue-400 font-bold mt-1">•</span>
+              <span>QR verification is evidence, not access control</span>
+            </li>
+          </ul>
         </div>
       </section>
 
       {/* WHO IT'S FOR */}
-      <section className="py-24 px-6 bg-slate-900/50">
-        <div className="max-w-6xl mx-auto text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Built for High-Risk Industries
+      <section className="py-20 px-6 bg-slate-950">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold mb-4 text-white text-center">
+            Built for High-Risk, Regulated Environments
           </h2>
-          <p className="text-slate-400 text-lg">
-            Where compliance failure has real consequences.
+          <p className="text-lg text-slate-300 mb-12 text-center max-w-3xl mx-auto">
+            Industries where compliance failures result in shutdowns, fines, litigation, or safety incidents.
           </p>
-        </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-          {[
-            { icon: Train, label: 'Railroads' },
-            { icon: HardHat, label: 'Construction' },
-            { icon: Leaf, label: 'Environmental' },
-            { icon: Building2, label: 'Enterprise / Regulators' }
-          ].map((item, i) => (
-            <div
-              key={i}
-              className="p-8 rounded-2xl bg-slate-800/40 border border-slate-700/50 text-center"
-            >
-              <item.icon className="w-10 h-10 text-blue-400 mx-auto mb-4" />
-              <p className="text-lg font-medium">{item.label}</p>
-            </div>
-          ))}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { icon: Train, label: 'Rail & Transportation', desc: 'FRA compliance, conductor certification, track safety' },
+              { icon: HardHat, label: 'Construction', desc: 'OSHA requirements, safety training, equipment certification' },
+              { icon: Leaf, label: 'Environmental Services', desc: 'EPA permits, hazmat training, site authorization' },
+              { icon: Building2, label: 'Enterprise & Regulators', desc: 'Multi-site operations, inspection agencies, compliance teams' }
+            ].map((item, i) => (
+              <div key={i} className="p-6 bg-slate-800/40 rounded-lg border border-slate-700/50">
+                <item.icon className="w-10 h-10 text-blue-400 mb-3" />
+                <h3 className="font-bold text-white mb-2">{item.label}</h3>
+                <p className="text-sm text-slate-300">{item.desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-24 px-6 text-center">
-        <h2 className="text-3xl md:text-4xl font-bold mb-6">
-          Proof Is the Product
-        </h2>
-        <p className="text-slate-400 text-lg mb-10">
-          If it cannot be proven later, it did not happen.
-        </p>
-        <Link
-          href="/pricing"
-          className="inline-flex items-center gap-2 px-12 py-6 rounded-lg bg-blue-600 hover:bg-blue-500 font-medium text-lg transition-colors"
-        >
-          View Organization Licensing
-          <ArrowRight className="w-5 h-5" />
-        </Link>
+      {/* WHY IT MATTERS */}
+      <section className="py-20 px-6 bg-slate-950">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold mb-12 text-white text-center">
+            Why Immutable Records Matter
+          </h2>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="p-8 bg-slate-800/50 rounded-lg border border-slate-700">
+              <h3 className="text-xl font-bold mb-4 text-white">
+                Editable Records Are Not Evidence
+              </h3>
+              <p className="text-slate-300 leading-relaxed">
+                Systems that allow logs to be edited, certifications to be overwritten, or records to be deleted after the fact cannot provide reliable evidence during regulatory reviews or legal proceedings.
+              </p>
+            </div>
+
+            <div className="p-8 bg-slate-800/50 rounded-lg border border-slate-700">
+              <h3 className="text-xl font-bold mb-4 text-white">
+                Current Status Is Not Historical Proof
+              </h3>
+              <p className="text-slate-300 leading-relaxed">
+                Regulators and courts require proof of compliance at the time work was performed—not what the status is today. Historical state preservation is mandatory for defensible compliance.
+              </p>
+            </div>
+
+            <div className="p-8 bg-slate-800/50 rounded-lg border border-slate-700">
+              <h3 className="text-xl font-bold mb-4 text-white">
+                User Accounts Are Not Employees
+              </h3>
+              <p className="text-slate-300 leading-relaxed">
+                User-centric systems lose the connection between work and the individual who performed it. Employee-anchored records preserve attribution and accountability.
+              </p>
+            </div>
+
+            <div className="p-8 bg-slate-800/50 rounded-lg border border-slate-700">
+              <h3 className="text-xl font-bold mb-4 text-white">
+                Exports Are Not Audit Trails
+              </h3>
+              <p className="text-slate-300 leading-relaxed">
+                Screenshots and spreadsheet exports lack tamper detection, verifiable timestamps, and audit continuity. Append-only systems maintain evidentiary integrity.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* REGULATORY & TRUST */}
+      <section className="py-20 px-6 bg-slate-900/50">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold mb-8 text-white">
+            System Design for Regulatory Environments
+          </h2>
+
+          <ul className="space-y-4 text-lg text-slate-300">
+            <li className="flex items-start gap-3">
+              <span className="text-blue-400 font-bold mt-1">•</span>
+              <span>Append-only audit logs</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-blue-400 font-bold mt-1">•</span>
+              <span>Time-stamped evidence retention</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-blue-400 font-bold mt-1">•</span>
+              <span>Read-only regulator access</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-blue-400 font-bold mt-1">•</span>
+              <span>Exportable evidence packages (PDF / ZIP)</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-blue-400 font-bold mt-1">•</span>
+              <span>Designed to support regulatory review (FRA, OSHA, EPA contexts)</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      {/* CONVERSION CTA */}
+      <section className="py-20 px-6 bg-white border-t border-slate-200">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl font-bold mb-4 text-slate-900">
+            Record What Matters. Preserve the Evidence.
+          </h2>
+          <p className="text-lg text-slate-600 mb-10">
+            Pricing scales based on organizational size, verification volume, and risk profile.
+          </p>
+
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Link
+              href="/create-account"
+              className="inline-flex items-center justify-center gap-2 px-10 py-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-lg transition-colors"
+            >
+              Create Account
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+            <Link
+              href="/pricing"
+              className="inline-flex items-center justify-center gap-2 px-10 py-4 rounded-lg border-2 border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold text-lg transition-colors"
+            >
+              View Pricing Details
+            </Link>
+          </div>
+
+          <div className="mt-8 text-sm text-slate-500">
+            Already have an account? <Link href="/login" className="text-blue-600 hover:text-blue-700 font-medium">Login here</Link>
+          </div>
+        </div>
+      </section>
+
+      {/* CONTACT FORM */}
+      <section className="py-20 px-6 bg-slate-950">
+        <ContactForm />
+      </section>
+
+      {/* DEMO REQUEST */}
+      <section className="py-20 px-6 bg-slate-900/50">
+        <DemoRequestForm />
       </section>
 
       {/* FOOTER */}
-      <footer className="border-t border-slate-800 py-10 text-center text-sm text-slate-500">
-        © {new Date().getFullYear()} System of Proof. All rights reserved.
+      <footer className="border-t border-slate-200 bg-white py-10 text-center text-sm text-slate-500">
+        © {new Date().getFullYear()} T-REX AI OS. All rights reserved.
       </footer>
-
-      <style jsx>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(40px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
     </div>
   );
 }

@@ -47,6 +47,9 @@ export default function CreateAccount() {
       // await signUp({ fullName, email, password })
 
       await new Promise(res => setTimeout(res, 1200)); // placeholder
+      
+      // Redirect to payment page
+      window.location.href = '/payment';
     } catch (err) {
       setError('Unable to create account');
     } finally {
@@ -64,12 +67,10 @@ export default function CreateAccount() {
       >
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-12 h-12 mx-auto rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-4">
-            <Shield className="w-6 h-6 text-white" />
-          </div>
+          <img src="/trex-logo.png" alt="T-REX AI OS" className="h-16 w-auto mx-auto mb-6" />
           <h1 className="text-2xl font-bold">Create Account</h1>
           <p className="text-slate-400 mt-1">
-            Secure access to System of Proof
+            Secure access to T-REX AI OS
           </p>
         </div>
 

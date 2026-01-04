@@ -17,7 +17,7 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   return NextResponse.json({
-    productName: 'System of Proof',
+    productName: 'T-REX AI OS',
     tagline: 'Compliance verification built for proof',
     ctaPrimary: 'Enter Dashboard',
     ctaSecondary: 'View Pricing',

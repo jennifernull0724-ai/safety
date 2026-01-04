@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
 import {
@@ -13,7 +15,7 @@ import {
 } from 'lucide-react';
 
 /**
- * PRICING PAGE — ORGANIZATION VERIFICATION LICENSE
+ * PRICING PAGE — VERIFICATION LICENSE
  * 
  * HARD RULES:
  * - MARKETING-ONLY SURFACE
@@ -27,32 +29,11 @@ import {
  * - It does NOT imply free verification
  * 
  * CONTENT LOCK:
- * - Pricing tiers, inclusions, exclusions, compliance note MUST match exactly
+ * - Flat pricing, inclusions, exclusions MUST match exactly
  */
 
 export default function Pricing() {
-  const tiers = [
-    {
-      name: 'Small Contractor',
-      size: '≤ 25 employees',
-      price: '$4,500 / year'
-    },
-    {
-      name: 'Mid Contractor',
-      size: '26–100 employees',
-      price: '$9,500 / year'
-    },
-    {
-      name: 'Large Contractor',
-      size: '100–300 employees',
-      price: '$18,000 / year'
-    },
-    {
-      name: 'Railroad / Regulator',
-      size: 'Enterprise',
-      price: 'Custom ($25,000–$75,000 / year)'
-    }
-  ];
+  const flatPrice = '$9,500 / year';
 
   const included = [
     'Unlimited public QR verification pages',
@@ -66,14 +47,15 @@ export default function Pricing() {
     'Audit-grade evidence timelines',
     'Exportable legal packages (PDF / ZIP)',
     'Court-defensible proof of compliance at time of work',
-    'Fail-closed enforcement guarantees'
+    'Fail-closed enforcement guarantees',
+    'AI risk scoring and predictions',
+    'Fatigue modeling and analytics',
+    'Near-miss clustering',
+    'Incident escalation analytics',
+    'Advanced compliance dashboards'
   ];
 
   const excluded = [
-    'AI risk scoring or predictions',
-    'Fatigue modeling',
-    'Near-miss clustering',
-    'Incident escalation analytics',
     'Financial or cost overrun modeling',
     'Blockchain anchoring'
   ];
@@ -83,13 +65,11 @@ export default function Pricing() {
       {/* Header */}
       <header className="border-b border-slate-800/50 bg-slate-950/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 py-6 flex items-center gap-4">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-            <Shield className="w-5 h-5 text-white" />
-          </div>
+          <img src="/trex-logo.png" alt="T-REX AI OS" className="h-10 w-auto" />
           <div>
-            <h1 className="text-xl font-semibold">Organization Verification License</h1>
+            <h1 className="text-xl font-semibold">Verification License</h1>
             <p className="text-sm text-slate-400">
-              Enterprise / Railroad Pricing
+              Flat Annual Pricing
             </p>
           </div>
         </div>
@@ -107,8 +87,7 @@ export default function Pricing() {
             Trusted Verification Authority
           </h2>
           <p className="text-xl text-slate-400">
-            This license activates your organization as a trusted verification
-            authority within the System of Proof.
+            Get full access to the T-REX AI OS verification platform.
           </p>
           <p className="text-lg text-slate-500 mt-4">
             It enables public, regulator-safe QR verification while preserving
@@ -116,30 +95,79 @@ export default function Pricing() {
           </p>
         </section>
 
-        {/* Pricing Table */}
-        <section>
-          <h3 className="text-2xl font-semibold mb-8 text-center">
-            Annual License Tiers
-          </h3>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {tiers.map((tier, i) => (
-              <div
-                key={i}
-                className="p-6 rounded-3xl bg-slate-800/50 border border-slate-700/50"
-                style={{
-                  animation: `fadeInUp 0.3s ease-out ${i * 0.05}s both`
-                }}
-              >
-                <h4 className="text-xl font-semibold mb-2">{tier.name}</h4>
-                <p className="text-slate-400 text-sm mb-4">{tier.size}</p>
-                <div className="text-2xl font-bold text-white">{tier.price}</div>
-              </div>
-            ))}
+        {/* Pricing */}
+        <section className="max-w-2xl mx-auto">
+          <div
+            className="p-12 rounded-3xl bg-slate-800/50 border-2 border-blue-500/50 text-center"
+            style={{
+              animation: 'fadeInUp 0.3s ease-out both'
+            }}
+          >
+            <h3 className="text-3xl font-bold mb-4">Annual License</h3>
+            <div className="text-6xl font-bold text-white mb-6">{flatPrice}</div>
+            <p className="text-xl text-slate-400 mb-8">
+              Pricing is per organization, billed annually.
+            </p>
+            <div className="text-left bg-slate-900/50 rounded-lg p-6 border border-slate-700">
+              <h4 className="text-lg font-semibold mb-4 text-white">Included with $9,500/year</h4>
+              <ul className="space-y-2 text-slate-300">
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0" />
+                  <span>Up to 250 employees</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0" />
+                  <span>Unlimited QR verification events</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0" />
+                  <span>Unlimited historical audit retention</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0" />
+                  <span>Read-only regulator access</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0" />
+                  <span>No per-scan or per-user fees</span>
+                </li>
+              </ul>
+              <p className="text-sm text-slate-400 mt-4 pt-4 border-t border-slate-700">
+                Organizations exceeding 250 employees require enterprise pricing.
+              </p>
+            </div>
           </div>
-          <p className="text-center text-slate-500 mt-6">
-            Pricing scales with organizational exposure and verification volume —
-            not feature gating.
-          </p>
+        </section>
+
+        {/* What Does NOT Affect Price */}
+        <section className="max-w-4xl mx-auto">
+          <h3 className="text-2xl font-semibold mb-6 text-center">What Does NOT Affect Price</h3>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="p-6 rounded-lg bg-slate-800/50 border border-slate-700">
+              <h4 className="font-semibold mb-2 text-white">Number of QR Scans</h4>
+              <p className="text-sm text-slate-400">
+                Unlimited verification events at no additional cost.
+              </p>
+            </div>
+            <div className="p-6 rounded-lg bg-slate-800/50 border border-slate-700">
+              <h4 className="font-semibold mb-2 text-white">Certifications per Employee</h4>
+              <p className="text-sm text-slate-400">
+                Track multiple certifications per employee without extra charges.
+              </p>
+            </div>
+            <div className="p-6 rounded-lg bg-slate-800/50 border border-slate-700">
+              <h4 className="font-semibold mb-2 text-white">Historical Data Retention</h4>
+              <p className="text-sm text-slate-400">
+                Permanent immutable record retention included.
+              </p>
+            </div>
+            <div className="p-6 rounded-lg bg-slate-800/50 border border-slate-700">
+              <h4 className="font-semibold mb-2 text-white">Regulator Access</h4>
+              <p className="text-sm text-slate-400">
+                Read-only access for regulators is always included.
+              </p>
+            </div>
+          </div>
         </section>
 
         {/* Included / Excluded */}
@@ -179,50 +207,56 @@ export default function Pricing() {
           </div>
         </section>
 
-        {/* Compliance Notice */}
-        <section className="rounded-3xl bg-red-500/10 border border-red-500/30 p-8 max-w-4xl mx-auto">
-          <div className="flex items-start gap-4">
-            <AlertTriangle className="w-8 h-8 text-red-400 flex-shrink-0" />
-            <div>
-              <h4 className="text-xl font-semibold text-red-300 mb-2">
-                Important Compliance Notice
-              </h4>
-              <p className="text-slate-300">
-                Verification is not a free feature. Free systems cannot be
-                trusted in audits or court.
-              </p>
-              <p className="text-slate-400 mt-2">
-                This license certifies your organization as a verified source of
-                truth.
-              </p>
-            </div>
-          </div>
-        </section>
-
         {/* CTA */}
         <section className="text-center space-y-6">
           <Link
-            href="/activate-license"
+            href="/create-account"
             className="inline-flex items-center gap-2 px-10 py-6 rounded-lg bg-blue-600 hover:bg-blue-500 font-medium text-lg transition-colors"
           >
-            Activate Organization Verification
+            Get Started
             <ArrowRight className="w-5 h-5" />
           </Link>
+        </section>
 
-          <div>
-            <Link href="/enterprise-contact" className="text-blue-400 hover:underline">
-              Request Enterprise / Regulator Access
-            </Link>
+        {/* Pricing FAQ */}
+        <section className="max-w-4xl mx-auto">
+          <h3 className="text-2xl font-semibold mb-8 text-center">Pricing FAQ</h3>
+          <div className="space-y-6">
+            <div className="p-6 rounded-lg bg-slate-800/50 border border-slate-700">
+              <h4 className="font-semibold mb-2 text-white">Is pricing per organization or per employee?</h4>
+              <p className="text-slate-400">
+                Pricing is per organization. The $9,500/year fee covers your entire organization for up to 250 employees. Organizations with more than 250 employees require enterprise pricing.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-lg bg-slate-800/50 border border-slate-700">
+              <h4 className="font-semibold mb-2 text-white">What happens if we grow mid-contract?</h4>
+              <p className="text-slate-400">
+                If your employee count exceeds 250 during your contract period, contact us to discuss enterprise pricing. Pricing adjustments, if needed, are prorated and applied at renewal.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-lg bg-slate-800/50 border border-slate-700">
+              <h4 className="font-semibold mb-2 text-white">Does pricing apply per location?</h4>
+              <p className="text-slate-400">
+                No. The annual fee covers all locations operated by your organization under a single account.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-lg bg-slate-800/50 border border-slate-700">
+              <h4 className="font-semibold mb-2 text-white">Are there storage or usage caps?</h4>
+              <p className="text-slate-400">
+                No. The system includes unlimited QR scans, unlimited historical retention, and unlimited verification events. Employee count is the only limit.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-lg bg-slate-800/50 border border-slate-700">
+              <h4 className="font-semibold mb-2 text-white">Can pricing be locked for multi-year terms?</h4>
+              <p className="text-slate-400">
+                Yes. Multi-year pricing agreements are available for organizations seeking cost predictability. Contact us to discuss terms.
+              </p>
+            </div>
           </div>
-
-          <p className="text-sm text-slate-500 max-w-2xl mx-auto">
-            Organizations without an active license may still generate QR codes,
-            but public verification pages will display:
-            <br />
-            <span className="text-red-400 font-medium">
-              "NOT VERIFIED — ORGANIZATION NOT SUBSCRIBED."
-            </span>
-          </p>
         </section>
       </main>
 

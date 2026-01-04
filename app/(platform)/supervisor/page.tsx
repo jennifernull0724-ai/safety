@@ -83,28 +83,3 @@ export default async function SupervisorDashboardPage() {
     </AppShell>
   );
 }
-          <div className="text-center py-8">
-            <p className="text-gray-500 mb-4">No employees found</p>
-            <a
-              href="/employee-directory"
-              className="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-            >
-              Go to Employee Directory
-            </a>
-          </div>
-        ) : (
-          <ul className="space-y-2">
-            {employees.slice(0, 10).map(emp => (
-              <li key={emp.id} className="border-b pb-2 flex justify-between">
-                <span>{emp.firstName} {emp.lastName}</span>
-                <span className="text-sm text-gray-500">
-                  {emp.Certification?.length || 0} certifications
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </div>
-  );
-}

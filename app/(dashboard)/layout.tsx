@@ -9,7 +9,8 @@ import {
   CheckSquare, 
   FileText, 
   Building2, 
-  Settings 
+  Settings,
+  Shield
 } from 'lucide-react';
 
 const NAV_ITEMS = [
@@ -26,18 +27,11 @@ export default function PlatformLayout({ children }: { children: React.ReactNode
   const pathname = usePathname();
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
+    <div className="min-h-screen bg-slate-950 text-white flex flex-col">
       {/* Top Navigation */}
       <nav className="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <Shield className="w-5 h-5" />
-              </div>
-              <span className="text-lg font-semibold">T-REX AI OS</span>
-            </Link>
-
             <div className="flex items-center gap-1">
               {NAV_ITEMS.map((item) => {
                 const Icon = item.icon;
@@ -66,7 +60,12 @@ export default function PlatformLayout({ children }: { children: React.ReactNode
       </nav>
       
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-6 py-8">{children}</main>
+      <main className="flex-1 max-w-7xl mx-auto px-6 py-8 w-full">{children}</main>
+      
+      {/* Footer Branding */}
+      <footer className="py-4 text-center text-xs text-slate-600">
+        T-REX AI OS
+      </footer>
     </div>
   );
 }

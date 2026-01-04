@@ -38,6 +38,9 @@ export default function Login() {
       // await signIn({ email, password })
 
       await new Promise(res => setTimeout(res, 1200)); // placeholder
+      
+      // Redirect to dashboard after successful login
+      window.location.href = '/dashboard';
     } catch (err) {
       setError('Invalid email or password');
     } finally {
@@ -55,10 +58,8 @@ export default function Login() {
       >
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-12 h-12 mx-auto rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-4">
-            <Shield className="w-6 h-6 text-white" />
-          </div>
-          <h1 className="text-2xl font-bold">System of Proof</h1>
+          <img src="/trex-logo.png" alt="T-REX AI OS" className="h-16 w-auto mx-auto mb-6" />
+          <h1 className="text-2xl font-bold">T-REX AI OS</h1>
           <p className="text-slate-400 mt-1">Secure Login</p>
         </div>
 

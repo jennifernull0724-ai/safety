@@ -295,6 +295,14 @@ export default function Dashboard() {
                 >
                   Audit Trail
                 </button>
+                <button
+                  onClick={() => setActiveTab('regulator')}
+                  className={`flex-1 px-4 py-3 text-sm font-medium ${
+                    activeTab === 'regulator' ? 'bg-slate-900/50 text-white' : 'text-slate-400'
+                  }`}
+                >
+                  Regulator
+                </button>
               </div>
 
               <div className="p-4">
@@ -317,7 +325,7 @@ export default function Dashboard() {
                       ))}
                     </div>
                   )
-                ) : (
+                ) : activeTab === 'audit' ? (
                   loading ? (
                     <div className="h-96 bg-slate-700/30 rounded-xl animate-pulse" />
                   ) : auditEvents.length === 0 ? (
@@ -336,6 +344,35 @@ export default function Dashboard() {
                       ))}
                     </div>
                   )
+                ) : (
+                  <div className="space-y-4">
+                    <h3 className="font-semibold text-lg">Regulator Audit Access</h3>
+                    <p className="text-sm text-slate-400">
+                      Immutable audit trail for regulatory compliance
+                    </p>
+                    <div className="space-y-2">
+                      <Link href="/audit-vault">
+                        <div className="p-3 bg-slate-700/30 rounded-lg hover:bg-slate-700/50 cursor-pointer">
+                          <div className="text-sm font-medium">Full Audit Vault</div>
+                          <div className="text-xs text-slate-400 mt-1">
+                            All system events and verifications
+                          </div>
+                        </div>
+                      </Link>
+                      <div className="p-3 bg-slate-700/30 rounded-lg">
+                        <div className="text-sm font-medium">Export Compliance Report</div>
+                        <div className="text-xs text-slate-400 mt-1">
+                          Generate regulatory submission
+                        </div>
+                      </div>
+                      <div className="p-3 bg-slate-700/30 rounded-lg">
+                        <div className="text-sm font-medium">Verification History</div>
+                        <div className="text-xs text-slate-400 mt-1">
+                          All QR scan events
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 )}
               </div>
             </div>
