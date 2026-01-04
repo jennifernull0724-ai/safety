@@ -4,11 +4,9 @@ import { calculateNearMissClusterRisk } from '@/lib/ai/risk-engine';
 
 // GET /api/aiNearMissCluster - Get AI near-miss clusters (advisory only)
 export async function GET(req: NextRequest) {
-  // Fetch near misses for clustering analysis
-  const nearMisses = await prisma.nearMiss.findMany({
-    orderBy: { reportedAt: 'desc' },
-    take: 100,
-  });
+  // NOTE: nearMiss model not yet implemented in schema
+  // Return empty advisory response until model is added
+  const nearMisses: any[] = [];
 
   // Group by category for clustering
   const categories = nearMisses.reduce((acc, nm) => {
