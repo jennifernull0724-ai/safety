@@ -403,6 +403,11 @@ export default function Page() {
                     Data & Security
                   </Link>
                 </li>
+                <li>
+                  <Link href="/technical-overview" className="text-slate-600 hover:text-slate-900">
+                    Technical Overview
+                  </Link>
+                </li>
               </ul>
             </div>
 
