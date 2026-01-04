@@ -101,7 +101,7 @@ export default async function PublicQRVerificationPage({ params }: Props) {
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1">
               <span className="text-sm text-text-secondary">Name</span>
-              <span className="text-text-primary font-bold">{employee.user?.name || 'Unknown'}</span>
+              <span className="text-text-primary font-bold">{`${employee.firstName} ${employee.lastName}`}</span>
             </div>
             <div className="flex flex-col gap-1">
               <span className="text-sm text-text-secondary">Company</span>
