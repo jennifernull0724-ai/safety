@@ -30,7 +30,6 @@ export default async function PublicQRVerificationPage({ params }: Props) {
   const employee = await prisma.employee.findUnique({
     where: { id: employeeId },
     include: {
-      user: true,
       certifications: {
         orderBy: { expirationDate: 'asc' }
       }
@@ -150,9 +149,9 @@ export default async function PublicQRVerificationPage({ params }: Props) {
                     <StatusBadge status={cert.status} timestamp={new Date()} />
                   </td>
                   <td className="p-3">
-                    {cert.evidenceNode ? (
+                    {cert.certificateMediaId ? (
                       <a 
-                        href={`/evidence/${cert.evidenceNode.id}`} 
+                        href={`/media/${cert.certificateMediaId}`} 
                         className="text-status-valid text-sm hover:underline"
                         target="_blank"
                         rel="noopener noreferrer"
