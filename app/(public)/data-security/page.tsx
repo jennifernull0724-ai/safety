@@ -5,12 +5,12 @@ import { Shield, Lock, Database, Eye, FileCheck, AlertCircle } from 'lucide-reac
 export default function DataSecurity() {
   return (
     <PublicLayout>
-      <div className="max-w-4xl mx-auto px-6 py-16">
-        <h1 className="text-4xl font-bold text-slate-900 mb-8">Data & Security</h1>
+      <div className="max-w-4xl mx-auto px-4 md:px-6 py-8 md:py-16">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-6 md:mb-8">Data & Security</h1>
         
-        <div className="prose prose-slate max-w-none space-y-8 text-slate-700">
+        <div className="prose prose-slate max-w-none space-y-6 md:space-y-8 text-slate-700">
           <section>
-            <h2 className="text-2xl font-semibold text-slate-900 mb-4">Overview</h2>
+            <h2 className="text-xl md:text-2xl font-semibold text-slate-900 mb-3 md:mb-4">Overview</h2>
             <p>
               T-REX AI OS is designed with security and data integrity as core principles. This page outlines 
               our approach to protecting your data, maintaining system security, and ensuring compliance with 

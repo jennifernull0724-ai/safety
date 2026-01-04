@@ -51,7 +51,7 @@ export default function Login() {
 
   return (
     <LoginLayout>
-      <div className="min-h-screen bg-white pt-12 pb-16 px-6 flex items-center justify-center">
+      <div className="min-h-screen bg-white pt-8 md:pt-12 pb-12 md:pb-16 px-4 md:px-6 flex items-center justify-center">
         <div
           className="w-full max-w-md"
           style={{
@@ -59,14 +59,14 @@ export default function Login() {
           }}
         >
         {/* Header */}
-        <div className="text-center mb-8">
-          <img src="/trex-logo.png" alt="T-REX AI OS" className="h-16 w-auto mx-auto mb-6" />
-          <h1 className="text-2xl font-bold text-slate-900">T-REX AI OS</h1>
-          <p className="text-slate-600 mt-1">Secure Login</p>
+        <div className="text-center mb-6 md:mb-8">
+          <img src="/trex-logo.png" alt="T-REX AI OS" className="h-12 md:h-16 w-auto mx-auto mb-4 md:mb-6" />
+          <h1 className="text-xl md:text-2xl font-bold text-slate-900">T-REX AI OS</h1>
+          <p className="text-sm md:text-base text-slate-600 mt-1">Secure Login</p>
         </div>
 
         {/* Card */}
-        <div className="p-8 rounded-3xl bg-blue-600 border border-blue-700">
+        <div className="p-6 md:p-8 rounded-2xl md:rounded-3xl bg-blue-600 border border-blue-700">
           <form onSubmit={handleLogin} className="space-y-6">
             {/* Error */}
             {error && (
@@ -127,7 +127,7 @@ export default function Login() {
             {/* Submit */}
             <button
               type="submit"
-              className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-500 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-500 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
               disabled={loading}
             >
               {loading ? (
@@ -141,14 +141,14 @@ export default function Login() {
         </div>
 
         {/* Footer Text */}
-        <div className="text-center mt-6 text-sm text-slate-500">
+        <div className="text-center mt-4 md:mt-6 text-sm text-slate-500">
           Unauthorized access is prohibited.
         </div>
         </div>
       </div>
 
       {/* FOOTER */}
-      <footer className="border-t border-slate-200 bg-white py-10 text-center text-sm text-slate-500">
+      <footer className="border-t border-slate-200 bg-white py-6 md:py-10 text-center text-sm text-slate-500">
         <div className="mb-4">
           <Link href="/contact-support" className="text-slate-600 hover:text-slate-900 font-medium">
             Contact Support

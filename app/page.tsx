@@ -65,27 +65,27 @@ export default function Page() {
     <PublicLayout>
       <div className="bg-slate-950 text-white">
       {/* HERO */}
-      <section className="pt-12 pb-20 px-6 bg-slate-900">
+      <section className="pt-8 md:pt-12 pb-12 md:pb-20 px-4 md:px-6 bg-slate-900">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6 text-white">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4 md:mb-6 text-white">
             Employee Certification & Compliance Record System for Regulated Work
           </h1>
           
-          <p className="text-xl text-slate-300 mb-10 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg md:text-xl text-slate-300 mb-8 md:mb-10 max-w-3xl mx-auto leading-relaxed">
             Records employee certifications, preserves historical compliance state, and provides regulator-safe verification through immutable records and QR-based evidence access.
           </p>
 
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
+          <div className="flex flex-col sm:flex-row justify-center gap-3 md:gap-4">
             <Link
               href="/create-account"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-lg transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-6 md:px-8 py-3 md:py-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-base md:text-lg transition-colors min-h-[44px]"
             >
               Create Account
               <ArrowRight className="w-5 h-5" />
             </Link>
             <Link
               href="/pricing"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg border-2 border-slate-700 text-slate-300 hover:bg-slate-800 font-semibold text-lg transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-6 md:px-8 py-3 md:py-4 rounded-lg border-2 border-slate-700 text-slate-300 hover:bg-slate-800 font-semibold text-base md:text-lg transition-colors min-h-[44px]"
             >
               View Pricing
             </Link>
@@ -94,13 +94,13 @@ export default function Page() {
       </section>
 
       {/* WHAT IT DOES */}
-      <section className="py-20 px-6 bg-slate-950">
+      <section className="py-12 md:py-20 px-4 md:px-6 bg-slate-950">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold mb-8 text-white">
+          <h2 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8 text-white">
             What This System Does
           </h2>
 
-          <ul className="space-y-4 text-lg text-slate-300">
+          <ul className="space-y-3 md:space-y-4 text-base md:text-lg text-slate-300">
             <li className="flex items-start gap-3">
               <span className="text-blue-400 font-bold mt-1">•</span>
               <span>Records employee certification data and supporting documents</span>
@@ -130,18 +130,18 @@ export default function Page() {
       </section>
 
       {/* CORE CAPABILITIES */}
-      <section className="py-20 px-6 bg-slate-900/50">
+      <section className="py-12 md:py-20 px-4 md:px-6 bg-slate-900/50">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold mb-12 text-white">
+          <h2 className="text-2xl md:text-3xl font-bold mb-8 md:mb-12 text-white">
             Core Capabilities
           </h2>
 
-          <div className="space-y-10">
+          <div className="space-y-6 md:space-y-10">
             <div>
-              <h3 className="text-2xl font-bold mb-3 text-white">
+              <h3 className="text-xl md:text-2xl font-bold mb-2 md:mb-3 text-white">
                 Immutable Compliance Records
               </h3>
-              <p className="text-lg text-slate-300 leading-relaxed">
+              <p className="text-base md:text-lg text-slate-300 leading-relaxed">
                 Certification data is preserved as entered. Corrections create new records; prior states remain intact.
               </p>
             </div>
@@ -348,22 +348,22 @@ export default function Page() {
       </section>
 
       {/* CTA BUTTONS */}
-      <section className="py-12 px-6 bg-slate-950 border-t border-slate-800">
+      <section className="py-8 md:py-12 px-4 md:px-6 bg-slate-950 border-t border-slate-800">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-xl font-semibold text-white mb-6">
+          <h2 className="text-lg md:text-xl font-semibold text-white mb-4 md:mb-6">
             Questions or want to see it in action?
           </h2>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
+          <div className="flex flex-col sm:flex-row justify-center gap-3 md:gap-4">
             <Link
               href="/request-demo"
-              className="inline-flex items-center justify-center gap-2 px-8 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-6 md:px-8 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors min-h-[44px]"
             >
               <Calendar className="w-4 h-4" />
               Request a Demo
             </Link>
             <Link
               href="/contact-support"
-              className="inline-flex items-center justify-center gap-2 px-8 py-3 rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800/50 font-medium transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-6 md:px-8 py-3 rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800/50 font-medium transition-colors min-h-[44px]"
             >
               <Mail className="w-4 h-4" />
               Contact Support
@@ -373,9 +373,9 @@ export default function Page() {
       </section>
 
       {/* FOOTER */}
-      <footer className="border-t border-slate-300 bg-slate-50 py-12 px-6">
+      <footer className="border-t border-slate-300 bg-slate-50 py-8 md:py-12 px-4 md:px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 mb-6 md:mb-8">
             {/* Product ID */}
             <div>
               <div className="font-semibold text-slate-900 mb-2">T-REX AI OS</div>

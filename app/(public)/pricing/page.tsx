@@ -64,21 +64,21 @@ export default function Pricing() {
   return (
     <PublicLayout>
       <div className="min-h-screen bg-slate-950 text-white">
-      <main className="max-w-7xl mx-auto px-6 pt-12 pb-20 space-y-24">
+      <main className="max-w-7xl mx-auto px-4 md:px-6 pt-8 md:pt-12 pb-12 md:pb-20 space-y-12 md:space-y-24">
         {/* Intro */}
         <section className="max-w-4xl mx-auto text-center">
           <h2
-            className="text-4xl font-bold mb-6"
+            className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 md:mb-6"
             style={{
               animation: 'fadeInUp 0.3s ease-out both'
             }}
           >
             Trusted Verification Authority
           </h2>
-          <p className="text-xl text-slate-400">
+          <p className="text-base sm:text-lg md:text-xl text-slate-400">
             Get full access to the T-REX AI OS verification platform.
           </p>
-          <p className="text-lg text-slate-500 mt-4">
+          <p className="text-sm sm:text-base md:text-lg text-slate-500 mt-3 md:mt-4">
             It enables public, regulator-safe QR verification while preserving
             immutable evidence, audit history, and legal defensibility.
           </p>
@@ -87,14 +87,14 @@ export default function Pricing() {
         {/* Pricing */}
         <section className="max-w-2xl mx-auto">
           <div
-            className="p-12 rounded-3xl bg-slate-800/50 border-2 border-blue-500/50 text-center"
+            className="p-6 md:p-12 rounded-2xl md:rounded-3xl bg-slate-800/50 border-2 border-blue-500/50 text-center"
             style={{
               animation: 'fadeInUp 0.3s ease-out both'
             }}
           >
-            <h3 className="text-3xl font-bold mb-4">Annual License</h3>
-            <div className="text-6xl font-bold text-white mb-6">{flatPrice}</div>
-            <p className="text-xl text-slate-400 mb-8">
+            <h3 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4">Annual License</h3>
+            <div className="text-4xl md:text-6xl font-bold text-white mb-4 md:mb-6">{flatPrice}</div>
+            <p className="text-base md:text-xl text-slate-400 mb-6 md:mb-8">
               Pricing is per organization, billed annually.
             </p>
             <div className="text-left bg-slate-900/50 rounded-lg p-6 border border-slate-700">
