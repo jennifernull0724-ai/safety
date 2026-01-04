@@ -350,8 +350,263 @@ export default function Page() {
         </div>
       </section>
 
-      {/* WHAT IT DOES NOT DO */}
+      {/* DAILY OPERATIONS WORKFLOW */}
       <section className="py-20 px-6 bg-slate-900/50">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold mb-8 text-white">
+            Daily Operations Workflow
+          </h2>
+
+          <div className="space-y-6 text-slate-300">
+            <p className="text-lg leading-relaxed">
+              This section explains how QR verification fits into daily field operations, including who scans codes, when scanning happens, and what occurs when compliance issues are identified.
+            </p>
+
+            {/* Who Scans QR Codes */}
+            <div className="p-6 bg-slate-800/50 rounded-lg border border-slate-700">
+              <h3 className="text-xl font-semibold text-white mb-4">Who Scans QR Codes</h3>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span><strong>Supervisors:</strong> Verify crew compliance before shift start or job assignment</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span><strong>Inspectors/Regulators:</strong> Verify employee authorization during site visits or audits</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span><strong>Gate/Site Security:</strong> Optional verification at site entry points (if configured)</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span><strong>Employees:</strong> Do NOT scan their own codes — verification is performed by authorized personnel only</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* When Scanning Happens */}
+            <div className="p-6 bg-slate-800/50 rounded-lg border border-slate-700">
+              <h3 className="text-xl font-semibold text-white mb-4">When Scanning Happens</h3>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span><strong>Shift Start:</strong> Supervisor verifies crew compliance before daily work begins</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span><strong>Job Assignment:</strong> Verify specific certifications required for specialized tasks (e.g., confined space entry, crane operation)</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span><strong>Inspection Events:</strong> Regulator or safety inspector scans to verify authorization during site audit</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span><strong>Post-Incident:</strong> Verify employee certification status as of the time of incident</span>
+                </li>
+              </ul>
+              <p className="text-sm text-slate-400 mt-4">
+                <strong>Timing:</strong> A single QR scan takes approximately 3-5 seconds (scan + result display). Supervisor can verify an entire crew of 10 employees in under 1 minute.
+              </p>
+            </div>
+
+            {/* What the Verification Result Shows */}
+            <div className="p-6 bg-slate-800/50 rounded-lg border border-slate-700">
+              <h3 className="text-xl font-semibold text-white mb-4">What the Verification Result Shows</h3>
+              <p className="mb-3">After scanning, the supervisor sees a clear compliance status page:</p>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-3">
+                  <span className="text-emerald-400 font-bold mt-1">✓</span>
+                  <span><strong>Compliant:</strong> Green status indicator, list of valid certifications with expiration dates</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-amber-400 font-bold mt-1">⚠</span>
+                  <span><strong>Expiring Soon:</strong> Yellow warning for certifications expiring within 30 days</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-red-400 font-bold mt-1">✗</span>
+                  <span><strong>Non-Compliant:</strong> Red status indicator showing expired or missing certifications</span>
+                </li>
+              </ul>
+              <p className="text-sm text-slate-400 mt-4">
+                The scan result is read-only and shows the employee's exact certification state at the moment of verification. It does not change if certifications are later updated.
+              </p>
+            </div>
+
+            {/* What Happens If Non-Compliant */}
+            <div className="p-6 bg-slate-800/50 rounded-lg border border-red-500/30">
+              <h3 className="text-xl font-semibold text-white mb-4">What Happens If Employee is Non-Compliant</h3>
+              <p className="mb-3">
+                <strong>Important:</strong> This system records verification results. Work authorization decisions are made by supervisors according to organizational policy.
+              </p>
+              <div className="space-y-3 mt-4">
+                <div className="p-4 bg-slate-900/50 rounded border border-slate-600">
+                  <h4 className="font-semibold text-white mb-2">System Behavior</h4>
+                  <ul className="space-y-1 text-sm">
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-400 mt-1">•</span>
+                      <span>Scan result displays non-compliant status and identifies missing/expired certifications</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-400 mt-1">•</span>
+                      <span>Verification event is logged with timestamp, location (if provided), and scanner identity</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-400 mt-1">•</span>
+                      <span>System does NOT automatically block work — supervisor makes the authorization decision</span>
+                    </li>
+                  </ul>
+                </div>
+                <div className="p-4 bg-slate-900/50 rounded border border-slate-600">
+                  <h4 className="font-semibold text-white mb-2">Supervisor Options</h4>
+                  <ul className="space-y-1 text-sm">
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-400 mt-1">•</span>
+                      <span>Reassign employee to work that does not require the expired certification</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-400 mt-1">•</span>
+                      <span>Contact compliance team to verify renewal status</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-400 mt-1">•</span>
+                      <span>Document exception and proceed (if organizational policy permits and documented override is logged)</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-400 mt-1">•</span>
+                      <span>Send employee home pending certification renewal</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile & Field Use */}
+            <div className="p-6 bg-slate-800/50 rounded-lg border border-slate-700">
+              <h3 className="text-xl font-semibold text-white mb-4">Mobile & Field Use</h3>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span><strong>Mobile Access:</strong> QR verification works on any smartphone with camera and internet connection (no app required — uses standard web browser)</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span><strong>Offline Capability:</strong> Limited offline support — QR codes scanned without connectivity will show cached status with "last verified" timestamp and alert user to verify online when connection available</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span><strong>No Special Hardware:</strong> Works with existing smartphones — no dedicated scanners required</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span><strong>QR Badge Format:</strong> Employees receive printed QR code badges (laminated cards or hard hat stickers) generated by compliance administrators</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Proactive Compliance Checking */}
+            <div className="p-6 bg-slate-800/50 rounded-lg border border-slate-700">
+              <h3 className="text-xl font-semibold text-white mb-4">Proactive Compliance Checking</h3>
+              <p className="mb-3">Supervisors can check compliance status BEFORE deploying crews to avoid surprises:</p>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span><strong>Dashboard View:</strong> Supervisors can view crew compliance status from desktop or mobile dashboard before shift assignment</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span><strong>Expiration Alerts:</strong> Automated notifications for certifications expiring within 30 days</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span><strong>Crew Compliance Summary:</strong> At-a-glance view of entire crew certification status</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Exception Handling */}
+            <div className="p-6 bg-slate-800/50 rounded-lg border border-amber-500/30">
+              <h3 className="text-xl font-semibold text-white mb-4">Exception Handling & Documented Overrides</h3>
+              <p className="mb-3">
+                Real-world operations require flexibility. The system supports documented exceptions when work must proceed despite compliance gaps:
+              </p>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span><strong>Documented Override:</strong> Authorized supervisors can document reason for proceeding with non-compliant employee (e.g., "Renewal appointment scheduled for tomorrow, emergency repair work required")</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span><strong>Audit Trail:</strong> All overrides are logged with supervisor identity, timestamp, and written justification</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span><strong>Grace Periods:</strong> Configurable warning periods (e.g., 7-day grace for certifications pending renewal)</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span><strong>Temporary Authorizations:</strong> Compliance team can issue time-limited temporary certifications while awaiting paperwork</span>
+                </li>
+              </ul>
+              <p className="text-sm text-slate-400 mt-4">
+                <strong>Note:</strong> Override capability is role-restricted. Not all users can override compliance requirements. Configuration is set during system setup based on organizational policy.
+              </p>
+            </div>
+
+            {/* Employee Experience */}
+            <div className="p-6 bg-slate-800/50 rounded-lg border border-slate-700">
+              <h3 className="text-xl font-semibold text-white mb-4">Employee Experience</h3>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span><strong>QR Badge Issuance:</strong> Employees receive physical QR code badge (card or sticker) from compliance office after certification entry</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span><strong>No Employee Login:</strong> Employees do not log in or manage their own records — they simply carry their QR badge</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span><strong>Expiration Notifications:</strong> Employees receive email/SMS notifications at 30 days and 7 days before certification expiration (if configured)</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span><strong>No Surprise Lockouts:</strong> Proactive notifications and supervisor dashboard views prevent employees from arriving to work only to discover expired certifications</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* System Outages & Fail-Closed Behavior */}
+            <div className="p-6 bg-slate-800/50 rounded-lg border border-amber-500/30">
+              <h3 className="text-xl font-semibold text-white mb-4">System Outages & Fail-Closed Behavior</h3>
+              <p className="mb-3">
+                <strong>Fail-Closed Policy:</strong> If verification services are unavailable, the system defaults to requiring manual verification rather than allowing unverified access.
+              </p>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span><strong>Database Outage:</strong> QR scans will fail with clear error message. Supervisor must verify compliance manually using backup records (printed cert lists, etc.)</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span><strong>Network Outage (Field):</strong> Cached verification data available for recently scanned employees with "Last verified [timestamp]" indicator</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-blue-400 font-bold mt-1">•</span>
+                  <span><strong>Mitigation:</strong> Supervisors should verify crew compliance at shift start (when connectivity is typically available) rather than relying on field verification</span>
+                </li>
+              </ul>
+              <p className="text-sm text-slate-400 mt-4">
+                <strong>Important:</strong> System outages do not automatically block work. Supervisors retain authority to proceed using manual verification processes during service disruptions.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* WHAT IT DOES NOT DO */}
+      <section className="py-20 px-6 bg-slate-950">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold mb-8 text-white">
             What This System Does Not Do
