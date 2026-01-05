@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import { PageContainer, Card, StatusBadge } from '@/components';
+import { getCorrectionChain } from '@/lib/services/certificationCorrection';
 
 /**
  * PUBLIC QR VERIFICATION PAGE (NO AUTH)
@@ -9,13 +10,15 @@ import { PageContainer, Card, StatusBadge } from '@/components';
  * - Verification banner (✔ VERIFIED / ⚠ INCOMPLETE / ❌ NOT COMPLIANT)
  * - Employee info (name, company, trade, status)
  * - Certification table (cert, issuer, issue/exp dates, status, proof)
- * - Verification metadata (verified at, location)
+ * - Correction indicators and history
+ * - Verification metadata (verified at, location, timezone)
  * 
  * Rules:
  * - No authentication required
  * - Proof is view-only
  * - Tamper-evident verification record
- * - "This verification has been recorded with tamper-evident protection."
+ * - Shows correction status clearly
+ * - Displays scan-time state vs current state
  */
 
 interface Props {
@@ -31,6 +34,7 @@ export default async function PublicQRVerificationPage({ params }: Props) {
     where: { id: employeeId },
     include: {
       certifications: {
+        where: { isCorrected: false }, // Only current versions
         orderBy: { expirationDate: 'asc' }
       }
     }
@@ -40,10 +44,40 @@ export default async function PublicQRVerificationPage({ params }: Props) {
     return notFound();
   }
 
+  // Check for corrections and get full history
+  const certificationsWithHistory = await Promise.all(
+    employee.certifications.map(async (cert) => {
+      try {
+        const chain = await getCorrectionChain(cert.id);
+        return {
+          ...cert,
+          correctionChain: chain,
+          hasCorrectionHistory: chain.length > 1,
+          versionNumber: chain.length,
+        };
+      } catch (error) {
+        return {
+          ...cert,
+          correctionChain: [cert],
+          hasCorrectionHistory: false,
+          versionNumber: 1,
+        };
+      }
+    })
+  );
+
+  const scanTime = new Date();
+  const timeZone = 'America/New_York'; // In production, detect or allow selection
+  const formattedScanTime = new Intl.DateTimeFormat('en-US', {
+    dateStyle: 'full',
+    timeStyle: 'long',
+    timeZone,
+  }).format(scanTime);
+
   // Derive verification status
-  const validStatuses = ['PASS', 'VALID', 'ACTIVE'];
-  const failStatuses = ['EXPIRED', 'INVALID', 'REVOKED'];
-  const incompleteStatuses = ['PENDING', 'INCOMPLETE'];
+  const validStatuses = ['valid', 'PASS', 'VALID', 'ACTIVE'];
+  const failStatuses = ['expired', 'EXPIRED', 'INVALID', 'REVOKED', 'revoked'];
+  const incompleteStatuses = ['expiring', 'PENDING', 'INCOMPLETE'];
   
   const hasFail = employee.certifications.some(c => failStatuses.includes(c.status as string));
   const hasIncomplete = employee.certifications.some(c => incompleteStatuses.includes(c.status as string));
@@ -135,9 +169,18 @@ export default async function PublicQRVerificationPage({ params }: Props) {
               </tr>
             </thead>
             <tbody>
-              {employee.certifications.map((cert) => (
+              {certificationsWithHistory.map((cert) => (
                 <tr key={cert.id} className="border-b border-border-default">
-                  <td className="p-3 text-text-primary">{cert.certificationType}</td>
+                  <td className="p-3 text-text-primary">
+                    <div className="flex items-center gap-2">
+                      <span>{cert.certificationType}</span>
+                      {cert.hasCorrectionHistory && (
+                        <span className="text-xs bg-amber-900/30 text-amber-300 px-2 py-0.5 rounded-full border border-amber-800/50">
+                          Corrected (v{cert.versionNumber})
+                        </span>
+                      )}
+                    </div>
+                  </td>
                   <td className="p-3 text-text-secondary">{cert.issuingAuthority || 'N/A'}</td>
                   <td className="p-3 text-text-secondary">
                     {cert.issueDate ? new Date(cert.issueDate).toLocaleDateString() : 'N/A'}
@@ -168,28 +211,97 @@ export default async function PublicQRVerificationPage({ params }: Props) {
           </table>
         </Card>
 
+        {/* Correction History Section (if any corrections exist) */}
+        {certificationsWithHistory.some(c => c.hasCorrectionHistory) && (
+          <Card>
+            <h2 className="text-lg font-bold text-text-primary mb-4">Correction History</h2>
+            <div className="bg-amber-900/20 border border-amber-800/50 rounded-md p-4 mb-4">
+              <p className="text-sm text-amber-300">
+                ⚠️ One or more certifications have been corrected. The table above shows the current version.
+                Historical versions remain in the audit trail.
+              </p>
+            </div>
+            {certificationsWithHistory
+              .filter(c => c.hasCorrectionHistory)
+              .map((cert) => (
+                <div key={cert.id} className="mb-4 p-4 bg-bg-secondary border border-border-default rounded-md">
+                  <h3 className="font-bold text-text-primary mb-2">{cert.certificationType}</h3>
+                  <div className="space-y-2">
+                    {cert.correctionChain.map((version, idx) => (
+                      <div
+                        key={version.id}
+                        className={`p-3 rounded border ${
+                          idx === cert.correctionChain.length - 1
+                            ? 'bg-emerald-900/20 border-emerald-800/50'
+                            : 'bg-slate-900/50 border-slate-700'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <div className="font-semibold text-sm">
+                              Version {idx + 1}
+                              {idx === cert.correctionChain.length - 1 && (
+                                <span className="ml-2 text-emerald-400">(Current)</span>
+                              )}
+                              {version.isCorrected && (
+                                <span className="ml-2 text-amber-400">(Corrected)</span>
+                              )}
+                            </div>
+                            <div className="text-xs text-text-secondary mt-1">
+                              Issued: {new Date(version.issueDate).toLocaleDateString()} | 
+                              Expires: {new Date(version.expirationDate).toLocaleDateString()}
+                            </div>
+                            {version.correctionReason && (
+                              <div className="text-xs text-amber-300 mt-1">
+                                Reason: {version.correctionReason}
+                              </div>
+                            )}
+                          </div>
+                          <div className="text-xs text-text-secondary">
+                            {new Date(version.createdAt).toLocaleDateString()}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+          </Card>
+        )}
+
         {/* Verification Metadata */}
         <Card>
           <h2 className="text-lg font-bold text-text-primary mb-4">Verification Metadata</h2>
           <div className="flex flex-col gap-3">
             <div className="flex flex-col gap-1">
-              <span className="text-sm text-text-secondary">Verified At</span>
-              <span className="text-text-primary">{new Date().toLocaleString()}</span>
+              <span className="text-sm text-text-secondary">Verified At (Scan Time)</span>
+              <span className="text-text-primary font-mono text-sm">{formattedScanTime}</span>
+              <span className="text-xs text-text-secondary">Timezone: {timeZone}</span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-sm text-text-secondary">State Shown</span>
+              <span className="text-text-primary">Current (live data at scan time)</span>
             </div>
             <div className="flex flex-col gap-1">
               <span className="text-sm text-text-secondary">Location</span>
               <span className="text-text-primary">Unknown (if available)</span>
             </div>
             <div className="p-4 bg-bg-secondary border border-border-default rounded-md">
-              <p className="text-sm text-text-primary font-bold">
+              <p className="text-sm text-text-primary font-bold mb-2">
                 ⚠️ This verification has been recorded with tamper-evident protection.
+              </p>
+              <p className="text-xs text-text-secondary">
+                Scan timestamp: {scanTime.toISOString()} | 
+                State: Current certifications at time of scan |
+                Corrections: {certificationsWithHistory.some(c => c.hasCorrectionHistory) ? 'Yes (see above)' : 'None'}
               </p>
             </div>
           </div>
         </Card>
 
-        <div className="text-xs text-text-secondary">
-          Last Evaluated At: {new Date().toISOString()}
+        <div className="text-xs text-text-secondary space-y-1">
+          <div>Scan completed at: {scanTime.toISOString()}</div>
+          <div>Timezone: {timeZone}</div>
         </div>
       </PageContainer>
     </div>

@@ -187,9 +187,18 @@ model Certification {
   certificateMediaId String?
   createdByUserId    String
   createdAt          DateTime @default(now())
+  
+  // Correction chain fields
+  isCorrected        Boolean  @default(false)
+  correctedById      String?  // References the corrected certification
+  correctionReason   String?
+  correctedAt        DateTime?
+  correctedByUserId  String?
 
-  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Restrict)
-  qrTokens VerificationToken[]
+  employee       Employee              @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  qrTokens       VerificationToken[]
+  correctedBy    Certification?        @relation("CorrectionChain", fields: [correctedById], references: [id], onDelete: Restrict)
+  corrections    Certification[]       @relation("CorrectionChain")
 }
 
 enum CertificationStatus {
@@ -497,4 +506,49 @@ model AISuggestion {
   @@index([suggestionType])
   @@index([relatedEntity, relatedEntityId])
   @@index([createdAt])
+}
+
+//////////////////////////////////////////////////////
+// SUPPORT & SUBMISSIONS
+//////////////////////////////////////////////////////
+
+model ContactSubmission {
+  id             String   @id @default(uuid())
+  name           String
+  email          String
+  company        String?
+  message        String
+  organizationId String?
+  submittedAt    DateTime @default(now())
+  status         SubmissionStatus @default(new)
+  assignedTo     String?
+  
+  @@index([status])
+  @@index([submittedAt])
+}
+
+model DemoRequest {
+  id             String   @id @default(uuid())
+  name           String
+  email          String
+  company        String
+  role           String?
+  employeeCount  String?
+  notes          String?
+  organizationId String?
+  submittedAt    DateTime @default(now())
+  status         SubmissionStatus @default(new)
+  assignedTo     String?
+  
+  @@index([status])
+  @@index([submittedAt])
+}
+
+enum SubmissionStatus {
+  new
+  contacted
+  qualified
+  demo_scheduled
+  closed_won
+  closed_lost
 }

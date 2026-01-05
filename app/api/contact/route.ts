@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
+import { prisma } from '@/lib/prisma';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -15,6 +16,17 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    // Persist to database
+    const submission = await prisma.contactSubmission.create({
+      data: {
+        name,
+        email,
+        company: company || null,
+        message,
+        status: 'new',
+      },
+    });
 
     // Send email to contact form recipient
     const { data, error } = await resend.emails.send({
@@ -50,12 +62,37 @@ export async function POST(request: NextRequest) {
         <p>New contact form submission received.</p>
         <p><strong>From:</strong> ${name} (${email})</p>
         <p><strong>Company:</strong> ${company || 'Not provided'}</p>
+        <p><strong>Submission ID:</strong> ${submission.id}</p>
       `,
     });
 
-    return NextResponse.json({ success: true, data });
+    return NextResponse.json({ success: true, data, submissionId: submission.id });
   } catch (error) {
     console.error('Contact form error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+// GET /api/contact - List all contact submissions
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const status = searchParams.get('status');
+
+    const where: any = {};
+    if (status) where.status = status;
+
+    const submissions = await prisma.contactSubmission.findMany({
+      where,
+      orderBy: { submittedAt: 'desc' },
+    });
+
+    return NextResponse.json(submissions);
+  } catch (error) {
+    console.error('Failed to fetch contact submissions:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

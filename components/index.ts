@@ -28,6 +28,8 @@ export { QRCodeCard } from './QRCodeCard';
 
 export { AICallout } from './AICallout';
 
+export { default as CorrectionChainView } from './CorrectionChainView';
+
 export { PageContainer } from './PageContainer';
 export { Card } from './Card';
 export { FormGroup } from './FormGroup';

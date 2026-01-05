@@ -154,8 +154,11 @@ export default function Page() {
                   <span>Manual administrative entry</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-blue-400 font-bold mt-1">•</span>
-                  <span>Bulk import (CSV or structured upload)</span>
+                  <span className="text-amber-400 font-bold mt-1">•</span>
+                  <span>
+                    <strong className="text-amber-300">Bulk CSV import:</strong>
+                    <span className="text-slate-400"> Not available in production — manual entry required</span>
+                  </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-blue-400 font-bold mt-1">•</span>
@@ -212,8 +215,11 @@ export default function Page() {
                   <span>Manual administrative entry</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-blue-400 font-bold mt-1">•</span>
-                  <span>Bulk upload for existing records</span>
+                  <span className="text-amber-400 font-bold mt-1">•</span>
+                  <span>
+                    <strong className="text-amber-300">Bulk upload for existing records:</strong>
+                    <span className="text-slate-400"> Not available in production</span>
+                  </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-blue-400 font-bold mt-1">•</span>

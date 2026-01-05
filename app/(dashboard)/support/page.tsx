@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
   Search,
@@ -61,40 +61,25 @@ export default function SupportDashboardPage() {
     untracedEvents: 0
   });
 
-  const [recentActivity] = useState<RecentActivity[]>([
-    {
-      id: '1',
-      timestamp: '2026-01-05T10:30:00Z',
-      type: 'certification_added',
-      description: 'OSHA 10 certification added for EMP-2401',
-      user: 'admin@company.com',
-      traceable: true
-    },
-    {
-      id: '2',
-      timestamp: '2026-01-05T09:15:00Z',
-      type: 'employee_blocked',
-      description: 'EMP-3201 blocked due to expired First Aid certification',
-      user: 'system (automated)',
-      traceable: true
-    },
-    {
-      id: '3',
-      timestamp: '2026-01-05T08:45:00Z',
-      type: 'qr_verified',
-      description: 'QR verification for EMP-1501 at Site Alpha',
-      user: 'field-user@company.com',
-      traceable: true
-    },
-    {
-      id: '4',
-      timestamp: '2026-01-05T07:30:00Z',
-      type: 'correction_submitted',
-      description: 'Correction request for EMP-2401 certification date',
-      user: 'compliance@company.com',
-      traceable: true
-    }
-  ]);
+  const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
+  const [loadingActivity, setLoadingActivity] = useState(true);
+
+  useEffect(() => {
+    const loadRecentActivity = async () => {
+      try {
+        const res = await fetch('/api/support/activity');
+        if (res.ok) {
+          const data = await res.json();
+          setRecentActivity(data);
+        }
+      } catch (error) {
+        console.error('Failed to load activity:', error);
+      } finally {
+        setLoadingActivity(false);
+      }
+    };
+    loadRecentActivity();
+  }, []);
 
   return (
     <div className="min-h-screen bg-slate-50">
