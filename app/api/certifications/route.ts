@@ -37,11 +37,8 @@ export async function GET(req: NextRequest) {
 
       return NextResponse.json(allCertifications);
     } else {
-      // Current state - get only non-corrected certifications
+      // Current state - get all certifications
       const certifications = await prisma.certification.findMany({
-        where: {
-          isCorrected: false, // Only show current versions
-        },
         orderBy: { createdAt: 'desc' },
         include: {
           employee: {

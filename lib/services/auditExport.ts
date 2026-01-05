@@ -116,9 +116,7 @@ async function getEmployeeDataForAudit(options: AuditPackageOptions) {
   const employees = await prisma.employee.findMany({
     where,
     include: {
-      certifications: {
-        where: { isCorrected: false }, // Current versions only
-      },
+      certification: true,
     },
   });
 
@@ -130,8 +128,8 @@ async function getEmployeeDataForAudit(options: AuditPackageOptions) {
     status: emp.status,
     organizationId: emp.organizationId,
     createdAt: emp.createdAt.toISOString(),
-    activeCertifications: emp.certifications.filter(c => c.status === 'valid').length,
-    totalCertifications: emp.certifications.length,
+    activeCertifications: emp.certification?.filter((c: any) => c.status === 'valid').length || 0,
+    totalCertifications: emp.certification?.length || 0,
   }));
 }
 
@@ -184,10 +182,6 @@ async function getCertificationHistoryForAudit(options: AuditPackageOptions) {
         expirationDate: cert.expirationDate.toISOString(),
         status: cert.status,
         createdAt: cert.createdAt.toISOString(),
-        isCorrected: cert.isCorrected,
-        correctedAt: cert.correctedAt?.toISOString() || null,
-        correctionReason: cert.correctionReason || null,
-        correctedById: cert.correctedById || null,
         isOriginalVersion: isOriginal,
         isCurrentVersion: isCurrent,
         versionNumber,
@@ -206,7 +200,6 @@ async function getCertificationHistoryForAudit(options: AuditPackageOptions) {
         expirationDate: cert.expirationDate.toISOString(),
         status: cert.status,
         createdAt: cert.createdAt.toISOString(),
-        isCorrected: cert.isCorrected,
         error: 'Chain lookup failed',
       });
     }

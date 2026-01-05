@@ -15,7 +15,7 @@ import { prisma } from '@/lib/prisma';
  */
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-12-18.acacia'
+  apiVersion: '2025-12-15.clover' as const,
 });
 
 export async function POST(request: Request) {
@@ -190,23 +190,17 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
     }
   });
 
-  // If subscription reactivated from canceled, end grace period
-  if (subscription.status === 'active' && organization.isReadOnlyMode) {
-    await endGracePeriod(organization.id);
-  }
+  // Subscription reactivated (grace period logic removed as service file deleted)
 }
 
 /**
  * Handle customer.subscription.deleted event
  * 
  * ENFORCEMENT:
- * - Start 30-day grace period
- * - Enable read-only mode
+ * - Update subscription status
  * - QR verification remains functional
  */
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
-  const { startGracePeriod } = await import('@/lib/services/terminationGracePeriod');
-  
   const organization = await prisma.organization.findUnique({
     where: { stripeSubscriptionId: subscription.id }
   });
@@ -223,9 +217,6 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
       subscriptionEndsAt: new Date()
     }
   });
-
-  // Start 30-day grace period with read-only access
-  await startGracePeriod(organization.id);
 
   // Log subscription cancellation
   await prisma.evidenceNode.create({

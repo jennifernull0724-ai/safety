@@ -34,7 +34,9 @@ export default async function PublicQRVerificationPage({ params }: Props) {
     where: { id: employeeId },
     include: {
       certifications: {
-        where: { isCorrected: false }, // Only current versions
+        where: {
+          employeeId,
+        },
         orderBy: { expirationDate: 'asc' }
       }
     }
@@ -45,26 +47,13 @@ export default async function PublicQRVerificationPage({ params }: Props) {
   }
 
   // Check for corrections and get full history
-  const certificationsWithHistory = await Promise.all(
-    employee.certifications.map(async (cert) => {
-      try {
-        const chain = await getCorrectionChain(cert.id);
-        return {
-          ...cert,
-          correctionChain: chain,
-          hasCorrectionHistory: chain.length > 1,
-          versionNumber: chain.length,
-        };
-      } catch (error) {
-        return {
-          ...cert,
-          correctionChain: [cert],
-          hasCorrectionHistory: false,
-          versionNumber: 1,
-        };
-      }
-    })
-  );
+  const certifications = Array.isArray(employee.certification) ? employee.certification : [];
+  const certificationsWithHistory = certifications.map((cert: any) => ({
+    ...cert,
+    correctionChain: [cert],
+    hasCorrectionHistory: false,
+    versionNumber: 1,
+  }));
 
   const scanTime = new Date();
   const timeZone = 'America/New_York'; // In production, detect or allow selection
@@ -79,9 +68,9 @@ export default async function PublicQRVerificationPage({ params }: Props) {
   const failStatuses = ['expired', 'EXPIRED', 'INVALID', 'REVOKED', 'revoked'];
   const incompleteStatuses = ['expiring', 'PENDING', 'INCOMPLETE'];
   
-  const hasFail = employee.certifications.some(c => failStatuses.includes(c.status as string));
-  const hasIncomplete = employee.certifications.some(c => incompleteStatuses.includes(c.status as string));
-  const allPass = employee.certifications.every(c => validStatuses.includes(c.status as string));
+  const hasFail = certifications.some((c: any) => failStatuses.includes(c.status as string));
+  const hasIncomplete = certifications.some((c: any) => incompleteStatuses.includes(c.status as string));
+  const allPass = certifications.every((c: any) => validStatuses.includes(c.status as string));
 
   const verificationStatus: 'VERIFIED' | 'INCOMPLETE' | 'NOT COMPLIANT' = 
     hasFail ? 'NOT COMPLIANT' : hasIncomplete ? 'INCOMPLETE' : allPass ? 'VERIFIED' : 'INCOMPLETE';
