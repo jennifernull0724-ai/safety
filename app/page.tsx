@@ -1,7 +1,5 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { MarketingFooter } from '@/components/public/marketing-footer'
-import { MarketingHeader } from '@/components/public/marketing-header'
 import {
   Train,
   HardHat,
@@ -113,7 +111,6 @@ export const metadata: Metadata = {
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-slate-950">
-      <MarketingHeader />
       <main className="space-y-0">
         {/* HERO */}
         <section className="relative isolate overflow-hidden bg-slate-950 text-white">
@@ -626,7 +623,6 @@ export default function LandingPage() {
           </div>
         </section>
       </main>
-      <MarketingFooter />
     </div>
   )
 }

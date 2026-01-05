@@ -216,32 +216,3 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
     }
   });
 }
-    //
-    // Step 4: Create Audit Event
-    // await prisma.auditEvent.create({
-    //   data: {
-    //     type: 'license_activated',
-    //     severity: 'info',
-    //     entityType: 'organization',
-    //     entityId: organization.id,
-    //     actor: `user:${userId}`,
-    //     description: `Organization Verification License activated (${licenseTier} tier)`,
-    //     organizationId: organization.id
-    //   }
-    // });
-
-    console.log(`[WEBHOOK] License activated for user ${userId}, tier ${licenseTier}`);
-
-    return NextResponse.json({
-      received: true,
-      activated: true
-    });
-
-  } catch (error) {
-    console.error('Webhook error:', error);
-    return NextResponse.json(
-      { error: 'Webhook processing failed' },
-      { status: 500 }
-    );
-  }
-}
