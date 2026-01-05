@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { LoginLayout } from '@/components/LoginLayout';
 import {
   Shield,
@@ -19,11 +21,10 @@ import {
  * - Authentication entry point only
  * - Explicit recovery path
  * - No compliance, verification, or product logic
- * 
- * NO Base44, NO React Router, NO Framer Motion, NO custom components
  */
 
 export default function Login() {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -35,15 +36,23 @@ export default function Login() {
     setError(null);
 
     try {
-      // AUTH PROVIDER HOOK GOES HERE
-      // await signIn({ email, password })
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false
+      });
 
-      await new Promise(res => setTimeout(res, 1200)); // placeholder
-      
-      // Redirect to dashboard after successful login
-      window.location.href = '/dashboard';
+      if (result?.error) {
+        setError('Invalid email or password');
+        return;
+      }
+
+      if (result?.ok) {
+        // Redirect to dashboard after successful login
+        router.push('/dashboard');
+      }
     } catch (err) {
-      setError('Invalid email or password');
+      setError('An error occurred during login');
     } finally {
       setLoading(false);
     }

@@ -65,21 +65,32 @@ export default function EvidencePackagePage() {
     setDownloadReady(false);
 
     try {
-      // PLACEHOLDER: API call to generate evidence package
-      // In production:
-      // const response = await fetch('/api/regulator/evidence-package', {
-      //   method: 'POST',
-      //   body: JSON.stringify({ employeeId, startDate, endDate, format: packageFormat, contents })
-      // });
-      // const blob = await response.blob();
-      // const url = window.URL.createObjectURL(blob);
-      // const a = document.createElement('a');
-      // a.href = url;
-      // a.download = `evidence-package-${employeeId}-${Date.now()}.${packageFormat === 'pdf' ? 'pdf' : 'zip'}`;
-      // a.click();
+      const response = await fetch('/api/regulator/evidence-package', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          employeeId, 
+          startDate, 
+          endDate, 
+          contents 
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate evidence package');
+      }
+
+      const data = await response.json();
       
-      // Simulate delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Generate downloadable file (CSV format for simplicity)
+      const csvContent = generateCSV(data);
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `evidence-package-${employeeId}-${Date.now()}.csv`;
+      a.click();
+      
       setDownloadReady(true);
     } catch (error) {
       console.error('Failed to generate evidence package:', error);
@@ -89,14 +100,69 @@ export default function EvidencePackagePage() {
     }
   };
 
+  const generateCSV = (data: any): string => {
+    const lines = [];
+    
+    // Employee info
+    lines.push('EMPLOYEE INFORMATION');
+    lines.push(`Name,${data.employee.firstName} ${data.employee.lastName}`);
+    lines.push(`Employee ID,${data.employee.id}`);
+    lines.push(`Role,${data.employee.tradeRole}`);
+    lines.push(`Organization,${data.employee.organizationName}`);
+    lines.push('');
+    
+    // Certifications
+    lines.push('CERTIFICATIONS');
+    lines.push('Type,Issuing Authority,Issue Date,Expiration Date,Status');
+    data.certifications.forEach((cert: any) => {
+      lines.push(`${cert.type},${cert.issuingAuthority},${cert.issueDate},${cert.expirationDate},${cert.status}`);
+    });
+    lines.push('');
+    
+    // Verification events
+    if (data.verificationEvents.length > 0) {
+      lines.push('VERIFICATION EVENTS');
+      lines.push('Timestamp,Certification Type,Location,Result');
+      data.verificationEvents.forEach((event: any) => {
+        lines.push(`${event.scannedAt},${event.certificationType},${event.location},${event.result}`);
+      });
+      lines.push('');
+    }
+    
+    // Audit trail
+    if (data.auditTrail.length > 0) {
+      lines.push('AUDIT TRAIL');
+      lines.push('Timestamp,Event Type,Actor Type,Actor ID');
+      data.auditTrail.forEach((node: any) => {
+        node.events.forEach((event: any) => {
+          lines.push(`${event.createdAt},${event.eventType},${node.actorType},${node.actorId}`);
+        });
+      });
+    }
+    
+    return lines.join('\n');
+  };
+
   const downloadNow = () => {
-    // PLACEHOLDER: Trigger actual download
-    alert(`Would download ${packageFormat.toUpperCase()} evidence package for employee ${employeeId}`);
+    // Already downloaded in generatePackage
   };
 
   return (
     <PublicLayout>
       <div className="max-w-4xl mx-auto px-4 md:px-6 py-8 md:py-16">
+        {/* READ-ONLY BANNER */}
+        <div className="mb-6 p-4 bg-blue-50 border-2 border-blue-600 rounded-lg">
+          <div className="flex items-center gap-3">
+            <AlertCircle className="w-6 h-6 text-blue-600" />
+            <div>
+              <h3 className="font-bold text-blue-900">READ-ONLY OFFICIAL RECORD — NOT EDITABLE</h3>
+              <p className="text-sm text-blue-800 mt-1">
+                This is a public, tamper-evident audit record. No modifications are possible. All access is logged.
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Header */}
         <div className="mb-8">
           <Link 

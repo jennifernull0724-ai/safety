@@ -1,36 +1,33 @@
 import { NextResponse } from 'next/server';
+import Stripe from 'stripe';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 /**
  * STRIPE CHECKOUT SESSION CREATION
  * 
  * Purpose:
- * - Create Stripe Checkout Session for Organization Verification License
- * 
- * CRITICAL:
- * - Does NOT activate verification
- * - Does NOT grant authority
- * - Does NOT touch audit tables
+ * - Create Stripe Checkout Session for Organization Subscription
  * 
  * Stripe Metadata (MANDATORY):
  * - userId
- * - licenseTier
- * - licenseType: "organization_verification"
+ * - pricingTier
  * 
  * PROMO CODE SUPPORT:
  * - Enabled for self-serve tiers (small, mid, large)
- * - Disabled for Enterprise (invoice-only)
- * - Stripe handles validation, NOT this endpoint
- * - Discounts applied by Stripe, NOT locally
+ * - Stripe handles validation and discount calculation
  * 
- * License activation happens in webhook ONLY (checkout.session.completed)
- * 
- * NO Base44, NO verification logic
+ * Subscription activation happens in webhook ONLY (checkout.session.completed)
  */
 
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2024-12-18.acacia'
+});
+
 const tierPricing: Record<string, number> = {
-  small: 4500,
-  mid: 9500,
-  large: 18000
+  small: 4500,  // $45.00/month
+  mid: 9500,    // $95.00/month
+  large: 18000  // $180.00/month
 };
 
 // Enterprise is NOT in tierPricing (invoice-only)
@@ -38,12 +35,21 @@ const ENTERPRISE_TIERS = ['enterprise', 'railroad', 'regulator'];
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { tier, userId } = body;
-
-    if (!tier || !userId) {
+    const session = await getServerSession(authOptions);
+    
+    if (!session?.user?.id) {
       return NextResponse.json(
-        { error: 'Tier and userId required' },
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
+
+    const body = await request.json();
+    const { tier, promoCode } = body;
+
+    if (!tier) {
+      return NextResponse.json(
+        { error: 'Tier required' },
         { status: 400 }
       );
     }
@@ -66,44 +72,39 @@ export async function POST(request: Request) {
       );
     }
 
-    // STRIPE INTEGRATION GOES HERE
-    // Example using @stripe/stripe-js:
-    // const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-    // const session = await stripe.checkout.sessions.create({
-    //   mode: 'payment',
-    //   line_items: [{
-    //     price_data: {
-    //       currency: 'usd',
-    //       product_data: {
-    //         name: `Organization Verification License - ${tier}`,
-    //       },
-    //       unit_amount: tierPricing[tier] * 100, // Stripe uses cents
-    //     },
-    //     quantity: 1,
-    //   }],
-    //   
-    //   // ✅ PROMO CODE ENABLEMENT (SELF-SERVE ONLY)
-    //   // Stripe displays "Add promotion code" link
-    //   // Stripe handles validation and discount calculation
-    //   // NO local coupon logic, NO custom input fields
-    //   allow_promotion_codes: true,
-    //   
-    //   metadata: {
-    //     userId,
-    //     licenseTier: tier,
-    //     licenseType: 'organization_verification'
-    //   },
-    //   success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/onboarding/complete?session_id={CHECKOUT_SESSION_ID}`,
-    //   cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/pricing/select`,
-    // });
-
-    // PLACEHOLDER: Return mock checkout URL
-    // In production, return session.url
-    const mockCheckoutUrl = `https://checkout.stripe.com/mock-session-${tier}`;
+    // Create Stripe Checkout Session
+    const checkoutSession = await stripe.checkout.sessions.create({
+      mode: 'subscription',
+      customer_email: session.user.email || undefined,
+      line_items: [{
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: `T-REX AI OS - ${tier.toUpperCase()} Plan`,
+            description: 'Safety compliance and certification management platform'
+          },
+          unit_amount: tierPricing[tier] * 100, // Convert to cents
+          recurring: {
+            interval: 'month'
+          }
+        },
+        quantity: 1,
+      }],
+      
+      // Enable promo codes (Stripe handles validation)
+      allow_promotion_codes: true,
+      
+      metadata: {
+        userId: session.user.id,
+        pricingTier: tier,
+      },
+      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard?payment=success`,
+      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/pricing?payment=canceled`,
+    });
 
     return NextResponse.json({
-      checkoutUrl: mockCheckoutUrl,
-      sessionId: 'mock_session_123'
+      checkoutUrl: checkoutSession.url,
+      sessionId: checkoutSession.id
     });
 
   } catch (error) {

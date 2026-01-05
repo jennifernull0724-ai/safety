@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { PublicLayout } from '@/components/PublicLayout';
 import {
   Shield,
@@ -20,11 +21,10 @@ import {
  * - Create an authenticated user identity
  * - Entry point into the system
  * - Explicitly does NOT imply verification, trust, or licensing
- * 
- * NO Base44, NO React Router, NO Framer Motion, NO custom components
  */
 
 export default function CreateAccount() {
+  const router = useRouter();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -41,18 +41,31 @@ export default function CreateAccount() {
       return;
     }
 
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      // AUTH PROVIDER SIGN-UP HOOK GOES HERE
-      // await signUp({ fullName, email, password })
+      const response = await fetch('/api/public/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fullName, email, password })
+      });
 
-      await new Promise(res => setTimeout(res, 1200)); // placeholder
-      
-      // Redirect to payment page
-      window.location.href = '/payment';
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || 'Unable to create account');
+        return;
+      }
+
+      // Redirect to payment page after successful account creation
+      router.push('/payment');
     } catch (err) {
-      setError('Unable to create account');
+      setError('Unable to create account. Please try again.');
     } finally {
       setLoading(false);
     }

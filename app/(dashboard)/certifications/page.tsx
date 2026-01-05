@@ -12,37 +12,35 @@ export default function CertificationsPage() {
   const [snapshotDate, setSnapshotDate] = useState<string>('');
   const [isSnapshotMode, setIsSnapshotMode] = useState(false);
 
-  const loadCertifications = async () => {
-    try {
-      setLoading(true);
-      const url = isSnapshotMode && snapshotDate
-        ? `/api/certifications?asOfDate=${snapshotDate}`
-        : '/api/certifications';
-      const res = await fetch(url);
-      if (res.ok) setCertifications(await res.json());
-    } catch (err) {
-      console.error('Failed to load certifications');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const applySnapshot = () => {
     if (!snapshotDate) {
       alert('Please select a date for the snapshot');
       return;
     }
     setIsSnapshotMode(true);
-    loadCertifications();
   };
 
   const clearSnapshot = () => {
     setIsSnapshotMode(false);
     setSnapshotDate('');
-    loadCertifications();
   };
 
   useEffect(() => {
+    const loadCertifications = async () => {
+      try {
+        setLoading(true);
+        const url = isSnapshotMode && snapshotDate
+          ? `/api/certifications?asOfDate=${snapshotDate}`
+          : '/api/certifications';
+        const res = await fetch(url);
+        if (res.ok) setCertifications(await res.json());
+      } catch (err) {
+        console.error('Failed to load certifications');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
     loadCertifications();
   }, [isSnapshotMode, snapshotDate]);
 

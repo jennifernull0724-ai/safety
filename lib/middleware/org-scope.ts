@@ -1,54 +1,49 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { AuthUser } from './auth';
-import { getUserFromRequest } from './getUserFromRequest';
+import { getToken } from "next-auth/jwt";
+import { prisma } from "@/lib/prisma";
 
 /**
  * ORG-SCOPE MIDDLEWARE — BILLING / LICENSE GATE
  * 
- * Purpose: Enforce organization billing and verification authority
+ * Purpose: Enforce organization billing and subscription
  * Applied ONLY AFTER auth, ONLY on /dashboard routes
  * 
  * Rules:
- * - Non-Enterprise: Require stripeSubscriptionStatus === "active"
- * - Enterprise/Regulator: Require verificationAuthority === true
+ * - Require user belongs to organization
+ * - Require organization.subscriptionStatus === "active"
  * - Otherwise → redirect /pricing
- * 
- * Does NOT:
- * - Calculate seats
- * - Mutate org state
- * - Infer plans
  */
 export async function orgScope(req: NextRequest): Promise<NextResponse | null> {
-  // Extract user (already authenticated by auth middleware)
-  const user = getUserFromRequest(req);
-  if (!user) {
-    // Should never happen (auth middleware runs first)
-    return NextResponse.redirect(new URL('/login', req.url));
+  const token = await getToken({
+    req,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
+
+  if (!token) {
+    return null; // Auth middleware already handled this
   }
 
-  // TODO: Fetch organization from database
-  // const org = await prisma.organization.findUnique({
-  //   where: { id: user.organizationId },
-  //   select: {
-  //     type: true,
-  //     stripeSubscriptionStatus: true,
-  //     verificationAuthority: true,
-  //   },
-  // });
+  // Load fresh organization data from database
+  const user = await prisma.user.findUnique({
+    where: { id: token.id as string },
+    include: { organization: true }
+  });
 
-  // PLACEHOLDER: Mock organization for development
-  const org = {
-    type: 'general' as 'general' | 'enterprise' | 'regulator',
-    stripeSubscriptionStatus: 'active' as 'active' | 'inactive' | 'canceled',
-    verificationAuthority: true,
-  };
-
-  // Non-Enterprise organizations: Require active Stripe subscription
-  if (org.type !== 'enterprise' && org.type !== 'regulator') {
-    if (org.stripeSubscriptionStatus !== 'active') {
-      return NextResponse.redirect(new URL('/pricing', req.url));
-    }
+  if (!user?.organization) {
+    const pricingUrl = new URL("/pricing", req.url);
+    pricingUrl.searchParams.set("reason", "no_organization");
+    return NextResponse.redirect(pricingUrl);
   }
+
+  // STRIPE SUBSCRIPTION GATE - Enforce active subscription
+  if (user.organization.subscriptionStatus !== 'active') {
+    const pricingUrl = new URL("/pricing", req.url);
+    pricingUrl.searchParams.set("reason", "subscription_required");
+    return NextResponse.redirect(pricingUrl);
+  }
+
+  return null; // Allow request to proceed
+}
 
   // Enterprise/Regulator organizations: Require verification authority
   if (org.type === 'enterprise' || org.type === 'regulator') {

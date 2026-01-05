@@ -1,39 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getUserFromRequest } from './getUserFromRequest';
+import { getToken } from "next-auth/jwt";
 
 export interface AuthUser {
   id: string;
-  role: 'admin' | 'supervisor' | 'dispatcher' | 'safety_officer' | 'executive' | 'regulator' | 'employee';
-  organizationId: string;
+  role: 'admin' | 'supervisor' | 'dispatcher' | 'safety' | 'executive' | 'regulator' | 'operations';
+  organizationId: string | null;
   email: string;
 }
 
 /**
  * AUTH MIDDLEWARE — AUTHENTICATION ONLY
  * 
- * Purpose: Verify user is authenticated
+ * Purpose: Verify user is authenticated via NextAuth
  * Applied to: /dashboard routes
  * 
  * Rules:
- * - Extract user via getUserFromRequest
+ * - Extract JWT token from NextAuth
  * - If unauthenticated → redirect /login
- * 
- * Does NOT:
- * - Check pricing
- * - Check organization
- * - Touch QR logic
  */
 export async function auth(req: NextRequest): Promise<NextResponse | null> {
-  // Extract user from request headers
-  const user = getUserFromRequest(req);
+  const token = await getToken({
+    req,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
 
-  // If no user session, redirect to login
-  if (!user) {
-    return NextResponse.redirect(new URL('/login', req.url));
+  if (!token) {
+    const loginUrl = new URL("/login", req.url);
+    loginUrl.searchParams.set("callbackUrl", req.url);
+    return NextResponse.redirect(loginUrl);
   }
 
-  // Authentication passed, allow to proceed to next middleware
-  return null;
+  return null; // Allow request to proceed
 }
 
 // Placeholder for auth middleware - integrate with your auth provider

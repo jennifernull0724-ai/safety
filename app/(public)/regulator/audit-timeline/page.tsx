@@ -11,6 +11,7 @@ import {
   Download,
   ArrowLeft,
   Shield,
+  ShieldAlert,
   Calendar
 } from 'lucide-react';
 import { PublicLayout } from '@/components/PublicLayout';
@@ -56,86 +57,94 @@ export default function AuditTimelinePage() {
     certifications: { name: string; status: string }[];
   } | null>(null);
 
-  // PLACEHOLDER: Fetch timeline from API
+  // Fetch timeline from real API
   const fetchTimeline = async () => {
     if (!employeeId) return;
     setLoading(true);
     
     try {
-      // In production: const response = await fetch(`/api/regulator/timeline/${employeeId}?date=${dateFilter}`);
-      // const data = await response.json();
-      // setTimeline(data.events);
+      const url = dateFilter 
+        ? `/api/regulator/timeline/${employeeId}?date=${dateFilter}`
+        : `/api/regulator/timeline/${employeeId}`;
       
-      // MOCK DATA for demonstration
-      setTimeline([
-        {
-          id: '1',
-          timestamp: '2025-12-15T14:30:00Z',
-          eventType: 'certification_added',
-          description: 'OSHA 30 certification added',
-          performedBy: 'Sarah Johnson (Compliance Admin)',
-          reason: 'New hire certification upload',
-          newValue: 'OSHA 30 - Expires 2028-12-01',
-          complianceStatus: 'compliant',
-          evidenceFiles: ['osha-30-cert.pdf']
-        },
-        {
-          id: '2',
-          timestamp: '2026-01-03T09:15:00Z',
-          eventType: 'verification_scan',
-          description: 'QR verification scan - Chicago Yard Gate 5',
-          performedBy: 'Mark Wilson (Site Supervisor)',
-          complianceStatus: 'compliant'
-        },
-        {
-          id: '3',
-          timestamp: '2026-01-04T11:20:00Z',
-          eventType: 'certification_expired',
-          description: 'First Aid/CPR certification expired',
-          performedBy: 'System (Automated)',
-          previousValue: 'First Aid/CPR - Valid',
-          newValue: 'First Aid/CPR - EXPIRED',
-          complianceStatus: 'non_compliant'
-        }
-      ]);
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch timeline');
+      }
+      
+      const data = await response.json();
+      setTimeline(data.timeline);
     } catch (error) {
       console.error('Failed to fetch timeline:', error);
+      alert('Failed to load timeline. Please check the employee ID.');
     } finally {
       setLoading(false);
     }
   };
 
-  // PLACEHOLDER: Query point-in-time status
+  // Query point-in-time status from real API
   const queryPointInTime = async () => {
     if (!employeeId || !pointInTimeDate) return;
     
     try {
-      // In production: const response = await fetch(`/api/regulator/point-in-time/${employeeId}?date=${pointInTimeDate}`);
-      // const data = await response.json();
-      // setPointInTimeStatus(data);
+      const response = await fetch(
+        `/api/regulator/point-in-time/${employeeId}?date=${pointInTimeDate}`
+      );
       
-      // MOCK DATA
+      if (!response.ok) {
+        throw new Error('Failed to query point-in-time status');
+      }
+      
+      const data = await response.json();
       setPointInTimeStatus({
-        compliant: true,
-        certifications: [
-          { name: 'OSHA 30', status: 'Valid - Expires 2028-12-01' },
-          { name: 'First Aid/CPR', status: 'Valid - Expires 2026-01-03' },
-          { name: 'Railroad Safety', status: 'Valid - Expires 2027-06-15' }
-        ]
+        compliant: data.compliant,
+        certifications: data.certifications.map((cert: any) => ({
+          name: cert.certificationType,
+          status: cert.status
+        }))
       });
     } catch (error) {
       console.error('Failed to query point-in-time status:', error);
+      alert('Failed to query historical status.');
     }
   };
 
   const downloadTimeline = () => {
-    // PLACEHOLDER: Export timeline as PDF or CSV
-    alert('Timeline export functionality - would download CSV/PDF of all events');
+    // Export timeline as CSV
+    const headers = ['Timestamp', 'Event Type', 'Description', 'Performed By'];
+    const rows = timeline.map(event => [
+      event.timestamp,
+      event.eventType,
+      event.description,
+      event.performedBy
+    ]);
+    
+    const csv = [headers, ...rows].map(row => row.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `timeline-${employeeId}-${new Date().toISOString()}.csv`;
+    a.click();
   };
 
   return (
     <PublicLayout>
       <div className="max-w-5xl mx-auto px-4 md:px-6 py-8 md:py-16">
+        {/* READ-ONLY BANNER */}
+        <div className="mb-6 p-4 bg-blue-50 border-2 border-blue-600 rounded-lg">
+          <div className="flex items-center gap-3">
+            <ShieldAlert className="w-6 h-6 text-blue-600" />
+            <div>
+              <h3 className="font-bold text-blue-900">READ-ONLY OFFICIAL RECORD — NOT EDITABLE</h3>
+              <p className="text-sm text-blue-800 mt-1">
+                This is a public, tamper-evident audit record. No modifications are possible. All access is logged.
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Header */}
         <div className="mb-8">
           <Link 

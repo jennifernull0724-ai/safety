@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './styles/globals.css';
+import { AuthProvider } from './providers';
 
 export const metadata: Metadata = {
   title: 'System of Proof',
@@ -13,7 +14,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-slate-950 text-white antialiased">{children}</body>
+      <body className="bg-slate-950 text-white antialiased">
+        <AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   );
 }

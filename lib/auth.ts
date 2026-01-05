@@ -1,38 +1,65 @@
 /**
- * AUTH LAYER
+ * AUTH LAYER - REAL IMPLEMENTATION
  * 
- * Minimal session management for server-side role checks
- * 
- * CRITICAL: This is a placeholder for actual authentication
- * In production, replace with NextAuth or similar
+ * Uses NextAuth with database-backed sessions
+ * All user roles loaded from database
  */
 
-type UserRole = "admin" | "safety" | "dispatch" | "supervisor" | "executive" | "operations" | "regulator";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { prisma } from "@/lib/prisma";
+
+type UserRole = "admin" | "safety" | "dispatcher" | "supervisor" | "executive" | "operations" | "regulator";
 
 interface Session {
   user: {
     id: string;
     email: string;
     role: UserRole;
-    organizationId: string;
+    organizationId: string | null;
+    organization: {
+      id: string;
+      name: string;
+      subscriptionStatus: string;
+      pricingTier: string | null;
+    } | null;
   };
 }
 
 /**
  * Get current session (server-side only)
- * 
- * PRODUCTION TODO: Replace with actual session lookup
+ * Returns null if not authenticated
  */
 export async function getSession(): Promise<Session | null> {
-  // TEMPORARY DEV MODE: Return mock admin session for development
-  // TODO: Replace with actual session validation in production
+  const session = await getServerSession(authOptions);
+  
+  if (!session?.user) {
+    return null;
+  }
+
+  // Load fresh user data from database to ensure role is current
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    include: { organization: true }
+  });
+
+  if (!user || user.status !== 'active') {
+    return null;
+  }
+
   return {
     user: {
-      id: 'dev-user-001',
-      email: 'admin@systemofproof.com',
-      role: 'admin',
-      organizationId: 'org-ironpath-rail',
-    },
+      id: user.id,
+      email: user.email,
+      role: user.role as UserRole,
+      organizationId: user.organizationId,
+      organization: user.organization ? {
+        id: user.organization.id,
+        name: user.organization.name,
+        subscriptionStatus: user.organization.subscriptionStatus,
+        pricingTier: user.organization.pricingTier
+      } : null
+    }
   };
 }
 
@@ -44,12 +71,45 @@ export async function requireRole(allowedRoles: UserRole[]): Promise<Session> {
   const session = await getSession();
   
   if (!session) {
-    throw new Error("Unauthorized");
+    throw new Error("Unauthorized - No valid session");
   }
   
   if (!allowedRoles.includes(session.user.role)) {
-    throw new Error("Forbidden");
+    // Log unauthorized access attempt
+    await prisma.evidenceNode.create({
+      data: {
+        entityType: 'UnauthorizedAccess',
+        entityId: session.user.id,
+        actorType: 'user',
+        actorId: session.user.id,
+      }
+    });
+    
+    throw new Error("Forbidden - Insufficient permissions");
   }
   
   return session;
 }
+
+/**
+ * Require active subscription
+ * Throws if organization has no active subscription
+ */
+export async function requireActiveSubscription(): Promise<Session> {
+  const session = await getSession();
+  
+  if (!session) {
+    throw new Error("Unauthorized - No valid session");
+  }
+
+  if (!session.user.organization) {
+    throw new Error("No organization associated with user");
+  }
+
+  if (session.user.organization.subscriptionStatus !== 'active') {
+    throw new Error("Subscription required - Please update billing");
+  }
+
+  return session;
+}
+

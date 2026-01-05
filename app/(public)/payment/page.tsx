@@ -57,30 +57,29 @@ export default function Payment() {
     setLoading(true);
 
     try {
-      // STRIPE PAYMENT PROCESSING HOOK GOES HERE
-      // await processStripePayment({ 
-      //   cardNumber, 
-      //   expiryDate, 
-      //   cvv, 
-      //   billingName, 
-      //   amount: finalPrice,
-      //   promoCode: promoApplied ? promoCode : null 
-      // })
-      
-      await new Promise(res => setTimeout(res, 2000)); // placeholder
-      
-      // Send welcome email (extract email from form - need to add email field)
-      // For now, using billingName as placeholder until real Stripe integration
-      // await fetch('/api/send-welcome', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ email: 'customer@example.com', name: billingName })
-      // });
-      
-      // Redirect to dashboard after successful payment
-      window.location.href = '/dashboard';
+      // Create Stripe Checkout Session
+      const response = await fetch('/api/public/billing/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tier: 'mid', // $9,500 tier
+          promoCode: promoApplied ? promoCode : null
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || 'Payment processing failed');
+        return;
+      }
+
+      // Redirect to Stripe Checkout
+      if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      }
     } catch (err) {
-      setError('Payment failed. Please check your card details.');
+      setError('Payment failed. Please try again.');
     } finally {
       setLoading(false);
     }

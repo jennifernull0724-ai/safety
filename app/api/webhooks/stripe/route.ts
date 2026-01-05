@@ -1,27 +1,22 @@
 import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
+import Stripe from 'stripe';
+import { prisma } from '@/lib/prisma';
 
 /**
- * STRIPE WEBHOOK → LICENSE ACTIVATION
+ * STRIPE WEBHOOK → SUBSCRIPTION ACTIVATION
  * 
- * Webhook: checkout.session.completed
+ * Webhook Events Handled:
+ * - checkout.session.completed: Create/activate organization subscription
+ * - customer.subscription.updated: Update subscription status
+ * - customer.subscription.deleted: Cancel subscription
  * 
- * This is the ONLY PLACE where license state changes.
- * 
- * Server Action (ATOMIC):
- * 1. Create Organization
- * 2. Attach User as Owner/Admin
- * 3. Create License Record
- * 4. Set organization.verificationAuthority = "enabled"
- * 
- * ⚠️ Does NOT create employees
- * ⚠️ Does NOT create certifications
- * ⚠️ Does NOT expose verification publicly yet
- * 
- * It only enables the capability.
- * 
- * NO Base44, Stripe is authoritative
+ * This is the ONLY PLACE where subscription state changes.
  */
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2024-12-18.acacia'
+});
 
 export async function POST(request: Request) {
   try {
@@ -35,69 +30,192 @@ export async function POST(request: Request) {
       );
     }
 
-    // STRIPE WEBHOOK VERIFICATION GOES HERE
-    // Example:
-    // const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-    // const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-    // 
-    // let event;
-    // try {
-    //   event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
-    // } catch (err) {
-    //   return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
-    // }
-    //
-    // if (event.type !== 'checkout.session.completed') {
-    //   return NextResponse.json({ received: true });
-    // }
-    //
-    // const session = event.data.object;
-    // const { userId, licenseTier, licenseType } = session.metadata;
-
-    // PLACEHOLDER: Parse mock event
-    const mockEvent = JSON.parse(body);
-    const { userId, licenseTier, licenseType } = mockEvent.metadata || {};
-
-    if (!userId || !licenseTier || licenseType !== 'organization_verification') {
+    // Verify webhook signature
+    let event: Stripe.Event;
+    try {
+      event = stripe.webhooks.constructEvent(
+        body,
+        signature,
+        process.env.STRIPE_WEBHOOK_SECRET!
+      );
+    } catch (err) {
+      console.error('Webhook signature verification failed:', err);
       return NextResponse.json(
-        { error: 'Invalid webhook metadata' },
+        { error: 'Invalid signature' },
         { status: 400 }
       );
     }
 
-    // ATOMIC LICENSE ACTIVATION (ALL OR NOTHING)
-    // 
-    // Step 1: Create Organization
-    // const organization = await prisma.organization.create({
-    //   data: {
-    //     name: `Organization for ${userId}`,
-    //     verificationAuthority: 'enabled',
-    //     trustStartAt: new Date(),
-    //   }
-    // });
-    //
-    // Step 2: Attach User as Owner/Admin
-    // await prisma.user.update({
-    //   where: { id: userId },
-    //   data: {
-    //     organizationId: organization.id,
-    //     role: 'owner'
-    //   }
-    // });
-    //
-    // Step 3: Create License Record
-    // await prisma.license.create({
-    //   data: {
-    //     organizationId: organization.id,
-    //     licenseType: 'organization_verification',
-    //     tier: licenseTier,
-    //     status: 'active',
-    //     validFrom: new Date(),
-    //     validUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year
-    //     stripeSessionId: session.id,
-    //     stripePaymentIntent: session.payment_intent
-    //   }
-    // });
+    // Handle different event types
+    switch (event.type) {
+      case 'checkout.session.completed': {
+        const session = event.data.object as Stripe.Checkout.Session;
+        await handleCheckoutCompleted(session);
+        break;
+      }
+
+      case 'customer.subscription.updated': {
+        const subscription = event.data.object as Stripe.Subscription;
+        await handleSubscriptionUpdated(subscription);
+        break;
+      }
+
+      case 'customer.subscription.deleted': {
+        const subscription = event.data.object as Stripe.Subscription;
+        await handleSubscriptionDeleted(subscription);
+        break;
+      }
+
+      default:
+        console.log(`Unhandled event type: ${event.type}`);
+    }
+
+    return NextResponse.json({ received: true });
+
+  } catch (error) {
+    console.error('Webhook processing error:', error);
+    return NextResponse.json(
+      { error: 'Webhook processing failed' },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * Handle checkout.session.completed event
+ * Creates or updates organization with Stripe subscription data
+ */
+async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
+  const { userId, pricingTier } = session.metadata || {};
+
+  if (!userId || !pricingTier) {
+    console.error('Missing metadata in checkout session:', session.id);
+    return;
+  }
+
+  // Get subscription details
+  const subscription = await stripe.subscriptions.retrieve(
+    session.subscription as string
+  );
+
+  // Find or create organization for the user
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    include: { organization: true }
+  });
+
+  if (!user) {
+    console.error('User not found:', userId);
+    return;
+  }
+
+  // ATOMIC SUBSCRIPTION ACTIVATION
+  if (user.organization) {
+    // Update existing organization
+    await prisma.organization.update({
+      where: { id: user.organization.id },
+      data: {
+        stripeCustomerId: session.customer as string,
+        stripeSubscriptionId: subscription.id,
+        pricingTier,
+        subscriptionStatus: 'active',
+        subscriptionStartedAt: new Date(),
+      }
+    });
+  } else {
+    // Create new organization for user
+    const organization = await prisma.organization.create({
+      data: {
+        name: `${user.name || user.email}'s Organization`,
+        type: 'contractor', // Default type
+        status: 'active',
+        stripeCustomerId: session.customer as string,
+        stripeSubscriptionId: subscription.id,
+        pricingTier,
+        subscriptionStatus: 'active',
+        subscriptionStartedAt: new Date(),
+      }
+    });
+
+    // Associate user with organization
+    await prisma.user.update({
+      where: { id: userId },
+      data: { organizationId: organization.id }
+    });
+  }
+
+  // Log subscription activation as evidence
+  await prisma.evidenceNode.create({
+    data: {
+      entityType: 'SubscriptionActivated',
+      entityId: subscription.id,
+      actorType: 'system',
+      actorId: 'stripe_webhook',
+    }
+  });
+}
+
+/**
+ * Handle customer.subscription.updated event
+ */
+async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
+  const organization = await prisma.organization.findUnique({
+    where: { stripeSubscriptionId: subscription.id }
+  });
+
+  if (!organization) {
+    console.error('Organization not found for subscription:', subscription.id);
+    return;
+  }
+
+  // Map Stripe subscription status to our enum
+  let status: 'active' | 'inactive' | 'canceled' | 'past_due' | 'trialing' = 'inactive';
+  
+  if (subscription.status === 'active') status = 'active';
+  else if (subscription.status === 'trialing') status = 'trialing';
+  else if (subscription.status === 'past_due') status = 'past_due';
+  else if (subscription.status === 'canceled') status = 'canceled';
+
+  await prisma.organization.update({
+    where: { id: organization.id },
+    data: {
+      subscriptionStatus: status,
+      subscriptionEndsAt: subscription.cancel_at ? new Date(subscription.cancel_at * 1000) : null
+    }
+  });
+}
+
+/**
+ * Handle customer.subscription.deleted event
+ */
+async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
+  const organization = await prisma.organization.findUnique({
+    where: { stripeSubscriptionId: subscription.id }
+  });
+
+  if (!organization) {
+    console.error('Organization not found for subscription:', subscription.id);
+    return;
+  }
+
+  await prisma.organization.update({
+    where: { id: organization.id },
+    data: {
+      subscriptionStatus: 'canceled',
+      subscriptionEndsAt: new Date()
+    }
+  });
+
+  // Log subscription cancellation
+  await prisma.evidenceNode.create({
+    data: {
+      entityType: 'SubscriptionCanceled',
+      entityId: subscription.id,
+      actorType: 'system',
+      actorId: 'stripe_webhook',
+    }
+  });
+}
     //
     // Step 4: Create Audit Event
     // await prisma.auditEvent.create({
