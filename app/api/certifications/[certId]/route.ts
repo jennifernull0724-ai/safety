@@ -6,7 +6,7 @@ import { withEvidence } from '@/lib/withEvidence';
 export async function GET(req: NextRequest, { params }: { params: { certId: string } }) {
   const certification = await prisma.certification.findUnique({
     where: { id: params.certId },
-    include: { Employee: true },
+    include: { employee: true },
   });
   if (!certification) return NextResponse.json({ error: 'Not found' }, { status: 404 });
   return NextResponse.json(certification);
