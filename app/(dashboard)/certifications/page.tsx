@@ -25,6 +25,31 @@ export default function CertificationsPage() {
     setSnapshotDate('');
   };
 
+  const generateAuditPackage = async () => {
+    try {
+      const res = await fetch('/api/audit/export', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          includeAll: true,
+          format: 'zip',
+        }),
+      });
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `audit-package-${new Date().toISOString()}.zip`;
+        a.click();
+      } else {
+        alert('Failed to generate audit package');
+      }
+    } catch (err) {
+      alert('Error generating audit package');
+    }
+  };
+
   useEffect(() => {
     const loadCertifications = async () => {
       try {
@@ -43,6 +68,20 @@ export default function CertificationsPage() {
     
     loadCertifications();
   }, [isSnapshotMode, snapshotDate]);
+
+  const filteredCertifications = certifications.filter((c: any) => {
+    const q = searchQuery.toLowerCase();
+    const matchesSearch = !q || c.type?.toLowerCase().includes(q) || c.issuing_authority?.toLowerCase().includes(q);
+    const matchesStatus = statusFilter === 'all' || c.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  const stats = {
+    total: certifications.length,
+    valid: certifications.filter(c => c.status === 'PASS' || c.status === 'valid').length,
+    expiring: certifications.filter(c => c.status === 'expiring').length,
+    expired: certifications.filter(c => c.status === 'FAIL' || c.status === 'expired').length,
+  };
 
   return (
     <div>
@@ -81,51 +120,7 @@ export default function CertificationsPage() {
                 value={snapshotDate}
                 onChange={e => setSnapshotDate(e.target.value)}
                 max={new Date().toISOString().split('T')[0]}
-              />
-              <button
-                onClick={applySnapshot}
-                disabled={!snapshotDate}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 disabled:text-slate-500 rounded-lg font-medium"
-              >
-                Apply Snapshot
-              </button>
-              {isSnapshotMode && (
-                <button onClick={clearSnapshot} className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg">
-                  Clear Snapshot (View Current)
-                </button>
-              )}
-            </div>
-          </div>
-          <button
-            onClick={generateAuditPackage}
-            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-lg flex items-center gap-2 font-medium"
-          >
-            <Download className="w-4 h-4" />
-            Generate Audit Package
-          </button>
-        </div>
-      </div>
-
-      {/* Snapshot Mode Banner */}
-      {isSnapshotMode && (
-        <div className="mb-6 p-4 bg-amber-900/20 border border-amber-800/50 rounded-lg">
-          <div className="flex items-center gap-3">
-            <Clock className="w-5 h-5 text-amber-400" />
-            <div>
-              <strong className="text-amber-300">Historical Snapshot — Read-Only View</strong>
-              <p className="text-sm text-slate-400 mt-1">
-                Viewing compliance state as of {new Date(snapshotDate).toLocaleDateString()}. This snapshot reflects
-                data as it existed at that time.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}res = await fetch('/api/audit/export', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          includeAll: true,
-          format: 'zip',
+        rmat: 'zip',
         }),
       });
       if (res.ok) {
