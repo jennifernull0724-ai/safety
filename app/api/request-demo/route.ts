@@ -45,6 +45,7 @@ export async function POST(request: NextRequest) {
         <p><strong>Estimated Employee Count:</strong> ${employeeCount || 'Not provided'}</p>
         <p><strong>Notes:</strong></p>
         <p>${notes ? notes.replace(/\n/g, '<br>') : 'No additional notes'}</p>
+        <p><strong>Request ID:</strong> ${demoRequest.id}</p>
       `,
     });
 
@@ -54,9 +55,7 @@ export async function POST(request: NextRequest) {
         { error: 'Failed to send demo request' },
         { status: 500 }
       );
-    }  <p><strong>Request ID:</strong> ${demoRequest.id}</p>
-      `,
-    });
+    }
 
     return NextResponse.json({ success: true, data, requestId: demoRequest.id });
   } catch (error) {
@@ -84,21 +83,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(requests);
   } catch (error) {
-    console.error('Failed to fetch demo requestsION_EMAIL!,
-      replyTo: process.env.EMAIL_REPLY_TO!,
-      subject: `New Demo Request: ${company} (${employeeCount || 'Unknown'} employees)`,
-      html: `
-        <p>New demo request received.</p>
-        <p><strong>Company:</strong> ${company}</p>
-        <p><strong>Contact:</strong> ${name} (${email})</p>
-        <p><strong>Role:</strong> ${role || 'Not provided'}</p>
-        <p><strong>Employee Count:</strong> ${employeeCount || 'Not provided'}</p>
-      `,
-    });
-
-    return NextResponse.json({ success: true, data });
-  } catch (error) {
-    console.error('Demo request error:', error);
+    console.error('Failed to fetch demo requests:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

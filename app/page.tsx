@@ -57,7 +57,7 @@ const coreCapabilities = [
   {
     name: 'Historical State Preservation',
     lines: [
-      'The system can answer: "What was this employee's certification status on a specific date?"',
+      'The system can answer: "What was this employee\'s certification status on a specific date?"',
       'QR codes resolve to records showing compliance status exactly as it existed at the time of issuance.',
     ],
   },
