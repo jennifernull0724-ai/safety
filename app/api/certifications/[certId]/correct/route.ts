@@ -8,7 +8,7 @@ import { correctCertification, getCorrectionChain } from '@/lib/services/certifi
  */
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { certId: string } }
 ) {
   try {
     const session = await getServerSession();
@@ -27,7 +27,7 @@ export async function POST(
     }
 
     const result = await correctCertification({
-      originalCertificationId: params.id,
+      originalCertificationId: params.certId,
       correctionReason: reason,
       correctedByUserId: session.user.id || session.user.email || 'unknown',
       newData: changes,
@@ -53,10 +53,10 @@ export async function POST(
  */
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { certId: string } }
 ) {
   try {
-    const chain = await getCorrectionChain(params.id);
+    const chain = await getCorrectionChain(params.certId);
     return NextResponse.json({ chain });
   } catch (error: any) {
     console.error('Get correction chain error:', error);
