@@ -25,14 +25,29 @@ model Organization {
   subscriptionStatus    SubscriptionStatus @default(inactive)
   subscriptionStartedAt DateTime?
   subscriptionEndsAt    DateTime?
+  
+  // Termination & Grace Period
+  gracePeriodEndsAt     DateTime?
+  isReadOnlyMode        Boolean  @default(false)
+  
+  // Pricing Controls
+  employeeCountAtRenewal Int?
+  contractTermYears     Int?     @default(1)
+  lockedDiscountRate    Float?
+  lastRenewalPrice      Float?
+  
+  // SLA Tracking
+  slaCreditsOwed        Float?   @default(0)
 
-  users     User[]
-  employees Employee[]
-  crews     Crew[]
-  incidents Incident[]
-  audits    AuditCase[]
-  assets    Asset[]
-  policies  InsurancePolicy[]
+  users          User[]
+  employees      Employee[]
+  crews          Crew[]
+  incidents      Incident[]
+  audits         AuditCase[]
+  assets         Asset[]
+  policies       InsurancePolicy[]
+  uptimeMetrics  UptimeMetric[]
+  usageMetrics   UsageMetric[]
 }
 
 enum SubscriptionStatus {
@@ -538,10 +553,51 @@ model DemoRequest {
   organizationId String?
   submittedAt    DateTime @default(now())
   status         SubmissionStatus @default(new)
-  assignedTo     String?
   
   @@index([status])
   @@index([submittedAt])
+}
+
+//////////////////////////////////////////////////////
+// SLA & USAGE TRACKING
+//////////////////////////////////////////////////////
+
+model UptimeMetric {
+  id              String   @id @default(uuid())
+  organizationId  String
+  month           String   // YYYY-MM format
+  uptimePercent   Float
+  downtimeMinutes Int
+  slaCreditsEarned Float   @default(0)
+  recordedAt      DateTime @default(now())
+  
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  @@unique([organizationId, month])
+  @@index([month])
+}
+
+model UsageMetric {
+  id                  String   @id @default(uuid())
+  organizationId      String
+  metricType          UsageMetricType
+  count               Int
+  period              String   // YYYY-MM or YYYY for annual metrics
+  exceededThreshold   Boolean  @default(false)
+  flaggedAt           DateTime?
+  recordedAt          DateTime @default(now())
+  
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  @@unique([organizationId, metricType, period])
+  @@index([metricType, period])
+}
+
+enum UsageMetricType {
+  qr_scans_daily
+  ai_events_annual
+  employee_days_annual
+  incidents_annual
 }
 
 enum SubmissionStatus {

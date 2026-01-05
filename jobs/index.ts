@@ -5,6 +5,9 @@ import { runFatigueRiskJob } from './fatigueRiskJob.js';
 import { runAINearMissClustering } from './aiNearMissClustering.js';
 import { runAuditReadinessScoring } from './auditReadinessScoring.js';
 import { runArchivalRetention } from './archivalRetention.js';
+import { runSLAUptimeMonitoring } from './slaUptimeMonitoring.js';
+import { runGracePeriodTermination } from './gracePeriodTermination.js';
+import { runPricingTierValidation } from './pricingTierValidation.js';
 
 export const JOBS = {
   certificationExpiration: runCertificationExpirationJob,
@@ -14,6 +17,9 @@ export const JOBS = {
   aiNearMissClustering: runAINearMissClustering,
   auditReadinessScoring: runAuditReadinessScoring,
   archivalRetention: runArchivalRetention,
+  slaUptimeMonitoring: runSLAUptimeMonitoring,
+  gracePeriodTermination: runGracePeriodTermination,
+  pricingTierValidation: runPricingTierValidation,
 };
 
 export async function runAllJobs() {
@@ -27,6 +33,9 @@ export async function runAllJobs() {
     aiNearMissClustering: await runAINearMissClustering(),
     auditReadinessScoring: await runAuditReadinessScoring(),
     archivalRetention: await runArchivalRetention(),
+    slaUptimeMonitoring: await runSLAUptimeMonitoring(),
+    gracePeriodTermination: await runGracePeriodTermination(),
+    pricingTierValidation: await runPricingTierValidation(),
   };
 
   console.log('✅ All jobs complete:', results);

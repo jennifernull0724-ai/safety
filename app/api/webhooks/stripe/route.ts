@@ -157,8 +157,14 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
 /**
  * Handle customer.subscription.updated event
+ * 
+ * ENFORCEMENT:
+ * - If reactivated, end grace period
+ * - If past_due, continue read-only mode
  */
 async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
+  const { endGracePeriod } = await import('@/lib/services/terminationGracePeriod');
+  
   const organization = await prisma.organization.findUnique({
     where: { stripeSubscriptionId: subscription.id }
   });
@@ -183,12 +189,24 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
       subscriptionEndsAt: subscription.cancel_at ? new Date(subscription.cancel_at * 1000) : null
     }
   });
+
+  // If subscription reactivated from canceled, end grace period
+  if (subscription.status === 'active' && organization.isReadOnlyMode) {
+    await endGracePeriod(organization.id);
+  }
 }
 
 /**
  * Handle customer.subscription.deleted event
+ * 
+ * ENFORCEMENT:
+ * - Start 30-day grace period
+ * - Enable read-only mode
+ * - QR verification remains functional
  */
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
+  const { startGracePeriod } = await import('@/lib/services/terminationGracePeriod');
+  
   const organization = await prisma.organization.findUnique({
     where: { stripeSubscriptionId: subscription.id }
   });
@@ -205,6 +223,9 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
       subscriptionEndsAt: new Date()
     }
   });
+
+  // Start 30-day grace period with read-only access
+  await startGracePeriod(organization.id);
 
   // Log subscription cancellation
   await prisma.evidenceNode.create({
