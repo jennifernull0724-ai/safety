@@ -93,11 +93,11 @@ export default function Pricing() {
         <section className="max-w-4xl mx-auto">
           <h3 className="text-2xl md:text-3xl font-bold mb-8 text-center">Pricing Tiers</h3>
           <div className="grid md:grid-cols-3 gap-6 mb-8">
-            {/* Standard Tier */}
+            {/* Small Tier */}
             <div className="p-6 rounded-xl bg-slate-800/50 border-2 border-blue-500/50">
-              <h4 className="text-xl font-bold mb-2 text-white">Standard</h4>
-              <div className="text-3xl font-bold text-white mb-2">$9,500</div>
-              <p className="text-sm text-slate-400 mb-4">per year</p>
+              <h4 className="text-xl font-bold mb-2 text-white">Small</h4>
+              <div className="text-3xl font-bold text-white mb-2">$4,500</div>
+              <p className="text-sm text-slate-400 mb-4">per month</p>
               <ul className="space-y-2 text-sm text-slate-300">
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
@@ -110,11 +110,11 @@ export default function Pricing() {
               </ul>
             </div>
 
-            {/* Enterprise Tier 1 */}
+            {/* Mid Tier */}
             <div className="p-6 rounded-xl bg-slate-800/50 border border-slate-700">
-              <h4 className="text-xl font-bold mb-2 text-white">Enterprise</h4>
-              <div className="text-3xl font-bold text-white mb-2">$18,000</div>
-              <p className="text-sm text-slate-400 mb-4">per year</p>
+              <h4 className="text-xl font-bold mb-2 text-white">Mid</h4>
+              <div className="text-3xl font-bold text-white mb-2">$9,500</div>
+              <p className="text-sm text-slate-400 mb-4">per month</p>
               <ul className="space-y-2 text-sm text-slate-300">
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
@@ -127,19 +127,19 @@ export default function Pricing() {
               </ul>
             </div>
 
-            {/* Enterprise Tier 2 */}
+            {/* Large Tier */}
             <div className="p-6 rounded-xl bg-slate-800/50 border border-slate-700">
-              <h4 className="text-xl font-bold mb-2 text-white">Enterprise Plus</h4>
-              <div className="text-3xl font-bold text-white mb-2">Custom</div>
-              <p className="text-sm text-slate-400 mb-4">contact sales</p>
+              <h4 className="text-xl font-bold mb-2 text-white">Large</h4>
+              <div className="text-3xl font-bold text-white mb-2">$18,000</div>
+              <p className="text-sm text-slate-400 mb-4">per month</p>
               <ul className="space-y-2 text-sm text-slate-300">
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
-                  <span>500+ active employees</span>
+                  <span>501-1000 active employees</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
-                  <span>Volume discounts available</span>
+                  <span>All core features</span>
                 </li>
               </ul>
             </div>
@@ -151,11 +151,11 @@ export default function Pricing() {
             <ul className="space-y-2 text-sm text-slate-300">
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
-                <span><strong>Billing:</strong> Annual payment in advance, Net 30 terms available</span>
+                <span><strong>Billing:</strong> Monthly recurring subscription, cancel anytime</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
-                <span><strong>Employee Definition:</strong> Active employees with certification records as of annual billing date, excluding terminated employees with historical-only records</span>
+                <span><strong>Employee Definition:</strong> Active employees with certification records, excluding terminated employees with historical-only records</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
@@ -163,19 +163,11 @@ export default function Pricing() {
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
-                <span><strong>Mid-Contract Growth:</strong> Service continues uninterrupted if employee count exceeds tier during contract term. Pricing adjustment applies at renewal only.</span>
+                <span><strong>Tier Changes:</strong> Upgrade or downgrade anytime based on employee count. Changes take effect at next billing cycle.</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
-                <span><strong>Renewal:</strong> Pricing locked for initial term. Annual adjustments capped at 8% per renewal cycle (non-compounding) with 60-day advance notice.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
-                <span><strong>Multi-Year:</strong> 3-year commitment: 5% discount | 5-year commitment: 10% discount</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
-                <span><strong>Payment Methods:</strong> ACH, wire transfer, credit card, or invoice/PO (Net 30)</span>
+                <span><strong>Payment Methods:</strong> Credit card or ACH. Enterprise customers (1000+ employees) contact sales for custom pricing and invoicing.</span>
               </li>
             </ul>
           </div>
