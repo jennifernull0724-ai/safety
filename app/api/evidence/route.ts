@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
   // await enforceRole(req, ['admin', 'safety', 'executive', 'regulator']);
 
   const nodes = await prisma.evidenceNode.findMany({
-    orderBy: { createdAt: 'desc' },
+    orderBy: { timestamp: 'desc' },
     take: 100,
   });
   return NextResponse.json({ nodes });
