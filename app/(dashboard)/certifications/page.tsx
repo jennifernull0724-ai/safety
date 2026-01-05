@@ -17,7 +17,9 @@ export default function CertificationsPage() {
   }, []);
 
   const loadCertifications = async () => {
-    setLoadiurl = isSnapshotMode && snapshotDate
+    try {
+      setLoading(true);
+      const url = isSnapshotMode && snapshotDate
         ? `/api/certifications?asOfDate=${snapshotDate}`
         : '/api/certifications';
       const res = await fetch(url);
@@ -42,6 +44,8 @@ export default function CertificationsPage() {
     setIsSnapshotMode(false);
     setSnapshotDate('');
     loadCertifications();
+  };
+
   useEffect(() => {
     loadCertifications();
   }, [isSnapshotMode, snapshotDate]);
