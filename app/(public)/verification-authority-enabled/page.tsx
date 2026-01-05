@@ -83,7 +83,7 @@ export default function VerificationAuthorityEnabled() {
               <ul className="space-y-3 text-slate-300">
                 <li className="flex items-start gap-3">
                   <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 shrink-0" />
-                  <span>All verification events are <strong>immutable and append-only</strong></span>
+                  <span>All verification events use <strong>tamper-evident, append-only record structures</strong></span>
                 </li>
                 <li className="flex items-start gap-3">
                   <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 shrink-0" />
@@ -130,7 +130,7 @@ export default function VerificationAuthorityEnabled() {
                   <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
                     <span className="text-xs font-semibold text-blue-400">4</span>
                   </div>
-                  <span>All actions create immutable audit trail entries</span>
+                  <span>All actions create tamper-evident audit trail entries</span>
                 </li>
               </ul>
             </div>

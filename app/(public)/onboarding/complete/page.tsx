@@ -191,7 +191,7 @@ export default function OnboardingComplete() {
                   <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
                     <span className="text-xs font-semibold text-blue-400">4</span>
                   </div>
-                  <span>All actions create immutable audit trail</span>
+                  <span>All actions create tamper-evident audit trail</span>
                 </li>
               </ul>
             </div>

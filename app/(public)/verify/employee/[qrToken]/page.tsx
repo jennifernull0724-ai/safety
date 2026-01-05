@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useParams, useSearchParams } from 'next/navigation';
 import {
   Shield,
@@ -160,14 +161,33 @@ export default function QRVerification() {
             <Lock className="w-6 h-6 text-blue-400 flex-shrink-0 print:text-black" />
             <div>
               <p className="font-bold text-white text-sm mb-1 print:text-black">
-                OFFICIAL READ-ONLY COMPLIANCE RECORD — NOT EDITABLE
+                READ-ONLY OFFICIAL RECORD
               </p>
               <p className="text-xs text-blue-200 print:text-gray-700">
-                This record reflects the compliance state as recorded at the time shown below.
+                This record reflects the compliance state as recorded at the time shown below. This page is read-only 
+                and cannot be modified.
               </p>
             </div>
           </div>
         </div>
+
+        {/* Correction Awareness Banner (if applicable) */}
+        {data.has_corrections && (
+          <div className="bg-amber-900/20 border border-amber-500/50 rounded-lg p-4 print:border-black print:bg-gray-50">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0 print:text-black" />
+              <div>
+                <p className="font-medium text-amber-300 text-sm print:text-black">
+                  NOTE: This record was corrected on {data.last_correction_date ? new Date(data.last_correction_date).toLocaleDateString() : 'a later date'}.
+                </p>
+                <p className="text-xs text-amber-200 mt-1 print:text-gray-700">
+                  Original versions remain preserved and available in the audit trail. This verification reflects the 
+                  current version.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Header */}
         <div className="text-center print:mb-4">
@@ -176,11 +196,59 @@ export default function QRVerification() {
           <p className="text-xs text-slate-500 print:text-gray-600">QR Verification</p>
         </div>
 
-        {/* Status Banner */}
-        <div className="rounded-2xl bg-slate-800/50 border border-slate-700 p-6 text-center print:border-gray-300 print:bg-white">
-          <StatusIcon className={`w-16 h-16 mx-auto mb-4 text-${status.color}-400 print:text-gray-700`} />
-          <h2 className="text-2xl font-bold print:text-black">{status.label}</h2>
-          <p className="text-slate-400 print:text-gray-600">{status.sublabel}</p>
+        {/* Status Banner - Enhanced for Field Operations */}
+        <div className={`rounded-2xl border-4 p-8 text-center print:border-2 print:bg-white ${
+          verification_status === 'compliant' 
+            ? 'bg-emerald-900/30 border-emerald-500' 
+            : verification_status === 'blocked'
+            ? 'bg-red-900/30 border-red-500'
+            : 'bg-amber-900/30 border-amber-500'
+        }`}>
+          <StatusIcon className={`w-20 h-20 mx-auto mb-4 ${
+            verification_status === 'compliant' 
+              ? 'text-emerald-400' 
+              : verification_status === 'blocked'
+              ? 'text-red-400'
+              : 'text-amber-400'
+          } print:text-gray-700`} />
+          <h2 className={`text-3xl font-bold mb-2 ${
+            verification_status === 'compliant' 
+              ? 'text-emerald-400' 
+              : verification_status === 'blocked'
+              ? 'text-red-400'
+              : 'text-amber-400'
+          } print:text-black`}>{status.label}</h2>
+          <p className={`text-lg ${
+            verification_status === 'compliant' 
+              ? 'text-emerald-300' 
+              : verification_status === 'blocked'
+              ? 'text-red-300'
+              : 'text-amber-300'
+          } print:text-gray-600`}>{status.sublabel}</p>
+          
+          {/* Action Message for Operations Managers */}
+          {verification_status === 'blocked' && (
+            <div className="mt-4 p-4 bg-red-900/50 border-2 border-red-600 rounded-lg print:border-black">
+              <p className="font-bold text-red-200 print:text-black">
+                ⚠️ DO NOT AUTHORIZE FOR WORK
+              </p>
+              <p className="text-sm text-red-300 mt-1 print:text-gray-700">
+                Contact Compliance Administrator immediately
+              </p>
+            </div>
+          )}
+          
+          {verification_status === 'compliant' && (
+            <div className="mt-4 p-4 bg-emerald-900/50 border-2 border-emerald-600 rounded-lg print:border-black">
+              <p className="font-bold text-emerald-200 print:text-black">
+                ✓ CLEARED TO WORK
+              </p>
+              <p className="text-sm text-emerald-300 mt-1 print:text-gray-700">
+                All required certifications are current
+              </p>
+            </div>
+          )}
+          
           {verified_at && (
             <div className="mt-4 p-3 bg-slate-900/50 rounded border border-slate-600 print:border-gray-300 print:bg-gray-50">
               <p className="text-sm text-slate-300 font-medium print:text-black">
@@ -275,14 +343,36 @@ export default function QRVerification() {
           )}
         </div>
 
-        {/* Print Button */}
-        <button
-          onClick={handlePrint}
-          className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors print:hidden"
-        >
-          <Printer className="w-5 h-5" />
-          Print Official Verification
-        </button>
+        {/* Action Buttons */}
+        <div className="space-y-3 print:hidden">
+          <button
+            onClick={handlePrint}
+            className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors"
+          >
+            <Printer className="w-5 h-5" />
+            Print Official Verification
+          </button>
+
+          {/* Regulator Tools Link */}
+          <div className="p-4 bg-slate-800/30 border border-slate-600 rounded-lg">
+            <div className="flex items-start gap-3">
+              <Shield className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <h3 className="text-sm font-bold text-slate-300 mb-1">For Regulators & Auditors</h3>
+                <p className="text-xs text-slate-400 mb-3">
+                  Need audit timelines, evidence packages, or historical compliance verification? 
+                  Access regulator tools (no login required).
+                </p>
+                <Link 
+                  href="/regulator"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors"
+                >
+                  Access Regulator Tools →
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Read-only Notice */}
         <div className="rounded-xl bg-slate-800/30 border border-slate-700 p-4 print:border-gray-300 print:bg-gray-50">

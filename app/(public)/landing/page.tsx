@@ -24,7 +24,7 @@ import {
  * CANONICAL LANDING PAGE
  * 
  * Purpose:
- * - Marketing-only entry surface explaining System of Proof
+ * - Marketing-only entry surface explaining Compliance Verification and Record System
  * - Smart CTA routing based on auth/license state
  * - NOT a dashboard
  * - NOT a pricing page
@@ -75,7 +75,7 @@ export default function Landing() {
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
               <Shield className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-semibold">System of Proof</span>
+            <span className="text-xl font-semibold">T-REX AI OS</span>
           </div>
           <Link
             href={dashboardLink}
@@ -108,16 +108,16 @@ export default function Landing() {
             </div>
 
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 bg-gradient-to-b from-white to-slate-400 bg-clip-text text-transparent">
-              System of Proof
+              Compliance Verification
             </h1>
 
             <p className="text-xl md:text-2xl text-slate-400 mb-6">
-              Compliance verification built for industries where proof matters.
+              Built for industries where proof matters.
             </p>
 
             <p className="text-lg text-slate-500 max-w-3xl mx-auto mb-12">
               Not checklists. Not spreadsheets.  
-              Immutable, verifiable evidence — tied to people, time, and place.
+              Tamper-evident, verifiable evidence — tied to people, time, and place.
             </p>
 
             <div className="flex flex-col sm:flex-row justify-center gap-4">
@@ -143,7 +143,7 @@ export default function Landing() {
       <section className="py-24 px-6 bg-slate-900/50">
         <div className="max-w-6xl mx-auto text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Why System of Proof Exists
+            Why Tamper-Evident Records Matter
           </h2>
           <p className="text-xl text-slate-400">
             Regulators don't ask what you intended.  
@@ -156,7 +156,7 @@ export default function Landing() {
             { icon: AlertTriangle, text: 'Editable after the fact' },
             { icon: Users, text: 'User-centric instead of employee-centric' },
             { icon: Eye, text: 'Missing verification history' },
-            { icon: FileCheck, text: 'No immutable evidence' }
+            { icon: FileCheck, text: 'No tamper-evident evidence' }
           ].map((item, i) => (
             <div
               key={i}
@@ -181,8 +181,8 @@ export default function Landing() {
           {[
             {
               icon: Lock,
-              title: 'Immutable Evidence',
-              desc: 'Nothing is overwritten. Nothing is deleted. Ever.'
+              title: 'Tamper-Evident Records',
+              desc: 'Append-only record structure designed for regulatory inspection.'
             },
             {
               icon: QrCode,
@@ -258,7 +258,7 @@ export default function Landing() {
 
       {/* FOOTER */}
       <footer className="border-t border-slate-800 py-10 text-center text-sm text-slate-500">
-        © {new Date().getFullYear()} System of Proof. All rights reserved.
+        © {new Date().getFullYear()} T-REX AI OS. All rights reserved.
       </footer>
 
       <style jsx>{`

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Search, Plus, User, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { Search, Plus, User, CheckCircle, XCircle, Clock, Info, FileText } from 'lucide-react';
 
 /**
  * EMPLOYEES PAGE
@@ -64,6 +64,24 @@ export default function EmployeesPage() {
         <p className="text-slate-400">
           Employee roster with certification status and evidence
         </p>
+      </div>
+
+      {/* Info Banner */}
+      <div className="mb-6 p-4 bg-blue-900/20 border border-blue-800/50 rounded-lg">
+        <div className="flex items-start gap-3">
+          <Info className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
+          <div className="text-sm text-slate-300">
+            <strong className="text-blue-300">Click "View Details" to see complete certification history</strong>
+            <p className="mt-1">
+              Employee detail pages show all certification versions, correction history, and chain of custody. 
+              Earlier versions are preserved and retrievable.{' '}
+              <Link href="/docs/audit-export" className="text-blue-400 hover:text-blue-300 underline inline-flex items-center gap-1">
+                <FileText className="w-3 h-3" />
+                Learn about audit exports
+              </Link>
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="mb-6 flex gap-4">

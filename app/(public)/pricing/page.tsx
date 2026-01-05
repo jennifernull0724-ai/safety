@@ -40,10 +40,10 @@ export default function Pricing() {
     'Unlimited public QR verification pages',
     'Read-only, regulator-safe public access',
     'Verification state shown exactly as of scan time',
-    'Immutable evidence retention',
+    'Tamper-evident, append-only evidence retention',
     'Append-only verification ledger',
     'QR scan logging with timestamp and optional location',
-    'Historical certification state preserved forever',
+    'Historical certification state preserved',
     'Regulator read-only access surfaces',
     'Audit-grade evidence timelines',
     'Exportable legal packages (PDF / ZIP)',
@@ -78,14 +78,14 @@ export default function Pricing() {
               animation: 'fadeInUp 0.3s ease-out both'
             }}
           >
-            Trusted Verification Authority
+            Compliance Verification and Record System
           </h2>
           <p className="text-base sm:text-lg md:text-xl text-slate-400">
             Get full access to the T-REX AI OS verification platform.
           </p>
           <p className="text-sm sm:text-base md:text-lg text-slate-500 mt-3 md:mt-4">
             It enables public, regulator-safe QR verification while preserving
-            immutable evidence, audit history, and legal defensibility.
+            tamper-evident evidence, audit history, and legal defensibility.
           </p>
         </section>
 
@@ -159,7 +159,7 @@ export default function Pricing() {
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
-                <span><strong>Organization:</strong> Single legal entity under one U.S. EIN or equivalent tax ID, all locations included</span>
+                <span><strong>Organization:</strong> Single legal entity under one U.S. EIN or equivalent tax ID, all locations included. Multi-entity or holding company structures may be consolidated under a single license by written agreement.</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
@@ -167,7 +167,7 @@ export default function Pricing() {
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
-                <span><strong>Renewal:</strong> Pricing locked for initial term. Annual adjustments capped at 8% with 60-day notice.</span>
+                <span><strong>Renewal:</strong> Pricing locked for initial term. Annual adjustments capped at 8% per renewal cycle (non-compounding) with 60-day advance notice.</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
@@ -200,7 +200,7 @@ export default function Pricing() {
             <div className="p-6 rounded-lg bg-slate-800/50 border border-slate-700">
               <h4 className="font-semibold mb-2 text-white">Historical Data Retention</h4>
               <p className="text-sm text-slate-400">
-                Permanent immutable record retention included.
+                Permanent tamper-evident record retention included.
               </p>
             </div>
             <div className="p-6 rounded-lg bg-slate-800/50 border border-slate-700">
@@ -244,7 +244,7 @@ export default function Pricing() {
                 ))}
               </ul>
               <p className="text-sm text-slate-400 mt-4 p-3 bg-slate-900/50 rounded border border-slate-700">
-                <strong>Fair Use Policy:</strong> AI features process data in batch mode (nightly). Caps prevent abuse while accommodating normal business use. Enterprise customers exceeding caps should contact support for optimization review.
+                <strong>Fair Use Policy:</strong> AI features process data in batch mode (nightly). Caps prevent abuse while accommodating normal business use. Customers approaching caps will receive advance written notice. No mid-term invoicing or service suspension without 14-day notice and good-faith consultation. Any adjustments apply at renewal only.
               </p>
             </div>
           </div>
@@ -289,21 +289,21 @@ export default function Pricing() {
             <div className="p-6 rounded-lg bg-slate-800/50 border border-slate-700">
               <h4 className="font-semibold mb-2 text-white">What defines "one organization"?</h4>
               <p className="text-slate-400">
-                A single legal entity under one U.S. EIN (or equivalent tax ID). All physical locations operated by that entity are included. Separate subsidiaries or legal entities require separate licenses.
+                A single legal entity under one U.S. EIN (or equivalent tax ID). All physical locations operated by that entity are included. Separate subsidiaries or legal entities require separate licenses unless consolidated under a negotiated multi-entity agreement. Contact sales for multi-entity or holding company licensing options.
               </p>
             </div>
 
             <div className="p-6 rounded-lg bg-slate-800/50 border border-slate-700">
               <h4 className="font-semibold mb-2 text-white">Are there usage caps beyond employee count?</h4>
               <p className="text-slate-400">
-                Core verification features (QR scans, historical retention, regulator access) are unlimited under normal business use. AI features have fair use caps (see above) to prevent abuse. Excessive automated scanning (&gt;100,000 scans/day) may require optimization review.
+                Core verification features (QR scans, historical retention, regulator access) are unlimited under normal business use. AI features have fair use caps (see above) to prevent abuse. Excessive automated scanning (&gt;100,000 scans/day) may trigger an optimization review with 14-day written notice. No service suspension or retroactive billing without good-faith consultation.
               </p>
             </div>
 
             <div className="p-6 rounded-lg bg-slate-800/50 border border-slate-700">
               <h4 className="font-semibold mb-2 text-white">Can we lock pricing for multiple years?</h4>
               <p className="text-slate-400">
-                Yes. 3-year commitments receive 5% discount. 5-year commitments receive 10% discount. Pricing is locked for the commitment term with no annual adjustments.
+                Yes. 3-year commitments receive 5% discount. 5-year commitments receive 10% discount. Pricing is locked for the commitment term with no annual adjustments. Multi-year pricing is subject to mutual written agreement and availability.
               </p>
             </div>
 
@@ -317,7 +317,42 @@ export default function Pricing() {
             <div className="p-6 rounded-lg bg-slate-800/50 border border-slate-700">
               <h4 className="font-semibold mb-2 text-white">What happens at renewal?</h4>
               <p className="text-slate-400">
-                Pricing is locked for your initial term. At renewal, your rate may be adjusted based on current employee count and tier. Annual adjustments are capped at 8% with 60-day advance notice. No surprise price increases.
+                Pricing is locked for your initial term. At renewal, your rate may be adjusted based on current employee count and tier. Annual price increases are capped at 8% per renewal cycle and do not compound cumulatively. You will receive renewal pricing at least 60 days in advance. If renewal terms are materially adverse, you may terminate without penalty with pro-rata refund for unused service time.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-lg bg-slate-800/50 border border-slate-700">
+              <h4 className="font-semibold mb-2 text-white">What is your uptime guarantee?</h4>
+              <p className="text-slate-400">
+                We commit to 99.5% monthly uptime availability. If uptime falls below this threshold, you may be eligible for pro-rata service credits (5%-15% depending on severity). Service outages during regulatory inspections qualify for SLA credit consideration. Full details in our Terms of Service.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-lg bg-slate-800/50 border border-slate-700">
+              <h4 className="font-semibold mb-2 text-white">What happens to our data if we terminate?</h4>
+              <p className="text-slate-400">
+                You retain full ownership of all data. Upon termination, you receive a complete data export within 30 days in multiple formats (CSV, JSON, PDF), including all records, audit logs, and evidence files. Read-only access remains available during the 30-day export window. See Terms of Service Section 6 for details.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-lg bg-slate-800/50 border border-slate-700">
+              <h4 className="font-semibold mb-2 text-white">What if T-REX AI OS goes out of business?</h4>
+              <p className="text-slate-400">
+                Your data is stored in redundant, geographically distributed cloud infrastructure (AWS/Google Cloud/Azure) with documented recovery procedures. In the event of service cessation, you will receive at least 60 days notice (if feasible) and complete data export access. Data accessibility is independent of T-REX AI OS operational status.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-lg bg-slate-800/50 border border-slate-700">
+              <h4 className="font-semibold mb-2 text-white">Do you have security certifications and insurance?</h4>
+              <p className="text-slate-400">
+                We maintain third-party security audits and are working toward SOC 2 Type II certification. T-REX AI OS carries commercial general liability, errors & omissions (E&O), and cyber liability insurance. Certificate of insurance available upon request. Summary security reports available under NDA.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-lg bg-slate-800/50 border border-slate-700">
+              <h4 className="font-semibold mb-2 text-white">Can we transfer our license if we are acquired?</h4>
+              <p className="text-slate-400">
+                Yes. Your license may be assigned to an acquiring entity in the event of merger, acquisition, or asset sale, subject to written notice and the acquiring entity's acceptance of our Terms of Service.
               </p>
             </div>
           </div>

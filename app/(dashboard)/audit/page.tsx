@@ -47,7 +47,7 @@ export default function AuditLogPage() {
         <div className="bg-slate-800/50 rounded-2xl border border-slate-700">
           <div className="p-4 bg-slate-900/50 border-b border-slate-700 flex items-center gap-2">
             <Lock className="w-4 h-4 text-amber-400" />
-            <span className="text-sm font-medium">Immutable Audit Trail</span>
+            <span className="text-sm font-medium">Append-Only Audit Trail (Earlier versions preserved)</span>
             <span className="ml-auto text-sm text-slate-400">{auditEvents.length} events</span>
           </div>
           <div className="divide-y divide-slate-700 max-h-[700px] overflow-y-auto">
@@ -82,7 +82,11 @@ export default function AuditLogPage() {
           <Shield className="w-5 h-5 text-amber-400 mt-0.5" />
           <div className="text-sm">
             <div className="font-medium text-amber-300 mb-1">Regulator-Grade Audit Trail</div>
-            <div className="text-slate-400">This audit log is designed for regulatory compliance and legal defensibility. All events are immutable, cryptographically sealed, and include actor identity, timestamp, and complete context.</div>
+            <div className="text-slate-400">
+              This audit log is designed for regulatory compliance and legal defensibility. All events use append-only 
+              record structures (earlier versions preserved), include actor identity, timestamp, and complete context. 
+              Records are retained and retrievable for regulatory inspection.
+            </div>
           </div>
         </div>
       </div>

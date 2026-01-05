@@ -184,8 +184,25 @@ export default function Page() {
 
           <div className="space-y-4 text-base md:text-lg text-slate-300">
             <p>
-              Certification data is entered by authorized administrators. Employees do not edit or modify certification records.
+              Certification data is entered by authorized administrators. <strong>Employees do not log into this system</strong> — they are records, not users.
             </p>
+
+            <div className="mb-6 p-4 bg-blue-900/30 border border-blue-700 rounded-lg">
+              <div className="flex items-start gap-3">
+                <Users className="w-6 h-6 text-blue-400 flex-shrink-0 mt-1" />
+                <div>
+                  <h4 className="text-white font-semibold mb-2">For Employees</h4>
+                  <p className="text-slate-300 text-base">
+                    You do not need to create an account or log in. Your employer maintains compliance records 
+                    about you using this system. QR codes may be provided for verification purposes, but you 
+                    don't interact with the system directly.{' '}
+                    <Link href="/for-employees" className="text-blue-400 hover:text-blue-300 underline">
+                      Learn more about how this works →
+                    </Link>
+                  </p>
+                </div>
+              </div>
+            </div>
 
             <div className="p-6 bg-slate-800/50 rounded-lg border border-slate-700">
               <h3 className="text-lg font-semibold text-white mb-3">Supported Ingestion Methods</h3>
@@ -378,11 +395,14 @@ export default function Page() {
                   <span className="text-blue-400 font-bold mt-1">•</span>
                   <span><strong>Gate/Site Security:</strong> Optional verification at site entry points (if configured)</span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-blue-400 font-bold mt-1">•</span>
-                  <span><strong>Employees:</strong> Do NOT scan their own codes — verification is performed by authorized personnel only</span>
-                </li>
               </ul>
+              <p className="mt-4 text-sm text-slate-400 italic">
+                <strong>Note:</strong> Employees do NOT log into this system or scan their own codes. They are 
+                subjects of verification, not system users.{' '}
+                <Link href="/for-employees/qr-explained" className="text-blue-400 hover:text-blue-300 underline">
+                  Learn how QR verification works for employees →
+                </Link>
+              </p>
             </div>
 
             {/* When Scanning Happens */}

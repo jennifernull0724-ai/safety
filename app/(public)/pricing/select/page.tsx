@@ -58,7 +58,7 @@ const tiers = [
 
 const includedFeatures = [
   'Unlimited public QR verification pages',
-  'Immutable evidence retention',
+  'Tamper-evident, append-only evidence retention',
   'Append-only verification ledger',
   'Employee certification tracking',
   'Regulator-grade compliance reporting',
@@ -198,7 +198,7 @@ export default function SelectLicenseTier() {
             </li>
             <li className="flex items-start gap-3">
               <div className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-2 shrink-0" />
-              <span>All verification events are immutable and append-only</span>
+              <span>All verification events use tamper-evident, append-only record structures</span>
             </li>
             <li className="flex items-start gap-3">
               <div className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-2 shrink-0" />

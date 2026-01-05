@@ -14,8 +14,8 @@ import { PageContainer, Card, StatusBadge } from '@/components';
  * Rules:
  * - No authentication required
  * - Proof is view-only
- * - Immutable verification record
- * - "This verification has been recorded and is immutable."
+ * - Tamper-evident verification record
+ * - "This verification has been recorded with tamper-evident protection."
  */
 
 interface Props {
@@ -182,7 +182,7 @@ export default async function PublicQRVerificationPage({ params }: Props) {
             </div>
             <div className="p-4 bg-bg-secondary border border-border-default rounded-md">
               <p className="text-sm text-text-primary font-bold">
-                ⚠️ This verification has been recorded and is immutable.
+                ⚠️ This verification has been recorded with tamper-evident protection.
               </p>
             </div>
           </div>

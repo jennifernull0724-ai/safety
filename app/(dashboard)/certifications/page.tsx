@@ -2,25 +2,146 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Award, Search, Plus, Calendar, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
+import { Award, Search, Plus, Calendar, AlertTriangle, CheckCircle, XCircle, Clock, Info, Download, FileText } from 'lucide-react';
 
 export default function CertificationsPage() {
   const [certifications, setCertifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [snapshotDate, setSnapshotDate] = useState<string>('');
+  const [isSnapshotMode, setIsSnapshotMode] = useState(false);
 
   useEffect(() => {
     loadCertifications();
   }, []);
 
   const loadCertifications = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch('/api/certifications');
+    setLoadiurl = isSnapshotMode && snapshotDate
+        ? `/api/certifications?asOfDate=${snapshotDate}`
+        : '/api/certifications';
+      const res = await fetch(url);
       if (res.ok) setCertifications(await res.json());
     } catch (err) {
       console.error('Failed to load certifications');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const applySnapshot = () => {
+    if (!snapshotDate) {
+      alert('Please select a date for the snapshot');
+      return;
+    }
+    setIsSnapshotMode(true);
+    loadCertifications();
+  };
+
+  const clearSnapshot = () => {
+    setIsSnapshotMode(false);
+    setSnapshotDate('');
+    loadCertifications();
+  useEffect(() => {
+    loadCertifications();
+  }, [isSnapshotMode, snapshotDate]);
+
+  return (
+    <div>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2">Certifications</h1>
+        <p className="text-slate-400">Organization-wide certification registry with proof documents</p>
+      </div>
+
+      {/* Point-in-Time Snapshot Controls */}
+      <div className="mb-6 p-4 bg-slate-800/50 border border-slate-700 rounded-lg">
+        <div className="flex items-start gap-4">
+          <div className="flex-1">
+            <label className="block text-sm font-medium mb-2 flex items-center gap-2">
+              <Clock className="w-4 h-4 text-blue-400" />
+              View Compliance As Of Date (Historical Snapshot)
+              <div className="group relative">
+                <Info className="w-4 h-4 text-slate-500 cursor-help" />
+                <div className="absolute left-0 top-6 w-96 p-4 bg-slate-900 border border-slate-600 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+                  <div className="text-sm text-slate-300">
+                    <strong className="text-white">Historical Snapshot Query</strong>
+                    <p className="mt-2">
+                      Snapshots show compliance state as recorded at the selected date. Later corrections do not alter
+                      historical snapshots.
+                    </p>
+                    <p className="mt-2">
+                      This is a read-only view that reflects what was known and valid at that specific point in time.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </label>
+            <div className="flex gap-3">
+              <input
+                type="date"
+                className="px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 text-white"
+                value={snapshotDate}
+                onChange={e => setSnapshotDate(e.target.value)}
+                max={new Date().toISOString().split('T')[0]}
+              />
+              <button
+                onClick={applySnapshot}
+                disabled={!snapshotDate}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 disabled:text-slate-500 rounded-lg font-medium"
+              >
+                Apply Snapshot
+              </button>
+              {isSnapshotMode && (
+                <button onClick={clearSnapshot} className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg">
+                  Clear Snapshot (View Current)
+                </button>
+              )}
+            </div>
+          </div>
+          <button
+            onClick={generateAuditPackage}
+            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-lg flex items-center gap-2 font-medium"
+          >
+            <Download className="w-4 h-4" />
+            Generate Audit Package
+          </button>
+        </div>
+      </div>
+
+      {/* Snapshot Mode Banner */}
+      {isSnapshotMode && (
+        <div className="mb-6 p-4 bg-amber-900/20 border border-amber-800/50 rounded-lg">
+          <div className="flex items-center gap-3">
+            <Clock className="w-5 h-5 text-amber-400" />
+            <div>
+              <strong className="text-amber-300">Historical Snapshot — Read-Only View</strong>
+              <p className="text-sm text-slate-400 mt-1">
+                Viewing compliance state as of {new Date(snapshotDate).toLocaleDateString()}. This snapshot reflects
+                data as it existed at that time.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}res = await fetch('/api/audit/export', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          includeAll: true,
+          format: 'zip',
+        }),
+      });
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `audit-package-${new Date().toISOString()}.zip`;
+        a.click();
+      } else {
+        alert('Failed to generate audit package');
+      }
+    } catch (err) {
+      alert('Error generating audit package'ailed to load certifications');
     } finally {
       setLoading(false);
     }
