@@ -106,7 +106,7 @@ export async function exportAuditPackage(
       evidenceLinks: {
         include: {
           evidenceNode: {
-            include: { ImmutableEventLedger: true },
+            include: { ledgerEntries: true },
           },
         },
       },

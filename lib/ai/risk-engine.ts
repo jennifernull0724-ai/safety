@@ -25,7 +25,7 @@ export interface RiskFactor {
 export async function calculateCertificationRisk(employeeId: string): Promise<RiskAssessment> {
   const employee = await prisma.employee.findUnique({
     where: { id: employeeId },
-    include: { Certification: true },
+    include: { certification: true },
   });
 
   if (!employee) {

@@ -6,7 +6,7 @@ import { withEvidence } from '@/lib/withEvidence';
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   const workWindow = await prisma.workWindow.findUnique({
     where: { id: params.id },
-    include: { Organization: true },
+    include: { organization: true },
   });
   if (!workWindow) return NextResponse.json({ error: 'Not found' }, { status: 404 });
   return NextResponse.json(workWindow);

@@ -51,14 +51,14 @@ export async function GET(
     const employee = await prisma.employee.findUnique({
       where: { id: verificationToken.employeeId },
       include: {
-        Organization: {
+        organization: {
           select: {
             id: true,
             name: true,
             type: true,
           },
         },
-        Certification: {
+        certification: {
           include: {
             mediaFiles: {
               select: {

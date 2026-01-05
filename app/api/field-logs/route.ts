@@ -5,7 +5,7 @@ import { withEvidence } from '@/lib/withEvidence';
 // GET /api/field-logs - List all field logs
 export async function GET(req: NextRequest) {
   const logs = await prisma.fieldLog.findMany({
-    include: { Employee: true },
+    include: { employee: true },
     orderBy: { loggedAt: 'desc' },
   });
   return NextResponse.json(logs);
