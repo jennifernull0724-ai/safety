@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
     const score = evidenceCount > 10 ? 100 : evidenceCount * 10;
     return {
       auditCaseId: audit.id,
-      title: audit.title,
+      auditType: audit.auditType,
       status: audit.status,
       evidenceCount,
       readinessScore: score,

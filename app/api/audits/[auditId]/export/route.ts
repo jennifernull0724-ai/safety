@@ -7,7 +7,7 @@ export async function GET(req: NextRequest, { params }: { params: { auditId: str
   const audit = await prisma.auditCase.findUnique({
     where: { id: params.auditId },
     include: {
-      evidenceLinks: { include: { EvidenceNode: { include: { ImmutableEventLedger: true } } } },
+      evidenceLinks: { include: { evidenceNode: { include: { ledgerEntries: true } } } },
       organization: true,
     },
   });

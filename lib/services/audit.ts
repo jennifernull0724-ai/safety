@@ -105,7 +105,7 @@ export async function exportAuditPackage(
     include: {
       evidenceLinks: {
         include: {
-          EvidenceNode: {
+          evidenceNode: {
             include: { ImmutableEventLedger: true },
           },
         },
@@ -191,7 +191,7 @@ export async function getAuditReadinessForCase(auditCaseId: string): Promise<{
     where: { id: auditCaseId },
     include: {
       evidenceLinks: {
-        include: { EvidenceNode: { include: { ImmutableEventLedger: true } } },
+        include: { evidenceNode: { include: { ledgerEntries: true } } },
       },
     },
   });
@@ -228,9 +228,9 @@ export async function buildAuditTimeline(auditId: string) {
   const links = await prisma.auditCaseEvidence.findMany({
     where: { auditCaseId: auditId },
     include: {
-      EvidenceNode: {
+      evidenceNode: {
         include: {
-          ImmutableEventLedger: {
+          ledgerEntries: {
             orderBy: { createdAt: 'asc' },
           },
         },

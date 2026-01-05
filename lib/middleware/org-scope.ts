@@ -45,17 +45,6 @@ export async function orgScope(req: NextRequest): Promise<NextResponse | null> {
   return null; // Allow request to proceed
 }
 
-  // Enterprise/Regulator organizations: Require verification authority
-  if (org.type === 'enterprise' || org.type === 'regulator') {
-    if (!org.verificationAuthority) {
-      return NextResponse.redirect(new URL('/pricing', req.url));
-    }
-  }
-
-  // Billing/license checks passed, allow access
-  return null;
-}
-
 // Organization scope middleware - ensures users can only access their org's data
 export async function withOrgScope<T extends { organizationId?: string }>(
   req: NextRequest,

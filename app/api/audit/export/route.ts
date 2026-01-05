@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
     );
 
     // Return the ZIP file
-    return new NextResponse(result.buffer, {
+    return new NextResponse(new Uint8Array(result.buffer), {
       status: 200,
       headers: {
         'Content-Type': 'application/zip',
