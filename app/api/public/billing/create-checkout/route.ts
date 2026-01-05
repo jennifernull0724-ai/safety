@@ -25,9 +25,9 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 const tierPricing: Record<string, number> = {
-  small: 4500,  // $45.00/month
-  mid: 9500,    // $95.00/month
-  large: 18000  // $180.00/month
+  small: 450000,   // $4,500.00/month
+  mid: 950000,     // $9,500.00/month
+  large: 1800000   // $18,000.00/month
 };
 
 // Enterprise is NOT in tierPricing (invoice-only)
@@ -83,7 +83,7 @@ export async function POST(request: Request) {
             name: `T-REX AI OS - ${tier.toUpperCase()} Plan`,
             description: 'Safety compliance and certification management platform'
           },
-          unit_amount: tierPricing[tier] * 100, // Convert to cents
+          unit_amount: tierPricing[tier], // Already in cents
           recurring: {
             interval: 'month'
           }
