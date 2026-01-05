@@ -12,10 +12,6 @@ export default function CertificationsPage() {
   const [snapshotDate, setSnapshotDate] = useState<string>('');
   const [isSnapshotMode, setIsSnapshotMode] = useState(false);
 
-  useEffect(() => {
-    loadCertifications();
-  }, []);
-
   const loadCertifications = async () => {
     try {
       setLoading(true);
