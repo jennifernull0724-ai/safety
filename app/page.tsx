@@ -57,7 +57,7 @@ const coreCapabilities = [
   {
     name: 'Historical State Preservation',
     lines: [
-      'The system can answer: "What was this employee\'s certification status on a specific date?"',
+      "The system can answer: 'What was this employee's certification status on a specific date?'",
       'QR codes resolve to records showing compliance status exactly as it existed at the time of issuance.',
     ],
   },
@@ -348,7 +348,7 @@ export default function LandingPage() {
                 Daily Operations Workflow
               </h2>
               <p className="mt-6 max-w-4xl text-xl leading-relaxed text-slate-300">
-                QR codes provide inspectors and regulators with immediate, read-only access to an employee's recorded compliance status at a specific point in time, preserved exactly as it existed and immune to later modification.
+                QR codes provide inspectors and regulators with immediate, read-only access to an employee&apos;s recorded compliance status at a specific point in time, preserved exactly as it existed and immune to later modification.
               </p>
             </header>
 
@@ -454,7 +454,7 @@ export default function LandingPage() {
                   </li>
                 </ul>
                 <p className="mt-6 text-sm text-slate-400">
-                  The scan result is read-only and shows the employee's exact certification state at the moment of verification. It does not change if certifications are later updated.
+                  The scan result is read-only and shows the employee&apos;s exact certification state at the moment of verification. It does not change if certifications are later updated.
                 </p>
               </div>
 
